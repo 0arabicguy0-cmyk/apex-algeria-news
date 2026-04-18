@@ -73,10 +73,19 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
             </Link>
             <button
               onClick={onToggleTheme}
-              className="p-2 rounded-full hover:bg-muted transition-colors text-foreground"
+              className="relative p-2 rounded-full hover:bg-muted transition-colors text-foreground overflow-hidden"
               aria-label="تبديل الوضع"
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              <Sun
+                className={`w-5 h-5 transition-all duration-500 ${
+                  isDark ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0 absolute inset-0 m-auto"
+                }`}
+              />
+              <Moon
+                className={`w-5 h-5 transition-all duration-500 ${
+                  isDark ? "rotate-90 scale-0 opacity-0 absolute inset-0 m-auto" : "rotate-0 scale-100 opacity-100"
+                }`}
+              />
             </button>
           </div>
         </div>

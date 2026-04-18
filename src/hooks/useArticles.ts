@@ -88,6 +88,11 @@ export function useRelated(article: Article | null, limit = 4) {
 }
 
 export async function trackView(articleId: string) {
+  // Always record into reading history (per session for view count)
+  try {
+    const { recordRead } = await import("@/hooks/useReadingHistory");
+    recordRead(articleId);
+  } catch {}
   const key = `viewed:${articleId}`;
   if (sessionStorage.getItem(key)) return;
   sessionStorage.setItem(key, "1");

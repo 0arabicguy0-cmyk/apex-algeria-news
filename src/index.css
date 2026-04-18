@@ -73,14 +73,33 @@
     @apply border-border;
   }
 
+  html {
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-[1.02];
+  }
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-muted;
+    background-image: linear-gradient(
+      90deg,
+      hsl(var(--muted)) 0%,
+      hsl(var(--muted-foreground) / 0.08) 50%,
+      hsl(var(--muted)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
   }
 }
 

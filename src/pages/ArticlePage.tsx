@@ -11,8 +11,11 @@ import Comments from "@/components/Comments";
 import BookmarkButton from "@/components/BookmarkButton";
 import AudioPlayer from "@/components/AudioPlayer";
 import TranslateButton from "@/components/TranslateButton";
+import ShareMenu from "@/components/ShareMenu";
+import PageTransition from "@/components/PageTransition";
+import { ArticleSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
-import { Share2, ArrowUp, Eye } from "lucide-react";
+import { ArrowUp, Eye } from "lucide-react";
 
 export default function ArticlePage() {
   const { id } = useParams();
@@ -28,8 +31,9 @@ export default function ArticlePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground animate-pulse">جارٍ التحميل...</p>
+      <div className="min-h-screen">
+        <Header isDark={isDark} onToggleTheme={toggle} />
+        <ArticleSkeleton />
       </div>
     );
   }
@@ -43,20 +47,6 @@ export default function ArticlePage() {
     );
   }
 
-  const handleShare = (platform: string) => {
-    const url = window.location.href;
-    const text = article.title;
-    const links: Record<string, string> = {
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-    };
-    if (platform === "copy") {
-      navigator.clipboard.writeText(url);
-      return;
-    }
-    window.open(links[platform], "_blank");
-  };
 
   const paragraphs = article.body.split("\n\n");
   const renderParagraph = (p: string, i: number) => {
@@ -80,9 +70,10 @@ export default function ArticlePage() {
       <ReadingProgress />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
-      <div className="w-full h-56 md:h-96 overflow-hidden">
-        <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
-      </div>
+      <PageTransition>
+        <div className="w-full h-56 md:h-96 overflow-hidden">
+          <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+        </div>
 
       <article className="container max-w-3xl py-6">
         <Link to={`/topic/${article.categoryKey}`} className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold hover:opacity-90">
@@ -118,16 +109,12 @@ export default function ArticlePage() {
           <div className="flex items-center gap-2">
             <AudioPlayer text={`${article.title}. ${article.body}`} />
             <TranslateButton title={article.title} body={article.body} />
+            <ShareMenu title={article.title} />
             <BookmarkButton articleId={article.id} />
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mb-8 pb-4 border-b border-border flex-wrap">
-          <button onClick={() => handleShare("whatsapp")} className="px-3 py-1.5 bg-[#25D366] text-white rounded-md text-xs font-medium">واتساب</button>
-          <button onClick={() => handleShare("facebook")} className="px-3 py-1.5 bg-[#1877F2] text-white rounded-md text-xs font-medium">فيسبوك</button>
-          <button onClick={() => handleShare("twitter")} className="px-3 py-1.5 bg-foreground text-background rounded-md text-xs font-medium">𝕏</button>
-          <button onClick={() => handleShare("copy")} className="px-3 py-1.5 bg-muted text-muted-foreground rounded-md text-xs font-medium">نسخ الرابط</button>
-        </div>
+        <div className="mb-8 pb-4 border-b border-border" />
 
         <TableOfContents body={article.body} />
 
@@ -168,11 +155,10 @@ export default function ArticlePage() {
 
         <Comments articleId={article.id} />
       </article>
+      </PageTransition>
 
       <div className="md:hidden fixed bottom-14 right-0 left-0 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-around h-12 z-40">
-        <button onClick={() => handleShare("whatsapp")} className="text-muted-foreground" aria-label="مشاركة">
-          <Share2 className="w-5 h-5" />
-        </button>
+        <ShareMenu title={article.title} />
         <BookmarkButton articleId={article.id} />
         <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="text-muted-foreground" aria-label="أعلى الصفحة">
           <ArrowUp className="w-5 h-5" />
