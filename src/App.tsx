@@ -18,12 +18,14 @@ import AdminFeedback from "./pages/AdminFeedback";
 import AdminBreakingNews from "./pages/AdminBreakingNews";
 import AdminComments from "./pages/AdminComments";
 import AdminNewsletter from "./pages/AdminNewsletter";
+import SplashScreen from "./components/SplashScreen";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <SplashScreen />
       <Toaster />
       <Sonner />
       <BrowserRouter>
