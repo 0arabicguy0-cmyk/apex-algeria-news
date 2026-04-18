@@ -15,10 +15,12 @@ import PageTransition from "@/components/PageTransition";
 import WeatherPrayerWidget from "@/components/WeatherPrayerWidget";
 import { HeroSkeleton, StoryCardSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Link, useSearchParams } from "react-router-dom";
 
 export default function Index() {
   const { isDark, toggle } = useTheme();
+  const { t, lang } = useLanguage();
   const [params, setParams] = useSearchParams();
   const activeCategory = params.get("cat") || "all";
   const { articles, loading } = useArticles();
@@ -57,7 +59,7 @@ export default function Index() {
         <BreakingTicker />
         <CategoryTabs active={activeCategory} onChange={setActive} />
         <div className="container py-20 text-center">
-          <p className="text-muted-foreground">لا توجد مقالات منشورة في هذا التصنيف بعد</p>
+          <p className="text-muted-foreground">{t("noArticlesInCat")}</p>
         </div>
         <Footer />
         <BottomNav />
@@ -83,11 +85,16 @@ export default function Index() {
             <div className="md:col-span-2">
               <div className="flex items-baseline justify-between mb-2">
                 <h2 className="font-bold text-lg text-foreground">
-                  {activeCategory === "all" ? "آخر الأخبار" : categories.find((c) => c.key === activeCategory)?.label}
+                  {activeCategory === "all"
+                    ? t("latestNews")
+                    : (() => {
+                        const cat = categories.find((c) => c.key === activeCategory);
+                        return lang === "en" ? cat?.labelEn : cat?.label;
+                      })()}
                 </h2>
                 {activeCategory !== "all" && (
                   <Link to={`/topic/${activeCategory}`} className="text-xs text-primary hover:underline">
-                    عرض القسم كاملاً ←
+                    {t("viewSection")}
                   </Link>
                 )}
               </div>
@@ -97,7 +104,7 @@ export default function Index() {
                 ))}
               </div>
               {feedItems.length === 0 && (
-                <p className="text-sm text-muted-foreground py-6 text-center">لا توجد مقالات إضافية</p>
+                <p className="text-sm text-muted-foreground py-6 text-center">{t("noMoreArticles")}</p>
               )}
             </div>
 
