@@ -96,7 +96,10 @@ const dict = {
   },
 } as const;
 
-export type TKey = keyof typeof dict["ar"];
+type Dict = typeof dict["ar"];
+type StringKeys = { [K in keyof Dict]: Dict[K] extends string ? K : never }[keyof Dict];
+type ArrayKeys = { [K in keyof Dict]: Dict[K] extends readonly string[] ? K : never }[keyof Dict];
+export type TKey = StringKeys;
 
 let listeners: Array<(l: Lang) => void> = [];
 const getInitial = (): Lang => (localStorage.getItem(KEY) as Lang) || "ar";
@@ -127,7 +130,8 @@ export function useLanguage() {
 
   const toggle = useCallback(() => setLang(lang === "ar" ? "en" : "ar"), [lang, setLang]);
 
-  const t = useCallback((k: TKey) => dict[lang][k], [lang]);
+  const t = useCallback((k: TKey): string => dict[lang][k] as string, [lang]);
+  const tArr = useCallback((k: ArrayKeys): readonly string[] => dict[lang][k] as readonly string[], [lang]);
 
-  return { lang, setLang, toggle, t, isRTL: lang === "ar" };
+  return { lang, setLang, toggle, t, tArr, isRTL: lang === "ar" };
 }
