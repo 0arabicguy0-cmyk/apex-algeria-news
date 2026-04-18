@@ -38,7 +38,6 @@ export default function AdminDashboard() {
     { to: "/admin/feedback", icon: MessageSquare, label: "الرسائل" },
   ];
 
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const NavList = ({ onNavigate }: { onNavigate?: () => void }) => (
     <nav className="space-y-1 flex-1">
