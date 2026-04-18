@@ -47,20 +47,6 @@ export default function ArticlePage() {
     );
   }
 
-  const handleShare = (platform: string) => {
-    const url = window.location.href;
-    const text = article.title;
-    const links: Record<string, string> = {
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
-    };
-    if (platform === "copy") {
-      navigator.clipboard.writeText(url);
-      return;
-    }
-    window.open(links[platform], "_blank");
-  };
 
   const paragraphs = article.body.split("\n\n");
   const renderParagraph = (p: string, i: number) => {
@@ -122,16 +108,12 @@ export default function ArticlePage() {
           <div className="flex items-center gap-2">
             <AudioPlayer text={`${article.title}. ${article.body}`} />
             <TranslateButton title={article.title} body={article.body} />
+            <ShareMenu title={article.title} />
             <BookmarkButton articleId={article.id} />
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mb-8 pb-4 border-b border-border flex-wrap">
-          <button onClick={() => handleShare("whatsapp")} className="px-3 py-1.5 bg-[#25D366] text-white rounded-md text-xs font-medium">واتساب</button>
-          <button onClick={() => handleShare("facebook")} className="px-3 py-1.5 bg-[#1877F2] text-white rounded-md text-xs font-medium">فيسبوك</button>
-          <button onClick={() => handleShare("twitter")} className="px-3 py-1.5 bg-foreground text-background rounded-md text-xs font-medium">𝕏</button>
-          <button onClick={() => handleShare("copy")} className="px-3 py-1.5 bg-muted text-muted-foreground rounded-md text-xs font-medium">نسخ الرابط</button>
-        </div>
+        <div className="mb-8 pb-4 border-b border-border" />
 
         <TableOfContents body={article.body} />
 
