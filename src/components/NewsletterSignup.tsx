@@ -2,17 +2,19 @@ import { useState } from "react";
 import { subscribersApi } from "@/lib/mockStore";
 import { useToast } from "@/hooks/use-toast";
 import { Mail } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.includes("@")) return;
     subscribersApi.add(email.trim().toLowerCase());
     setEmail("");
-    toast({ title: "تم الاشتراك", description: "ستصلك أبرز الأخبار يومياً" });
+    toast({ title: t("nlToastTitle"), description: t("nlToastDesc") });
   };
 
   return (
@@ -20,24 +22,24 @@ export default function NewsletterSignup() {
       <div className="relative z-10 max-w-2xl">
         <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-xs font-medium mb-3">
           <Mail className="w-3.5 h-3.5" />
-          نشرة Apex News اليومية
+          {t("nlBadge")}
         </div>
         <h3 className="text-xl md:text-2xl font-bold mb-2 leading-snug">
-          أبرز ما يحدث في الجزائر والعالم — في صندوق بريدك كل صباح
+          {t("nlTitle")}
         </h3>
-        <p className="text-primary-foreground/80 text-sm mb-4">انضم إلى آلاف القراء. اشتراك مجاني، إلغاء في أي وقت.</p>
+        <p className="text-primary-foreground/80 text-sm mb-4">{t("nlSub")}</p>
         <form onSubmit={submit} className="flex flex-col sm:flex-row gap-2">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="بريدك الإلكتروني"
+            placeholder={t("nlPlaceholder")}
             required
             dir="ltr"
             className="flex-1 px-4 py-3 rounded-lg bg-white/10 backdrop-blur border border-white/20 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-white/40 text-sm"
           />
           <button type="submit" className="px-6 py-3 bg-white text-navy font-bold rounded-lg hover:bg-white/90 transition-colors text-sm">
-            اشترك
+            {t("nlSubscribe")}
           </button>
         </form>
       </div>

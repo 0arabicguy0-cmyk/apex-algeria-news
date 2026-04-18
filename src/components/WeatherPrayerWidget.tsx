@@ -1,16 +1,13 @@
 import { Cloud, Sun, MapPin, Moon } from "lucide-react";
+import { useLanguage } from "@/hooks/useLanguage";
 
-const prayers = [
-  { name: "الفجر", time: "05:12" },
-  { name: "الظهر", time: "12:48" },
-  { name: "العصر", time: "16:22" },
-  { name: "المغرب", time: "19:05" },
-  { name: "العشاء", time: "20:31" },
-];
+const times = ["05:12", "12:48", "16:22", "19:05", "20:31"];
 
 export default function WeatherPrayerWidget() {
-  // Mock: highlight "العصر" as the next prayer
+  const { t, tArr } = useLanguage();
   const nextIdx = 2;
+  const prayers = tArr("prayers");
+  const days = tArr("weekDays");
 
   return (
     <section className="container py-4">
@@ -22,10 +19,12 @@ export default function WeatherPrayerWidget() {
             <div>
               <div className="flex items-center gap-1 text-xs opacity-80">
                 <MapPin className="w-3 h-3" />
-                <span>الجزائر العاصمة</span>
+                <span>{t("city")}</span>
               </div>
-              <div className="text-3xl font-bold mt-1">22°<span className="text-base font-normal opacity-80">م</span></div>
-              <div className="text-xs opacity-90">غائم جزئياً · رطوبة 64%</div>
+              <div className="text-3xl font-bold mt-1">
+                22°<span className="text-base font-normal opacity-80">{t("weatherUnit")}</span>
+              </div>
+              <div className="text-xs opacity-90">{t("weatherDesc")}</div>
             </div>
             <div className="relative">
               <Sun className="w-12 h-12 opacity-90" />
@@ -33,7 +32,7 @@ export default function WeatherPrayerWidget() {
             </div>
           </div>
           <div className="relative mt-3 grid grid-cols-4 gap-2 text-center text-xs">
-            {["الأربعاء", "الخميس", "الجمعة", "السبت"].map((d, i) => (
+            {days.map((d, i) => (
               <div key={d} className="bg-white/10 rounded-lg py-1.5">
                 <div className="opacity-80">{d}</div>
                 <div className="font-bold">{[24, 23, 26, 25][i]}°</div>
@@ -47,27 +46,27 @@ export default function WeatherPrayerWidget() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Moon className="w-4 h-4 text-accent" />
-              <span className="font-bold text-foreground text-sm">مواقيت الصلاة</span>
+              <span className="font-bold text-foreground text-sm">{t("prayerTimes")}</span>
             </div>
-            <span className="text-[10px] text-muted-foreground">١٧ شوال ١٤٤٧</span>
+            <span className="text-[10px] text-muted-foreground">{t("hijriDate")}</span>
           </div>
           <div className="grid grid-cols-5 gap-1.5">
             {prayers.map((p, i) => (
               <div
-                key={p.name}
+                key={p}
                 className={`text-center rounded-lg py-2 transition-all ${
                   i === nextIdx
                     ? "bg-accent text-accent-foreground shadow-sm scale-[1.05]"
                     : "bg-muted text-foreground"
                 }`}
               >
-                <div className="text-[11px] font-medium">{p.name}</div>
-                <div className="text-xs font-bold mt-0.5 tabular-nums">{p.time}</div>
+                <div className="text-[11px] font-medium">{p}</div>
+                <div className="text-xs font-bold mt-0.5 tabular-nums">{times[i]}</div>
               </div>
             ))}
           </div>
           <div className="mt-2 text-[11px] text-muted-foreground text-center">
-            القادمة: <span className="font-bold text-accent">{prayers[nextIdx].name}</span> بعد ٢ ساعة و ١٤ دقيقة
+            {t("nextPrayer")} <span className="font-bold text-accent">{prayers[nextIdx]}</span> {t("inHrsMins")}
           </div>
         </div>
       </div>

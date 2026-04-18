@@ -1,4 +1,5 @@
 import { categories } from "@/lib/data";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface CategoryTabsProps {
   active: string;
@@ -6,6 +7,7 @@ interface CategoryTabsProps {
 }
 
 export default function CategoryTabs({ active, onChange }: CategoryTabsProps) {
+  const { lang } = useLanguage();
   return (
     <div className="md:hidden border-b border-border bg-background">
       <div className="flex overflow-x-auto scrollbar-hide gap-1 px-4 py-2">
@@ -19,7 +21,7 @@ export default function CategoryTabs({ active, onChange }: CategoryTabsProps) {
                 : "text-muted-foreground hover:bg-muted"
             }`}
           >
-            {cat.label}
+            {lang === "en" ? cat.labelEn : cat.label}
           </button>
         ))}
       </div>
