@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { articlesApi } from "@/lib/mockStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,41 +29,26 @@ export default function AdminArticleEditor() {
   const [isFeatured, setIsFeatured] = useState(false);
   const [tagsInput, setTagsInput] = useState("");
   const [status, setStatus] = useState<"draft" | "published">("draft");
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!isNew && id) {
-      supabase.from("articles").select("*").eq("id", id).single().then(({ data }) => {
-        if (data) {
-          setTitle(data.title);
-          setExcerpt(data.excerpt);
-          setBody(data.body);
-          setAuthor(data.author);
-          setCategoryKey(data.category_key);
-          setImageUrl(data.image_url ?? "");
-          setIsBreaking(data.is_breaking);
-          setIsFeatured(((data as any).is_featured ?? false));
-          setTagsInput((((data as any).tags ?? []) as string[]).join(", "));
-          setStatus(data.status as "draft" | "published");
-        }
-      });
+      const a = articlesApi.get(id);
+      if (a) {
+        setTitle(a.title); setExcerpt(a.excerpt); setBody(a.body); setAuthor(a.author);
+        setCategoryKey(a.category_key); setImageUrl(a.image_url ?? "");
+        setIsBreaking(a.is_breaking); setIsFeatured(a.is_featured);
+        setTagsInput(a.tags.join(", ")); setStatus(a.status);
+      }
     }
   }, [id, isNew]);
 
   const selectedCategory = categoryOptions.find((c) => c.key === categoryKey);
 
-  const handleSave = async (publishStatus: "draft" | "published") => {
-    if (!title.trim()) {
-      toast({ title: "العنوان مطلوب", variant: "destructive" });
-      return;
-    }
-    setSaving(true);
+  const handleSave = (publishStatus: "draft" | "published") => {
+    if (!title.trim()) { toast({ title: "العنوان مطلوب", variant: "destructive" }); return; }
     const tags = tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
-    const articleData = {
-      title,
-      excerpt,
-      body,
-      author,
+    const data = {
+      title, excerpt, body, author,
       category: selectedCategory?.label ?? "الجزائر",
       category_key: categoryKey,
       image_url: imageUrl || null,
@@ -74,20 +59,11 @@ export default function AdminArticleEditor() {
       published_at: publishStatus === "published" ? new Date().toISOString() : null,
     };
 
-    let error;
-    if (isNew) {
-      ({ error } = await supabase.from("articles").insert(articleData));
-    } else {
-      ({ error } = await supabase.from("articles").update(articleData).eq("id", id!));
-    }
+    if (isNew) articlesApi.create(data);
+    else articlesApi.update(id!, data);
 
-    setSaving(false);
-    if (error) {
-      toast({ title: "خطأ", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: publishStatus === "published" ? "تم نشر المقال" : "تم حفظ المسودة" });
-      navigate("/admin/articles");
-    }
+    toast({ title: publishStatus === "published" ? "تم نشر المقال" : "تم حفظ المسودة" });
+    navigate("/admin/articles");
   };
 
   return (
@@ -102,17 +78,14 @@ export default function AdminArticleEditor() {
           <Label>العنوان</Label>
           <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="عنوان المقال" className="mt-1" />
         </div>
-
         <div>
           <Label>المقتطف</Label>
-          <Textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="ملخص قصير للمقال" className="mt-1" rows={2} />
+          <Textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} placeholder="ملخص قصير" className="mt-1" rows={2} />
         </div>
-
         <div>
           <Label>المحتوى</Label>
-          <Textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="اكتب محتوى المقال هنا..." className="mt-1 min-h-[300px] font-normal leading-relaxed" />
+          <Textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="اكتب محتوى المقال هنا..." className="mt-1 min-h-[300px] leading-relaxed" />
         </div>
-
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>الكاتب</Label>
@@ -123,25 +96,19 @@ export default function AdminArticleEditor() {
             <Select value={categoryKey} onValueChange={setCategoryKey}>
               <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
               <SelectContent>
-                {categoryOptions.map((c) => (
-                  <SelectItem key={c.key} value={c.key}>{c.label}</SelectItem>
-                ))}
+                {categoryOptions.map((c) => <SelectItem key={c.key} value={c.key}>{c.label}</SelectItem>)}
               </SelectContent>
             </Select>
           </div>
         </div>
-
         <div>
           <Label>رابط الصورة</Label>
           <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." className="mt-1" dir="ltr" />
         </div>
-
         <div>
           <Label>الوسوم (مفصولة بفاصلة)</Label>
           <Input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="الجزائر, طاقة, اقتصاد" className="mt-1" />
-          <p className="text-xs text-muted-foreground mt-1">تساعد على عرض المقالات ذات الصلة وتحسين البحث</p>
         </div>
-
         <div className="flex items-center gap-6 flex-wrap">
           <div className="flex items-center gap-3">
             <Switch checked={isBreaking} onCheckedChange={setIsBreaking} />
@@ -152,14 +119,9 @@ export default function AdminArticleEditor() {
             <Label>مقال مميّز</Label>
           </div>
         </div>
-
         <div className="flex gap-3 pt-4">
-          <Button onClick={() => handleSave("published")} disabled={saving}>
-            {saving ? "جارٍ الحفظ..." : "نشر"}
-          </Button>
-          <Button variant="outline" onClick={() => handleSave("draft")} disabled={saving}>
-            حفظ كمسودة
-          </Button>
+          <Button onClick={() => handleSave("published")}>نشر</Button>
+          <Button variant="outline" onClick={() => handleSave("draft")}>حفظ كمسودة</Button>
         </div>
       </div>
     </div>

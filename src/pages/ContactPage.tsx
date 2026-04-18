@@ -4,8 +4,7 @@ import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import { useTheme } from "@/hooks/useTheme";
 import { CheckCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { feedbackApi } from "@/lib/mockStore";
 
 export default function ContactPage() {
   const { isDark, toggle } = useTheme();
@@ -13,18 +12,10 @@ export default function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
-    const { error } = await supabase.from("feedback_messages").insert({ name, email, message });
-    setSubmitting(false);
-    if (error) {
-      toast({ title: "خطأ", description: error.message, variant: "destructive" });
-      return;
-    }
+    feedbackApi.add(name, email, message);
     setSubmitted(true);
   };
 
@@ -46,49 +37,18 @@ export default function ContactPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">الاسم</label>
-              <input
-                required
-                type="text"
-                maxLength={100}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="اسمك الكامل"
-              />
+              <input required type="text" maxLength={100} value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary" placeholder="اسمك الكامل" />
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">البريد الإلكتروني</label>
-              <input
-                required
-                type="email"
-                maxLength={255}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="example@email.com"
-                dir="ltr"
-              />
+              <input required type="email" maxLength={255} value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary" placeholder="example@email.com" dir="ltr" />
             </div>
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">الرسالة</label>
-              <textarea
-                required
-                rows={5}
-                maxLength={500}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                placeholder="اكتب رسالتك هنا..."
-              />
+              <textarea required rows={5} maxLength={500} value={message} onChange={(e) => setMessage(e.target.value)} className="w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none" placeholder="اكتب رسالتك هنا..." />
               <span className="text-xs text-muted-foreground">{message.length}/٥٠٠</span>
             </div>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {submitting ? "جارٍ الإرسال..." : "إرسال"}
-            </button>
+            <button type="submit" className="w-full py-3 bg-primary text-primary-foreground rounded-lg font-bold hover:opacity-90 transition-opacity">إرسال</button>
           </form>
         )}
       </div>

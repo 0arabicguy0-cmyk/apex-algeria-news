@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { breakingApi, subscribe } from "@/lib/mockStore";
 
 export interface BreakingItem {
   id: string;
@@ -8,17 +8,7 @@ export interface BreakingItem {
 }
 
 export function useBreakingNews() {
-  const [items, setItems] = useState<BreakingItem[]>([]);
-  useEffect(() => {
-    (async () => {
-      const { data } = await supabase
-        .from("breaking_news_items")
-        .select("id, text, link_article_id")
-        .eq("is_active", true)
-        .order("display_order", { ascending: true })
-        .order("created_at", { ascending: false });
-      setItems(data ?? []);
-    })();
-  }, []);
+  const [items, setItems] = useState<BreakingItem[]>(breakingApi.active());
+  useEffect(() => subscribe(() => setItems(breakingApi.active())), []);
   return items;
 }

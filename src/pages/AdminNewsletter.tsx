@@ -1,30 +1,15 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { subscribersApi, subscribe } from "@/lib/mockStore";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Download } from "lucide-react";
 
-interface Sub { id: string; email: string; created_at: string; }
-
 export default function AdminNewsletter() {
-  const [subs, setSubs] = useState<Sub[]>([]);
+  const [, force] = useState(0);
   const { toast } = useToast();
 
-  const load = async () => {
-    const { data } = await supabase
-      .from("newsletter_subscribers")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setSubs(data ?? []);
-  };
-
-  useEffect(() => { load(); }, []);
-
-  const remove = async (id: string) => {
-    await supabase.from("newsletter_subscribers").delete().eq("id", id);
-    toast({ title: "تم الحذف" });
-    load();
-  };
+  useEffect(() => subscribe(() => force((n) => n + 1)), []);
+  const subs = subscribersApi.all();
 
   const exportCsv = () => {
     const csv = "email,date\n" + subs.map((s) => `${s.email},${s.created_at}`).join("\n");
@@ -55,14 +40,12 @@ export default function AdminNewsletter() {
               <p className="text-sm font-medium text-foreground" dir="ltr">{s.email}</p>
               <p className="text-xs text-muted-foreground">{new Date(s.created_at).toLocaleString("ar-DZ")}</p>
             </div>
-            <button onClick={() => remove(s.id)} className="text-destructive hover:opacity-70 p-2" aria-label="حذف">
+            <button onClick={() => { subscribersApi.remove(s.id); toast({ title: "تم الحذف" }); }} className="text-destructive hover:opacity-70 p-2" aria-label="حذف">
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
         ))}
-        {subs.length === 0 && (
-          <p className="text-center text-sm text-muted-foreground py-8">لا يوجد مشتركون بعد</p>
-        )}
+        {subs.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">لا يوجد مشتركون بعد</p>}
       </div>
     </div>
   );
