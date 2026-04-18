@@ -20,13 +20,13 @@ export interface Article {
 }
 
 export const categories = [
-  { key: "all", label: "الرئيسية" },
-  { key: "algeria", label: "الجزائر" },
-  { key: "world", label: "العالم" },
-  { key: "economy", label: "اقتصاد" },
-  { key: "sports", label: "رياضة" },
-  { key: "tech", label: "تكنولوجيا" },
-  { key: "culture", label: "ثقافة" },
+  { key: "all", label: "الرئيسية", labelEn: "Home" },
+  { key: "algeria", label: "الجزائر", labelEn: "Algeria" },
+  { key: "world", label: "العالم", labelEn: "World" },
+  { key: "economy", label: "اقتصاد", labelEn: "Economy" },
+  { key: "sports", label: "رياضة", labelEn: "Sports" },
+  { key: "tech", label: "تكنولوجيا", labelEn: "Tech" },
+  { key: "culture", label: "ثقافة", labelEn: "Culture" },
 ];
 
 export const articles: Article[] = [
