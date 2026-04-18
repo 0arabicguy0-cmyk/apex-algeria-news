@@ -3,9 +3,11 @@ import { Clock, X } from "lucide-react";
 import { useReadingHistory, clearHistory } from "@/hooks/useReadingHistory";
 import { articlesApi } from "@/lib/mockStore";
 import { mapArticle } from "@/hooks/useArticles";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function ContinueReading() {
   const ids = useReadingHistory();
+  const { t } = useLanguage();
   if (ids.length === 0) return null;
 
   const items = articlesApi
@@ -21,15 +23,15 @@ export default function ContinueReading() {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Clock className="w-4 h-4 text-primary" />
-          <h2 className="font-bold text-base text-foreground">واصل القراءة</h2>
+          <h2 className="font-bold text-base text-foreground">{t("continueReading")}</h2>
         </div>
         <button
           onClick={clearHistory}
           className="text-xs text-muted-foreground hover:text-destructive transition-colors flex items-center gap-1"
-          aria-label="مسح السجل"
+          aria-label={t("clearHistory")}
         >
           <X className="w-3 h-3" />
-          مسح
+          {t("clear")}
         </button>
       </div>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
