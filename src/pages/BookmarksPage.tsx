@@ -1,0 +1,61 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useBookmarks } from "@/hooks/useBookmarks";
+import { supabase } from "@/integrations/supabase/client";
+import { mapArticle, type Article } from "@/hooks/useArticles";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import BottomNav from "@/components/BottomNav";
+import StoryCard from "@/components/StoryCard";
+import { useTheme } from "@/hooks/useTheme";
+import { Bookmark } from "lucide-react";
+
+export default function BookmarksPage() {
+  const { isDark, toggle } = useTheme();
+  const { ids } = useBookmarks();
+  const [items, setItems] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      if (ids.length === 0) { setItems([]); setLoading(false); return; }
+      const { data } = await supabase.from("articles").select("*").in("id", ids);
+      setItems((data ?? []).map(mapArticle));
+      setLoading(false);
+    })();
+  }, [ids.join(",")]);
+
+  return (
+    <div className="min-h-screen pb-16 md:pb-0">
+      <Header isDark={isDark} onToggleTheme={toggle} />
+
+      <section className="container py-6 md:py-10">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
+          <Bookmark className="w-6 h-6 text-primary fill-primary" />
+          المقالات المحفوظة
+        </h1>
+        <p className="text-sm text-muted-foreground mb-6">{items.length} مقال محفوظ على جهازك</p>
+
+        {loading ? (
+          <p className="text-muted-foreground">جارٍ التحميل...</p>
+        ) : items.length === 0 ? (
+          <div className="text-center py-16 bg-card border border-border rounded-2xl">
+            <Bookmark className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
+            <p className="text-foreground font-medium mb-1">لا توجد مقالات محفوظة</p>
+            <p className="text-sm text-muted-foreground mb-4">احفظ مقالات لقراءتها لاحقاً بضغطة زر</p>
+            <Link to="/" className="inline-block px-5 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium">
+              تصفح الأخبار
+            </Link>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {items.map((a) => <StoryCard key={a.id} article={a} />)}
+          </div>
+        )}
+      </section>
+
+      <Footer />
+      <BottomNav />
+    </div>
+  );
+}

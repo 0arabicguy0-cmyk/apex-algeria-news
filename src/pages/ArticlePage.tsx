@@ -1,25 +1,47 @@
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { articles } from "@/lib/data";
+import { useArticle, useRelated, trackView } from "@/hooks/useArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
+import ReadingProgress from "@/components/ReadingProgress";
+import TableOfContents from "@/components/TableOfContents";
+import Reactions from "@/components/Reactions";
+import Comments from "@/components/Comments";
+import BookmarkButton from "@/components/BookmarkButton";
+import AudioPlayer from "@/components/AudioPlayer";
+import TranslateButton from "@/components/TranslateButton";
 import { useTheme } from "@/hooks/useTheme";
-import { ArrowRight, Share2, Bookmark, ArrowUp, MessageCircle } from "lucide-react";
+import { Share2, ArrowUp, Eye } from "lucide-react";
 
 export default function ArticlePage() {
   const { id } = useParams();
   const { isDark, toggle } = useTheme();
-  const article = articles.find((a) => a.id === id);
+  const { article, loading } = useArticle(id);
+  const related = useRelated(article);
 
-  if (!article) {
+  useEffect(() => {
+    if (article) trackView(article.id);
+  }, [article?.id]);
+
+  useEffect(() => { window.scrollTo(0, 0); }, [id]);
+
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-foreground">المقال غير موجود</p>
+        <p className="text-muted-foreground animate-pulse">جارٍ التحميل...</p>
       </div>
     );
   }
 
-  const related = articles.filter((a) => a.id !== id).slice(0, 4);
+  if (!article) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <p className="text-foreground">المقال غير موجود</p>
+        <Link to="/" className="text-primary hover:underline">العودة للرئيسية</Link>
+      </div>
+    );
+  }
 
   const handleShare = (platform: string) => {
     const url = window.location.href;
@@ -36,99 +58,123 @@ export default function ArticlePage() {
     window.open(links[platform], "_blank");
   };
 
+  const paragraphs = article.body.split("\n\n");
+  const renderParagraph = (p: string, i: number) => {
+    const trimmed = p.trim();
+    if (trimmed.startsWith("## ")) {
+      return (
+        <h2 key={i} id={`h-${i}`} className="text-xl md:text-2xl font-bold text-foreground mt-8 mb-4 scroll-mt-20">
+          {trimmed.replace(/^##\s+/, "")}
+        </h2>
+      );
+    }
+    return (
+      <p key={i} className={i === 0 ? "first-letter:text-4xl first-letter:font-bold first-letter:text-primary first-letter:float-right first-letter:ml-2 first-letter:mt-1" : ""}>
+        {p}
+      </p>
+    );
+  };
+
   return (
     <div className="min-h-screen pb-20 md:pb-0 transition-colors duration-300">
+      <ReadingProgress />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
-      {/* Hero image */}
       <div className="w-full h-56 md:h-96 overflow-hidden">
         <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
       </div>
 
       <article className="container max-w-3xl py-6">
-        <span className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold">
+        <Link to={`/topic/${article.categoryKey}`} className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold hover:opacity-90">
           {article.category}
-        </span>
+        </Link>
 
         <h1 className="text-2xl md:text-4xl font-bold text-foreground mt-4 mb-4 leading-snug">
           {article.title}
         </h1>
 
-        {/* Author info */}
-        <div className="flex items-center gap-3 text-sm text-muted-foreground mb-4">
-          <div className="w-9 h-9 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-sm">
-            {article.author[0]}
+        {article.excerpt && (
+          <p className="text-base md:text-lg text-muted-foreground mb-4 leading-relaxed">
+            {article.excerpt}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <div className="w-9 h-9 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-sm">
+              {article.author[0]}
+            </div>
+            <div>
+              <span className="font-medium text-foreground">{article.author}</span>
+              <div className="text-xs flex items-center gap-2">
+                <span>{article.date}</span>
+                <span>·</span>
+                <span>{article.readTime} قراءة</span>
+                <span>·</span>
+                <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {article.viewCount}</span>
+              </div>
+            </div>
           </div>
-          <div>
-            <span className="font-medium text-foreground">{article.author}</span>
-            <div className="text-xs">{article.date} · {article.readTime} قراءة</div>
+          <div className="flex items-center gap-2">
+            <AudioPlayer text={`${article.title}. ${article.body}`} />
+            <TranslateButton title={article.title} body={article.body} />
+            <BookmarkButton articleId={article.id} />
           </div>
         </div>
 
-        {/* Share row */}
-        <div className="flex items-center gap-2 mb-8 pb-4 border-b border-border">
-          <button onClick={() => handleShare("whatsapp")} className="px-3 py-1.5 bg-[#25D366] text-primary-foreground rounded-md text-xs font-medium">واتساب</button>
-          <button onClick={() => handleShare("facebook")} className="px-3 py-1.5 bg-[#1877F2] text-primary-foreground rounded-md text-xs font-medium">فيسبوك</button>
+        <div className="flex items-center gap-2 mb-8 pb-4 border-b border-border flex-wrap">
+          <button onClick={() => handleShare("whatsapp")} className="px-3 py-1.5 bg-[#25D366] text-white rounded-md text-xs font-medium">واتساب</button>
+          <button onClick={() => handleShare("facebook")} className="px-3 py-1.5 bg-[#1877F2] text-white rounded-md text-xs font-medium">فيسبوك</button>
           <button onClick={() => handleShare("twitter")} className="px-3 py-1.5 bg-foreground text-background rounded-md text-xs font-medium">𝕏</button>
           <button onClick={() => handleShare("copy")} className="px-3 py-1.5 bg-muted text-muted-foreground rounded-md text-xs font-medium">نسخ الرابط</button>
         </div>
 
-        {/* Body */}
+        <TableOfContents body={article.body} />
+
         <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6">
-          {article.body.split("\n\n").map((p, i) => (
-            <p key={i} className={i === 0 ? "first-letter:text-4xl first-letter:font-bold first-letter:text-primary first-letter:float-right first-letter:ml-2 first-letter:mt-1" : ""}>
-              {p}
-            </p>
-          ))}
-
-          {/* Pull quote */}
-          <blockquote className="border-r-4 border-primary pr-4 py-2 text-xl font-medium text-primary/90 my-8 italic">
-            "الجزائر تمتلك واحداً من أعلى معدلات الإشعاع الشمسي في العالم"
-          </blockquote>
+          {paragraphs.map(renderParagraph)}
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mt-8 pt-4 border-t border-border">
-          <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs">#الجزائر</span>
-          <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs">#طاقة</span>
-          <span className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs">#اقتصاد</span>
-        </div>
-
-        {/* Feedback */}
-        <div className="mt-8 p-4 bg-card rounded-xl border border-border text-center">
-          <p className="text-foreground font-medium mb-3">هل وجدت هذا المقال مفيداً؟</p>
-          <div className="flex justify-center gap-4">
-            <button className="px-6 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">👍 نعم</button>
-            <button className="px-6 py-2 bg-muted text-muted-foreground rounded-lg text-sm font-medium hover:bg-border transition-colors">👎 لا</button>
-          </div>
-        </div>
-
-        {/* Related */}
-        <div className="mt-10">
-          <h3 className="font-bold text-lg text-foreground mb-4">مقالات ذات صلة</h3>
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-            {related.map((r) => (
-              <Link key={r.id} to={`/article/${r.id}`} className="flex-shrink-0 w-56 group">
-                <div className="rounded-lg overflow-hidden mb-2">
-                  <img src={r.image} alt={r.title} loading="lazy" className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-                <span className="text-[11px] font-bold text-dz-green">{r.category}</span>
-                <h4 className="text-sm font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors">{r.title}</h4>
+        {article.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-8 pt-4 border-t border-border">
+            {article.tags.map((t) => (
+              <Link key={t} to={`/search?tag=${encodeURIComponent(t)}`} className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs hover:bg-primary/10 hover:text-primary transition-colors">
+                #{t}
               </Link>
             ))}
           </div>
+        )}
+
+        <div className="mt-8">
+          <Reactions articleId={article.id} />
         </div>
+
+        {related.length > 0 && (
+          <div className="mt-10">
+            <h3 className="font-bold text-lg text-foreground mb-4">مقالات ذات صلة</h3>
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+              {related.map((r) => (
+                <Link key={r.id} to={`/article/${r.id}`} className="flex-shrink-0 w-56 group">
+                  <div className="rounded-lg overflow-hidden mb-2">
+                    <img src={r.image} alt={r.title} loading="lazy" className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <span className="text-[11px] font-bold text-dz-green">{r.category}</span>
+                  <h4 className="text-sm font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors">{r.title}</h4>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <Comments articleId={article.id} />
       </article>
 
-      {/* Fixed bottom bar — mobile */}
       <div className="md:hidden fixed bottom-14 right-0 left-0 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-around h-12 z-40">
-        <button onClick={() => handleShare("whatsapp")} className="text-muted-foreground">
+        <button onClick={() => handleShare("whatsapp")} className="text-muted-foreground" aria-label="مشاركة">
           <Share2 className="w-5 h-5" />
         </button>
-        <button className="text-muted-foreground">
-          <Bookmark className="w-5 h-5" />
-        </button>
-        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="text-muted-foreground">
+        <BookmarkButton articleId={article.id} />
+        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="text-muted-foreground" aria-label="أعلى الصفحة">
           <ArrowUp className="w-5 h-5" />
         </button>
       </div>

@@ -1,62 +1,97 @@
-import { useState } from "react";
-import { articles } from "@/lib/data";
+import { useMemo, useState } from "react";
+import { useArticles } from "@/hooks/useArticles";
+import { categories } from "@/lib/data";
 import Header from "@/components/Header";
 import BreakingTicker from "@/components/BreakingTicker";
 import CategoryTabs from "@/components/CategoryTabs";
 import HeroSection from "@/components/HeroSection";
 import StoryCard from "@/components/StoryCard";
 import MostRead from "@/components/MostRead";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import { useTheme } from "@/hooks/useTheme";
+import { Link, useSearchParams } from "react-router-dom";
 
 export default function Index() {
   const { isDark, toggle } = useTheme();
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [params, setParams] = useSearchParams();
+  const activeCategory = params.get("cat") || "all";
+  const { articles, loading } = useArticles();
 
-  const filtered = activeCategory === "all"
-    ? articles
-    : articles.filter((a) => a.categoryKey === activeCategory);
+  const setActive = (key: string) => {
+    if (key === "all") setParams({}); else setParams({ cat: key });
+  };
 
-  const featured = filtered[0] || articles[0];
-  const sidebar = (filtered.length > 3 ? filtered : articles).slice(1, 4);
-  const feed = (filtered.length > 4 ? filtered : articles).slice(4);
+  const filtered = useMemo(
+    () => activeCategory === "all" ? articles : articles.filter((a) => a.categoryKey === activeCategory),
+    [articles, activeCategory]
+  );
+
+  const featured = filtered.find((a) => a.isFeatured) || filtered[0];
+  const sidebar = filtered.filter((a) => a.id !== featured?.id).slice(0, 3);
+  const feedItems = filtered.filter((a) => a.id !== featured?.id && !sidebar.some((s) => s.id === a.id));
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse text-muted-foreground">جارٍ تحميل الأخبار...</div>
+      </div>
+    );
+  }
+
+  if (!featured) {
+    return (
+      <div className="min-h-screen pb-16 md:pb-0">
+        <Header isDark={isDark} onToggleTheme={toggle} />
+        <BreakingTicker />
+        <CategoryTabs active={activeCategory} onChange={setActive} />
+        <div className="container py-20 text-center">
+          <p className="text-muted-foreground">لا توجد مقالات منشورة في هذا التصنيف بعد</p>
+        </div>
+        <Footer />
+        <BottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-16 md:pb-0 transition-colors duration-300">
       <Header isDark={isDark} onToggleTheme={toggle} />
       <BreakingTicker />
-      <CategoryTabs active={activeCategory} onChange={setActiveCategory} />
+      <CategoryTabs active={activeCategory} onChange={setActive} />
 
       <HeroSection featured={featured} sidebar={sidebar} />
 
       <section className="container pb-8">
         <div className="grid md:grid-cols-3 gap-6">
-          {/* Feed */}
           <div className="md:col-span-2">
-            <h2 className="font-bold text-lg text-foreground mb-2">آخر الأخبار</h2>
+            <div className="flex items-baseline justify-between mb-2">
+              <h2 className="font-bold text-lg text-foreground">
+                {activeCategory === "all" ? "آخر الأخبار" : categories.find((c) => c.key === activeCategory)?.label}
+              </h2>
+              {activeCategory !== "all" && (
+                <Link to={`/topic/${activeCategory}`} className="text-xs text-primary hover:underline">
+                  عرض القسم كاملاً ←
+                </Link>
+              )}
+            </div>
             <div className="md:grid md:grid-cols-2 md:gap-4">
-              {feed.map((article) => (
+              {feedItems.map((article) => (
                 <StoryCard key={article.id} article={article} />
               ))}
-              {filtered.length > 1 &&
-                articles
-                  .filter((a) => !filtered.includes(a) && !sidebar.includes(a) && a.id !== featured.id)
-                  .slice(0, 4)
-                  .map((article) => <StoryCard key={article.id} article={article} />)}
             </div>
-            <div className="flex justify-center mt-6">
-              <button className="px-6 py-2.5 border border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-primary-foreground transition-colors text-sm">
-                تحميل المزيد
-              </button>
-            </div>
+            {feedItems.length === 0 && (
+              <p className="text-sm text-muted-foreground py-6 text-center">لا توجد مقالات إضافية</p>
+            )}
           </div>
 
-          {/* Sidebar */}
           <aside className="hidden md:block space-y-6">
             <MostRead />
           </aside>
         </div>
+
+        <NewsletterSignup />
       </section>
 
       <Footer />
