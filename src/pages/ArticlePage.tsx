@@ -16,11 +16,13 @@ import PageTransition from "@/components/PageTransition";
 import FontSizeControl from "@/components/FontSizeControl";
 import { ArticleSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
+import { useLanguage } from "@/hooks/useLanguage";
 import { ArrowUp, Eye } from "lucide-react";
 
 export default function ArticlePage() {
   const { id } = useParams();
   const { isDark, toggle } = useTheme();
+  const { t } = useLanguage();
   const { article, loading } = useArticle(id);
   const related = useRelated(article);
 
@@ -42,8 +44,8 @@ export default function ArticlePage() {
   if (!article) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <p className="text-foreground">المقال غير موجود</p>
-        <Link to="/" className="text-primary hover:underline">العودة للرئيسية</Link>
+        <p className="text-foreground">{t("articleNotFound")}</p>
+        <Link to="/" className="text-primary hover:underline">{t("backToHome")}</Link>
       </div>
     );
   }
@@ -101,7 +103,7 @@ export default function ArticlePage() {
               <div className="text-xs flex items-center gap-2">
                 <span>{article.date}</span>
                 <span>·</span>
-                <span>{article.readTime} قراءة</span>
+                <span>{article.readTime} {t("readDuration")}</span>
                 <span>·</span>
                 <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {article.viewCount}</span>
               </div>
@@ -140,7 +142,7 @@ export default function ArticlePage() {
 
         {related.length > 0 && (
           <div className="mt-10">
-            <h3 className="font-bold text-lg text-foreground mb-4">مقالات ذات صلة</h3>
+            <h3 className="font-bold text-lg text-foreground mb-4">{t("relatedArticles")}</h3>
             <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
               {related.map((r) => (
                 <Link key={r.id} to={`/article/${r.id}`} className="flex-shrink-0 w-56 group">
