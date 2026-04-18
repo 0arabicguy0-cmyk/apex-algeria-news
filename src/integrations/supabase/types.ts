@@ -14,6 +14,96 @@ export type Database = {
   }
   public: {
     Tables: {
+      article_comments: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          message: string
+          name: string
+          status: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          message: string
+          name: string
+          status?: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_comments_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_reactions: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          reaction: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          reaction: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          reaction?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_reactions_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_views: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_views_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       articles: {
         Row: {
           author: string
@@ -25,10 +115,13 @@ export type Database = {
           id: string
           image_url: string | null
           is_breaking: boolean
+          is_featured: boolean
           published_at: string | null
           status: string
+          tags: string[]
           title: string
           updated_at: string
+          view_count: number
         }
         Insert: {
           author?: string
@@ -40,10 +133,13 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_breaking?: boolean
+          is_featured?: boolean
           published_at?: string | null
           status?: string
+          tags?: string[]
           title: string
           updated_at?: string
+          view_count?: number
         }
         Update: {
           author?: string
@@ -55,12 +151,50 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_breaking?: boolean
+          is_featured?: boolean
           published_at?: string | null
           status?: string
+          tags?: string[]
           title?: string
           updated_at?: string
+          view_count?: number
         }
         Relationships: []
+      }
+      breaking_news_items: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          link_article_id: string | null
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          link_article_id?: string | null
+          text: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          link_article_id?: string | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "breaking_news_items_link_article_id_fkey"
+            columns: ["link_article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feedback_messages: {
         Row: {
@@ -86,6 +220,24 @@ export type Database = {
           is_read?: boolean
           message?: string
           name?: string
+        }
+        Relationships: []
+      }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
         }
         Relationships: []
       }
