@@ -10,6 +10,9 @@ import MostRead from "@/components/MostRead";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
+import ContinueReading from "@/components/ContinueReading";
+import PageTransition from "@/components/PageTransition";
+import { HeroSkeleton, StoryCardSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { Link, useSearchParams } from "react-router-dom";
 
