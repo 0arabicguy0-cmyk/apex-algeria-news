@@ -1,4 +1,4 @@
-import { Menu, Moon, Sun, Bell, X } from "lucide-react";
+import { Menu, Moon, Sun, Search, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { categories } from "@/lib/data";
@@ -53,7 +53,7 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
             {categories.map((cat) => (
               <Link
                 key={cat.key}
-                to={cat.key === "all" ? "/" : `/?cat=${cat.key}`}
+                to={cat.key === "all" ? "/" : `/topic/${cat.key}`}
                 className="px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors relative group"
               >
                 {cat.label}
@@ -64,15 +64,19 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
 
           {/* Actions */}
           <div className="flex items-center gap-2">
+            <Link
+              to="/search"
+              className="p-2 rounded-full hover:bg-muted transition-colors text-foreground"
+              aria-label="بحث"
+            >
+              <Search className="w-5 h-5" />
+            </Link>
             <button
               onClick={onToggleTheme}
               className="p-2 rounded-full hover:bg-muted transition-colors text-foreground"
               aria-label="تبديل الوضع"
             >
               {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <button className="p-2 rounded-full hover:bg-muted transition-colors text-foreground" aria-label="الإشعارات">
-              <Bell className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -93,7 +97,7 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
               {categories.map((cat) => (
                 <Link
                   key={cat.key}
-                  to={cat.key === "all" ? "/" : `/?cat=${cat.key}`}
+                  to={cat.key === "all" ? "/" : `/topic/${cat.key}`}
                   onClick={() => setMenuOpen(false)}
                   className="px-4 py-3 rounded-lg text-foreground hover:bg-muted font-medium transition-colors"
                 >

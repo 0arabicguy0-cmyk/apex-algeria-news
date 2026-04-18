@@ -26,6 +26,8 @@ export default function AdminArticleEditor() {
   const [categoryKey, setCategoryKey] = useState("algeria");
   const [imageUrl, setImageUrl] = useState("");
   const [isBreaking, setIsBreaking] = useState(false);
+  const [isFeatured, setIsFeatured] = useState(false);
+  const [tagsInput, setTagsInput] = useState("");
   const [status, setStatus] = useState<"draft" | "published">("draft");
   const [saving, setSaving] = useState(false);
 
@@ -40,6 +42,8 @@ export default function AdminArticleEditor() {
           setCategoryKey(data.category_key);
           setImageUrl(data.image_url ?? "");
           setIsBreaking(data.is_breaking);
+          setIsFeatured(((data as any).is_featured ?? false));
+          setTagsInput((((data as any).tags ?? []) as string[]).join(", "));
           setStatus(data.status as "draft" | "published");
         }
       });
@@ -54,6 +58,7 @@ export default function AdminArticleEditor() {
       return;
     }
     setSaving(true);
+    const tags = tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
     const articleData = {
       title,
       excerpt,
@@ -63,6 +68,8 @@ export default function AdminArticleEditor() {
       category_key: categoryKey,
       image_url: imageUrl || null,
       is_breaking: isBreaking,
+      is_featured: isFeatured,
+      tags,
       status: publishStatus,
       published_at: publishStatus === "published" ? new Date().toISOString() : null,
     };
@@ -129,9 +136,21 @@ export default function AdminArticleEditor() {
           <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://..." className="mt-1" dir="ltr" />
         </div>
 
-        <div className="flex items-center gap-3">
-          <Switch checked={isBreaking} onCheckedChange={setIsBreaking} />
-          <Label>خبر عاجل</Label>
+        <div>
+          <Label>الوسوم (مفصولة بفاصلة)</Label>
+          <Input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="الجزائر, طاقة, اقتصاد" className="mt-1" />
+          <p className="text-xs text-muted-foreground mt-1">تساعد على عرض المقالات ذات الصلة وتحسين البحث</p>
+        </div>
+
+        <div className="flex items-center gap-6 flex-wrap">
+          <div className="flex items-center gap-3">
+            <Switch checked={isBreaking} onCheckedChange={setIsBreaking} />
+            <Label>خبر عاجل</Label>
+          </div>
+          <div className="flex items-center gap-3">
+            <Switch checked={isFeatured} onCheckedChange={setIsFeatured} />
+            <Label>مقال مميّز</Label>
+          </div>
         </div>
 
         <div className="flex gap-3 pt-4">

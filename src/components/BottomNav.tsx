@@ -1,11 +1,11 @@
-import { Home, Flame, Search, Bookmark, MessageCircle } from "lucide-react";
+import { Home, Search, Bookmark, MessageCircle, Tag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const tabs = [
   { icon: Home, label: "الرئيسية", path: "/" },
-  { icon: Flame, label: "عاجل", path: "/?breaking=1" },
-  { icon: Search, label: "بحث", path: "/?search=1" },
-  { icon: Bookmark, label: "محفوظ", path: "/?saved=1" },
+  { icon: Search, label: "بحث", path: "/search" },
+  { icon: Tag, label: "أقسام", path: "/topic/algeria" },
+  { icon: Bookmark, label: "محفوظ", path: "/bookmarks" },
   { icon: MessageCircle, label: "تواصل", path: "/contact" },
 ];
 
@@ -16,7 +16,8 @@ export default function BottomNav() {
     <nav className="md:hidden fixed bottom-0 right-0 left-0 z-50 bg-background border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
       <div className="flex items-center justify-around h-14">
         {tabs.map((tab) => {
-          const isActive = location.pathname === tab.path || (tab.path === "/" && location.pathname === "/");
+          const isActive =
+            tab.path === "/" ? location.pathname === "/" : location.pathname.startsWith(tab.path.split("?")[0]);
           return (
             <Link
               key={tab.label}

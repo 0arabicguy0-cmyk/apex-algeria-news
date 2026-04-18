@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, FileText, MessageSquare, LogOut } from "lucide-react";
+import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
@@ -42,6 +42,9 @@ export default function AdminDashboard() {
   const isExact = location.pathname === "/admin";
   const navItems = [
     { to: "/admin/articles", icon: FileText, label: "المقالات" },
+    { to: "/admin/breaking", icon: Megaphone, label: "الأخبار العاجلة" },
+    { to: "/admin/comments", icon: MessageCircle, label: "التعليقات" },
+    { to: "/admin/newsletter", icon: Mail, label: "النشرة" },
     { to: "/admin/feedback", icon: MessageSquare, label: "الرسائل" },
   ];
 
