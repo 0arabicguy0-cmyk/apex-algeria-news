@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { categories } from "@/lib/data";
 import LanguageToggle from "@/components/LanguageToggle";
+import NotificationsBell from "@/components/NotificationsBell";
 import { useLanguage } from "@/hooks/useLanguage";
 
 interface HeaderProps {
@@ -66,7 +67,8 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-1 md:gap-2">
+          <div className="relative flex items-center gap-1 md:gap-2">
+            <NotificationsBell />
             <LanguageToggle />
             <Link
               to="/search"
