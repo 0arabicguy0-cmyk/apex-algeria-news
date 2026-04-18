@@ -156,9 +156,7 @@ export default function ArticlePage() {
       </article>
 
       <div className="md:hidden fixed bottom-14 right-0 left-0 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-around h-12 z-40">
-        <button onClick={() => handleShare("whatsapp")} className="text-muted-foreground" aria-label="مشاركة">
-          <Share2 className="w-5 h-5" />
-        </button>
+        <ShareMenu title={article.title} />
         <BookmarkButton articleId={article.id} />
         <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="text-muted-foreground" aria-label="أعلى الصفحة">
           <ArrowUp className="w-5 h-5" />
