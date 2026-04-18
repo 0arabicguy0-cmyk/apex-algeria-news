@@ -11,8 +11,11 @@ import Comments from "@/components/Comments";
 import BookmarkButton from "@/components/BookmarkButton";
 import AudioPlayer from "@/components/AudioPlayer";
 import TranslateButton from "@/components/TranslateButton";
+import ShareMenu from "@/components/ShareMenu";
+import PageTransition from "@/components/PageTransition";
+import { ArticleSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
-import { Share2, ArrowUp, Eye } from "lucide-react";
+import { ArrowUp, Eye } from "lucide-react";
 
 export default function ArticlePage() {
   const { id } = useParams();
@@ -28,8 +31,9 @@ export default function ArticlePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground animate-pulse">جارٍ التحميل...</p>
+      <div className="min-h-screen">
+        <Header isDark={isDark} onToggleTheme={toggle} />
+        <ArticleSkeleton />
       </div>
     );
   }
