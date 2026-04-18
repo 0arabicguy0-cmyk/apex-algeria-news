@@ -1,34 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { articlesApi, subscribe, type MockArticle } from "@/lib/mockStore";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import type { Tables } from "@/integrations/supabase/types";
-
-type Article = Tables<"articles">;
 
 export default function AdminArticles() {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [, force] = useState(0);
   const { toast } = useToast();
 
-  const fetchArticles = async () => {
-    const { data } = await supabase.from("articles").select("*").order("created_at", { ascending: false });
-    setArticles(data ?? []);
-  };
+  useEffect(() => subscribe(() => force((n) => n + 1)), []);
 
-  useEffect(() => { fetchArticles(); }, []);
+  const articles: MockArticle[] = articlesApi.all();
 
-  const deleteArticle = async (id: string) => {
-    const { error } = await supabase.from("articles").delete().eq("id", id);
-    if (error) {
-      toast({ title: "خطأ", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "تم حذف المقال" });
-      fetchArticles();
-    }
+  const remove = (id: string) => {
+    articlesApi.remove(id);
+    toast({ title: "تم حذف المقال" });
   };
 
   return (
@@ -68,7 +57,7 @@ export default function AdminArticles() {
                     <Link to={`/admin/articles/${a.id}`}>
                       <Button variant="ghost" size="icon"><Pencil className="w-4 h-4" /></Button>
                     </Link>
-                    <Button variant="ghost" size="icon" onClick={() => deleteArticle(a.id)}>
+                    <Button variant="ghost" size="icon" onClick={() => remove(a.id)}>
                       <Trash2 className="w-4 h-4 text-destructive" />
                     </Button>
                   </div>
@@ -77,9 +66,7 @@ export default function AdminArticles() {
             ))}
             {articles.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                  لا توجد مقالات بعد
-                </TableCell>
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">لا توجد مقالات بعد</TableCell>
               </TableRow>
             )}
           </TableBody>

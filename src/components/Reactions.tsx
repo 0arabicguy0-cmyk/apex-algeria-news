@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { reactionsApi, subscribe } from "@/lib/mockStore";
 import { useToast } from "@/hooks/use-toast";
 
 const REACTIONS = [
@@ -13,40 +13,24 @@ const REACTIONS = [
 type Counts = Record<string, number>;
 
 export default function Reactions({ articleId }: { articleId: string }) {
-  const [counts, setCounts] = useState<Counts>({});
+  const [, force] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
   const { toast } = useToast();
   const storageKey = `reaction:${articleId}`;
 
   useEffect(() => {
     setPicked(localStorage.getItem(storageKey));
-    (async () => {
-      const { data } = await supabase
-        .from("article_reactions")
-        .select("reaction")
-        .eq("article_id", articleId);
-      const c: Counts = {};
-      (data ?? []).forEach((r) => { c[r.reaction] = (c[r.reaction] ?? 0) + 1; });
-      setCounts(c);
-    })();
+    return subscribe(() => force((n) => n + 1));
   }, [articleId]);
 
-  const react = async (key: string) => {
-    if (picked) {
-      toast({ title: "لقد قمت بالتفاعل مسبقاً" });
-      return;
-    }
-    const { error } = await supabase.from("article_reactions").insert({
-      article_id: articleId,
-      reaction: key,
-    });
-    if (error) {
-      toast({ title: "خطأ", description: error.message, variant: "destructive" });
-      return;
-    }
+  const counts: Counts = {};
+  reactionsApi.forArticle(articleId).forEach((r) => { counts[r.reaction] = (counts[r.reaction] ?? 0) + 1; });
+
+  const react = (key: string) => {
+    if (picked) { toast({ title: "لقد قمت بالتفاعل مسبقاً" }); return; }
+    reactionsApi.add(articleId, key);
     localStorage.setItem(storageKey, key);
     setPicked(key);
-    setCounts((c) => ({ ...c, [key]: (c[key] ?? 0) + 1 }));
   };
 
   return (
@@ -59,9 +43,7 @@ export default function Reactions({ articleId }: { articleId: string }) {
             onClick={() => react(r.key)}
             disabled={!!picked}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all text-sm ${
-              picked === r.key
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-background hover:border-primary/40 hover:bg-muted"
+              picked === r.key ? "border-primary bg-primary/10 text-primary" : "border-border bg-background hover:border-primary/40 hover:bg-muted"
             } ${picked && picked !== r.key ? "opacity-60" : ""}`}
           >
             <span className="text-lg leading-none">{r.emoji}</span>

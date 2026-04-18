@@ -1,28 +1,17 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { feedbackApi, subscribe, type MockFeedback } from "@/lib/mockStore";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Mail, MailOpen } from "lucide-react";
-import type { Tables } from "@/integrations/supabase/types";
-
-type Feedback = Tables<"feedback_messages">;
 
 export default function AdminFeedback() {
-  const [messages, setMessages] = useState<Feedback[]>([]);
-  const [selected, setSelected] = useState<Feedback | null>(null);
+  const [selected, setSelected] = useState<MockFeedback | null>(null);
+  const [, force] = useState(0);
 
-  const fetchMessages = async () => {
-    const { data } = await supabase.from("feedback_messages").select("*").order("created_at", { ascending: false });
-    setMessages(data ?? []);
-  };
+  useEffect(() => subscribe(() => force((n) => n + 1)), []);
+  const messages = feedbackApi.all();
 
-  useEffect(() => { fetchMessages(); }, []);
-
-  const markAsRead = async (msg: Feedback) => {
-    if (!msg.is_read) {
-      await supabase.from("feedback_messages").update({ is_read: true }).eq("id", msg.id);
-      fetchMessages();
-    }
+  const open = (msg: MockFeedback) => {
+    if (!msg.is_read) feedbackApi.markRead(msg.id);
     setSelected(msg);
   };
 
@@ -30,12 +19,11 @@ export default function AdminFeedback() {
     <div>
       <h1 className="text-2xl font-bold text-foreground mb-6">صندوق الرسائل</h1>
       <div className="grid md:grid-cols-3 gap-4">
-        {/* List */}
         <div className="md:col-span-1 space-y-2 max-h-[70vh] overflow-y-auto">
           {messages.map((m) => (
             <button
               key={m.id}
-              onClick={() => markAsRead(m)}
+              onClick={() => open(m)}
               className={`w-full text-right p-3 rounded-lg border transition-colors ${
                 selected?.id === m.id ? "border-primary bg-primary/5" : "border-border hover:bg-muted"
               }`}
@@ -48,20 +36,15 @@ export default function AdminFeedback() {
               <p className="text-xs text-muted-foreground truncate">{m.message}</p>
             </button>
           ))}
-          {messages.length === 0 && (
-            <p className="text-center text-muted-foreground py-8">لا توجد رسائل</p>
-          )}
+          {messages.length === 0 && <p className="text-center text-muted-foreground py-8">لا توجد رسائل</p>}
         </div>
 
-        {/* Detail */}
         <div className="md:col-span-2 border border-border rounded-xl p-6">
           {selected ? (
             <div>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-foreground">{selected.name}</h2>
-                <span className="text-xs text-muted-foreground">
-                  {new Date(selected.created_at).toLocaleDateString("ar-DZ")}
-                </span>
+                <span className="text-xs text-muted-foreground">{new Date(selected.created_at).toLocaleDateString("ar-DZ")}</span>
               </div>
               <p className="text-sm text-muted-foreground mb-2" dir="ltr">{selected.email}</p>
               <hr className="my-4 border-border" />

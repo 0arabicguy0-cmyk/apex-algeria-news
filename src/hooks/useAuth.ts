@@ -1,50 +1,24 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
+import { mockAuth } from "@/lib/mockStore";
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(mockAuth.getUser());
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        const u = session?.user ?? null;
-        setUser(u);
-        if (u) {
-          const { data } = await supabase.rpc("has_role", {
-            _user_id: u.id,
-            _role: "admin",
-          });
-          setIsAdmin(!!data);
-        } else {
-          setIsAdmin(false);
-        }
-        setLoading(false);
-      }
-    );
-
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) {
-        const { data } = await supabase.rpc("has_role", {
-          _user_id: u.id,
-          _role: "admin",
-        });
-        setIsAdmin(!!data);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    const sync = () => setUser(mockAuth.getUser());
+    window.addEventListener("mockauth", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("mockauth", sync);
+      window.removeEventListener("storage", sync);
+    };
   }, []);
 
-  const signIn = (email: string, password: string) =>
-    supabase.auth.signInWithPassword({ email, password });
+  const signIn = async (email: string, password: string) => {
+    const { error } = mockAuth.signIn(email, password);
+    return { error: error ? { message: error } : null };
+  };
+  const signOut = async () => mockAuth.signOut();
 
-  const signOut = () => supabase.auth.signOut();
-
-  return { user, isAdmin, loading, signIn, signOut };
+  return { user, isAdmin: !!user, loading: false, signIn, signOut };
 }

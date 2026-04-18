@@ -1,25 +1,16 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { subscribersApi } from "@/lib/mockStore";
 import { useToast } from "@/hooks/use-toast";
 import { Mail } from "lucide-react";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.includes("@")) return;
-    setSubmitting(true);
-    const { error } = await supabase
-      .from("newsletter_subscribers")
-      .insert({ email: email.trim().toLowerCase() });
-    setSubmitting(false);
-    if (error && !error.message.toLowerCase().includes("duplicate")) {
-      toast({ title: "خطأ", description: error.message, variant: "destructive" });
-      return;
-    }
+    subscribersApi.add(email.trim().toLowerCase());
     setEmail("");
     toast({ title: "تم الاشتراك", description: "ستصلك أبرز الأخبار يومياً" });
   };
@@ -45,12 +36,8 @@ export default function NewsletterSignup() {
             dir="ltr"
             className="flex-1 px-4 py-3 rounded-lg bg-white/10 backdrop-blur border border-white/20 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:border-white/40 text-sm"
           />
-          <button
-            type="submit"
-            disabled={submitting}
-            className="px-6 py-3 bg-white text-navy font-bold rounded-lg hover:bg-white/90 transition-colors text-sm disabled:opacity-60"
-          >
-            {submitting ? "..." : "اشترك"}
+          <button type="submit" className="px-6 py-3 bg-white text-navy font-bold rounded-lg hover:bg-white/90 transition-colors text-sm">
+            اشترك
           </button>
         </form>
       </div>
