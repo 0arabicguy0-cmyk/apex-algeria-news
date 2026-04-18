@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import type { Article } from "@/lib/data";
 
-export default function StoryCard({ article }: { article: Article }) {
+export default function StoryCard({ article, index = 0 }: { article: Article; index?: number }) {
   return (
     <Link
       to={`/article/${article.id}`}
-      className="group flex gap-4 py-4 border-b border-border last:border-b-0 md:flex-col md:border-b-0"
+      className="group flex gap-4 py-4 border-b border-border last:border-b-0 md:flex-col md:border-b-0 animate-fade-in-up"
+      style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
     >
       <div className="w-[40%] md:w-full flex-shrink-0 rounded-lg overflow-hidden">
         <img
