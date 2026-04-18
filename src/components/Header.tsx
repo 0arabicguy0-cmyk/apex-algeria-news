@@ -2,6 +2,8 @@ import { Menu, Moon, Sun, Search, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { categories } from "@/lib/data";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface HeaderProps {
   isDark: boolean;
@@ -10,17 +12,18 @@ interface HeaderProps {
 
 export default function Header({ isDark, onToggleTheme }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <>
       {/* Top navy bar — desktop only */}
       <div className="hidden md:block bg-navy text-navy-foreground">
         <div className="container flex items-center justify-between py-1.5 text-sm opacity-80">
-          <span>الثلاثاء ١٥ أبريل ٢٠٢٦ — ١٧ شوال ١٤٤٧</span>
+          <span>{t("dateLine")}</span>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-primary transition-colors">فيسبوك</a>
-            <a href="#" className="hover:text-primary transition-colors">تويتر</a>
-            <a href="#" className="hover:text-primary transition-colors">يوتيوب</a>
+            <a href="#" className="hover:text-primary transition-colors">{t("facebook")}</a>
+            <a href="#" className="hover:text-primary transition-colors">{t("twitter")}</a>
+            <a href="#" className="hover:text-primary transition-colors">{t("youtube")}</a>
           </div>
         </div>
       </div>
@@ -63,18 +66,19 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 md:gap-2">
+            <LanguageToggle />
             <Link
               to="/search"
               className="p-2 rounded-full hover:bg-muted transition-colors text-foreground"
-              aria-label="بحث"
+              aria-label={t("search")}
             >
               <Search className="w-5 h-5" />
             </Link>
             <button
               onClick={onToggleTheme}
               className="relative p-2 rounded-full hover:bg-muted transition-colors text-foreground overflow-hidden"
-              aria-label="تبديل الوضع"
+              aria-label={t("toggleTheme")}
             >
               <Sun
                 className={`w-5 h-5 transition-all duration-500 ${
