@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("admin@apex.dz");
@@ -12,6 +13,7 @@ export default function AdminLogin() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,7 +21,7 @@ export default function AdminLogin() {
     const { error } = await signIn(email, password);
     setSubmitting(false);
     if (error) {
-      toast({ title: "خطأ في الدخول", description: error.message, variant: "destructive" });
+      toast({ title: t("signInError"), description: error.message, variant: "destructive" });
       return;
     }
     navigate("/admin");
@@ -28,15 +30,15 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="w-full max-w-sm p-8 rounded-xl border border-border bg-card shadow-lg">
-        <h1 className="text-2xl font-bold text-foreground text-center mb-1">لوحة التحكم</h1>
-        <p className="text-muted-foreground text-center text-sm mb-6">Apex News DZ — وضع تجريبي</p>
+        <h1 className="text-2xl font-bold text-foreground text-center mb-1">{t("adminPanel")}</h1>
+        <p className="text-muted-foreground text-center text-sm mb-6">{t("adminDemoMode")}</p>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input type="email" placeholder="البريد الإلكتروني" value={email} onChange={(e) => setEmail(e.target.value)} required dir="ltr" />
-          <Input type="password" placeholder="كلمة المرور" value={password} onChange={(e) => setPassword(e.target.value)} required dir="ltr" />
-          <Button type="submit" className="w-full" disabled={submitting}>{submitting ? "جارٍ الدخول..." : "دخول"}</Button>
+          <Input type="email" placeholder={t("fEmail")} value={email} onChange={(e) => setEmail(e.target.value)} required dir="ltr" />
+          <Input type="password" placeholder={t("password")} value={password} onChange={(e) => setPassword(e.target.value)} required dir="ltr" />
+          <Button type="submit" className="w-full" disabled={submitting}>{submitting ? t("signingIn") : t("signIn")}</Button>
         </form>
         <p className="text-xs text-muted-foreground text-center mt-4">
-          أي بريد + كلمة المرور: <code className="bg-muted px-1.5 py-0.5 rounded" dir="ltr">admin</code>
+          {t("adminHint")} <code className="bg-muted px-1.5 py-0.5 rounded" dir="ltr">admin</code>
         </p>
       </div>
     </div>
