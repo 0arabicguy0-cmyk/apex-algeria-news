@@ -70,9 +70,10 @@ export default function ArticlePage() {
       <ReadingProgress />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
-      <div className="w-full h-56 md:h-96 overflow-hidden">
-        <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
-      </div>
+      <PageTransition>
+        <div className="w-full h-56 md:h-96 overflow-hidden">
+          <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
+        </div>
 
       <article className="container max-w-3xl py-6">
         <Link to={`/topic/${article.categoryKey}`} className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold hover:opacity-90">
