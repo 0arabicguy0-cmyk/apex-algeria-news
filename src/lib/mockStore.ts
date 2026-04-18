@@ -91,9 +91,9 @@ function persist() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch {}
   listeners.forEach((l) => l());
 }
-export function subscribe(fn: () => void) {
+export function subscribe(fn: () => void): () => void {
   listeners.add(fn);
-  return () => listeners.delete(fn);
+  return () => { listeners.delete(fn); };
 }
 export function resetMock() {
   state = seed();
