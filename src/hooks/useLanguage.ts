@@ -48,6 +48,10 @@ const dict = {
     prayers: ["الفجر", "الظهر", "العصر", "المغرب", "العشاء"] as readonly string[],
     nextPrayer: "القادمة:",
     inHrsMins: "بعد ٢ ساعة و ١٤ دقيقة",
+    latestNews: "آخر الأخبار",
+    viewSection: "عرض القسم كاملاً ←",
+    noMoreArticles: "لا توجد مقالات إضافية",
+    noArticlesInCat: "لا توجد مقالات منشورة في هذا التصنيف بعد",
   },
   en: {
     siteName: "Apex News",
@@ -93,6 +97,10 @@ const dict = {
     prayers: ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"] as readonly string[],
     nextPrayer: "Next:",
     inHrsMins: "in 2h 14m",
+    latestNews: "Latest news",
+    viewSection: "View full section →",
+    noMoreArticles: "No additional articles",
+    noArticlesInCat: "No articles published in this category yet",
   },
 } as const;
 

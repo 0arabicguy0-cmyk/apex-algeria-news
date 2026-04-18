@@ -1,16 +1,18 @@
 import { Home, Search, Bookmark, MessageCircle, Tag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { useLanguage, type TKey } from "@/hooks/useLanguage";
 
-const tabs = [
-  { icon: Home, label: "الرئيسية", path: "/" },
-  { icon: Search, label: "بحث", path: "/search" },
-  { icon: Tag, label: "أقسام", path: "/topic/algeria" },
-  { icon: Bookmark, label: "محفوظ", path: "/bookmarks" },
-  { icon: MessageCircle, label: "تواصل", path: "/contact" },
+const tabs: { icon: typeof Home; key: TKey; path: string }[] = [
+  { icon: Home, key: "home", path: "/" },
+  { icon: Search, key: "search", path: "/search" },
+  { icon: Tag, key: "sections", path: "/topic/algeria" },
+  { icon: Bookmark, key: "bookmarks", path: "/bookmarks" },
+  { icon: MessageCircle, key: "contact", path: "/contact" },
 ];
 
 export default function BottomNav() {
   const location = useLocation();
+  const { t } = useLanguage();
 
   return (
     <nav className="md:hidden fixed bottom-0 right-0 left-0 z-50 bg-background border-t border-border shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
@@ -20,14 +22,14 @@ export default function BottomNav() {
             tab.path === "/" ? location.pathname === "/" : location.pathname.startsWith(tab.path.split("?")[0]);
           return (
             <Link
-              key={tab.label}
+              key={tab.key}
               to={tab.path}
               className={`flex flex-col items-center gap-0.5 text-[11px] transition-colors ${
                 isActive ? "text-primary" : "text-muted-foreground"
               }`}
             >
               <tab.icon className="w-5 h-5" />
-              <span>{tab.label}</span>
+              <span>{t(tab.key)}</span>
             </Link>
           );
         })}

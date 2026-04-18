@@ -15,10 +15,12 @@ import PageTransition from "@/components/PageTransition";
 import WeatherPrayerWidget from "@/components/WeatherPrayerWidget";
 import { HeroSkeleton, StoryCardSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
+import { useLanguage } from "@/hooks/useLanguage";
 import { Link, useSearchParams } from "react-router-dom";
 
 export default function Index() {
   const { isDark, toggle } = useTheme();
+  const { t, lang } = useLanguage();
   const [params, setParams] = useSearchParams();
   const activeCategory = params.get("cat") || "all";
   const { articles, loading } = useArticles();
