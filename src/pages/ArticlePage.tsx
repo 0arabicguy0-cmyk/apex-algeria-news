@@ -13,6 +13,7 @@ import AudioPlayer from "@/components/AudioPlayer";
 import TranslateButton from "@/components/TranslateButton";
 import ShareMenu from "@/components/ShareMenu";
 import PageTransition from "@/components/PageTransition";
+import FontSizeControl from "@/components/FontSizeControl";
 import { ArticleSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { ArrowUp, Eye } from "lucide-react";
@@ -107,6 +108,7 @@ export default function ArticlePage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <FontSizeControl />
             <AudioPlayer text={`${article.title}. ${article.body}`} />
             <TranslateButton title={article.title} body={article.body} />
             <ShareMenu title={article.title} />

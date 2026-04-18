@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import ContinueReading from "@/components/ContinueReading";
 import PageTransition from "@/components/PageTransition";
+import WeatherPrayerWidget from "@/components/WeatherPrayerWidget";
 import { HeroSkeleton, StoryCardSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { Link, useSearchParams } from "react-router-dom";
@@ -72,6 +73,8 @@ export default function Index() {
 
       <PageTransition>
         <HeroSection featured={featured} sidebar={sidebar} />
+
+        <WeatherPrayerWidget />
 
         <ContinueReading />
 

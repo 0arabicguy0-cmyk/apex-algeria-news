@@ -19,6 +19,8 @@ import AdminBreakingNews from "./pages/AdminBreakingNews";
 import AdminComments from "./pages/AdminComments";
 import AdminNewsletter from "./pages/AdminNewsletter";
 import SplashScreen from "./components/SplashScreen";
+import CommandPalette from "./components/CommandPalette";
+import BackToTop from "./components/BackToTop";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <CommandPalette />
+        <BackToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/article/:id" element={<ArticlePage />} />
