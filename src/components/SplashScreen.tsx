@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const LAST_SEEN_KEY = "apex-last-seen";
 const SESSION_KEY = "apex-splash-shown";
@@ -7,6 +8,7 @@ const INACTIVITY_MS = 30 * 60 * 1000; // 30 minutes
 export default function SplashScreen() {
   const [show, setShow] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const { t, isRTL } = useLanguage();
 
   useEffect(() => {
     const now = Date.now();
@@ -40,7 +42,7 @@ export default function SplashScreen() {
       className={`fixed inset-0 z-[200] flex items-center justify-center bg-background transition-opacity duration-500 ${
         leaving ? "opacity-0 pointer-events-none" : "opacity-100"
       }`}
-      dir="rtl"
+      dir={isRTL ? "rtl" : "ltr"}
       aria-hidden={leaving}
     >
       <div className="flex flex-col items-center gap-5 animate-scale-in">
@@ -52,8 +54,8 @@ export default function SplashScreen() {
         </div>
 
         <div className="flex flex-col items-center gap-1">
-          <h1 className="font-bold text-2xl text-foreground tracking-tight">Apex News</h1>
-          <span className="text-xs text-muted-foreground">الجزائر</span>
+          <h1 className="font-bold text-2xl text-foreground tracking-tight">{t("siteName")}</h1>
+          <span className="text-xs text-muted-foreground">{t("siteSub")}</span>
         </div>
 
         <div
@@ -65,7 +67,7 @@ export default function SplashScreen() {
             animation: "shimmer 1.6s linear infinite",
           }}
         >
-          أخبار الجزائر والعالم — لحظة بلحظة
+          {t("tagline")}
         </div>
       </div>
     </div>
