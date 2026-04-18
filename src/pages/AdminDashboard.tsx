@@ -10,6 +10,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const [, force] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => subscribe(() => force((n) => n + 1)), []);
 
