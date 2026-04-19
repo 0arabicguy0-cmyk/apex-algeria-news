@@ -229,6 +229,39 @@ export default function AdminArticleEditor() {
             <Switch checked={isFeatured} onCheckedChange={setIsFeatured} />
             <Label>{isRTL ? "مقال مميّز" : "Featured"}</Label>
           </div>
+          <div className="flex items-center gap-3">
+            <Switch checked={isPremium} onCheckedChange={setIsPremium} />
+            <Label>{isRTL ? "محتوى بريميوم (مدفوع)" : "Premium (paywall)"}</Label>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <Label>{isRTL ? "تصنيف التحقق" : "Fact-check label"}</Label>
+            <Select value={factCheck} onValueChange={(v) => setFactCheck(v as FactCheckLabel)}>
+              <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">{isRTL ? "بدون" : "None"}</SelectItem>
+                <SelectItem value="verified">{isRTL ? "تم التحقق" : "Verified"}</SelectItem>
+                <SelectItem value="opinion">{isRTL ? "رأي" : "Opinion"}</SelectItem>
+                <SelectItem value="developing">{isRTL ? "خبر متطوّر" : "Developing"}</SelectItem>
+                <SelectItem value="analysis">{isRTL ? "تحليل" : "Analysis"}</SelectItem>
+                <SelectItem value="satire">{isRTL ? "ساخر" : "Satire"}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div>
+          <Label>{isRTL ? "المصادر (سطر لكل مصدر بصيغة: العنوان|الرابط)" : "Sources (one per line: Title|https://url)"}</Label>
+          <Textarea
+            value={sourcesInput}
+            onChange={(e) => setSourcesInput(e.target.value)}
+            className="mt-1 font-mono text-xs"
+            rows={4}
+            placeholder={isRTL ? "وزارة الطاقة|https://www.energy.gov.dz" : "Reuters|https://www.reuters.com"}
+            dir="ltr"
+          />
         </div>
 
         {/* Workflow panel */}
