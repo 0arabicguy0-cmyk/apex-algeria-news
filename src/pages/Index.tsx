@@ -19,6 +19,18 @@ import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Link, useSearchParams } from "react-router-dom";
 
+import { Fragment } from "react";
+import type { Article } from "@/hooks/useArticles";
+
+function FeedItem({ article, index }: { article: Article; index: number }) {
+  return (
+    <Fragment>
+      <StoryCard article={article} index={index} />
+      {index === 3 && <div className="md:col-span-2"><AdBanner variant="inline" /></div>}
+    </Fragment>
+  );
+}
+
 export default function Index() {
   const { isDark, toggle } = useTheme();
   const { t, lang } = useLanguage();
