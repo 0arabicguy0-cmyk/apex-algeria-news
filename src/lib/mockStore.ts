@@ -7,6 +7,12 @@ import economyImg from "@/assets/news-economy.jpg";
 import cultureImg from "@/assets/news-culture.jpg";
 
 export type ArticleStatus = "draft" | "in_review" | "scheduled" | "published";
+export type FactCheckLabel = "verified" | "opinion" | "developing" | "analysis" | "satire" | "none";
+
+export interface MockSource {
+  title: string;
+  url: string;
+}
 
 export interface MockArticle {
   id: string;
@@ -20,6 +26,9 @@ export interface MockArticle {
   status: ArticleStatus;
   is_breaking: boolean;
   is_featured: boolean;
+  is_premium?: boolean;
+  fact_check?: FactCheckLabel;
+  sources?: MockSource[];
   tags: string[];
   view_count: number;
   created_at: string;
@@ -27,6 +36,15 @@ export interface MockArticle {
   scheduled_at?: string | null;
   submitted_by?: string | null;
   reviewed_by?: string | null;
+}
+
+export interface MockAuthor {
+  slug: string;
+  name: string;
+  bio: string;
+  avatar_url?: string | null;
+  twitter?: string | null;
+  email?: string | null;
 }
 
 export interface MockComment {
