@@ -268,6 +268,50 @@ export const feedbackApi = {
   },
 };
 
+// --- Authors ---
+export function authorSlug(name: string): string {
+  // Try exact match in seeded authors first
+  const exact = state.authors.find((a) => a.name === name);
+  if (exact) return exact.slug;
+  return name.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "");
+}
+
+export const authorsApi = {
+  all() { return [...state.authors]; },
+  bySlug(slug: string): MockAuthor | null {
+    const found = state.authors.find((a) => a.slug === slug);
+    if (found) return found;
+    // Fallback: look up by article author name
+    const a = state.articles.find((x) => authorSlug(x.author) === slug);
+    if (a) return { slug, name: a.author, bio: "", avatar_url: null };
+    return null;
+  },
+  byName(name: string): MockAuthor | null {
+    return state.authors.find((a) => a.name === name) ?? null;
+  },
+  articlesBy(name: string) {
+    return state.articles
+      .filter((a) => a.author === name && a.status === "published")
+      .sort((a, b) => (b.published_at ?? b.created_at).localeCompare(a.published_at ?? a.created_at));
+  },
+};
+
+// --- Premium subscription (mock) ---
+const SUB_KEY = "apex_subscription_v1";
+export const subscriptionApi = {
+  isActive(): boolean {
+    try { return localStorage.getItem(SUB_KEY) === "active"; } catch { return false; }
+  },
+  subscribe() {
+    try { localStorage.setItem(SUB_KEY, "active"); } catch {}
+    window.dispatchEvent(new Event("apex-subscription"));
+  },
+  cancel() {
+    try { localStorage.removeItem(SUB_KEY); } catch {}
+    window.dispatchEvent(new Event("apex-subscription"));
+  },
+};
+
 // --- Mock auth with roles (password "admin" works for any email) ---
 export type UserRole = "journalist" | "editor" | "admin";
 export interface MockUser { id: string; email: string; role: UserRole; }
