@@ -54,6 +54,9 @@ export default function AdminArticleEditor() {
         setCategoryKey(a.category_key); setImageUrl(a.image_url ?? "");
         setIsBreaking(a.is_breaking); setIsFeatured(a.is_featured);
         setTagsInput(a.tags.join(", ")); setStatus(a.status);
+        setIsPremium(a.is_premium ?? false);
+        setFactCheck(a.fact_check ?? "none");
+        setSourcesInput((a.sources ?? []).map((s) => `${s.title}|${s.url}`).join("\n"));
         if (a.scheduled_at) {
           // ISO -> "YYYY-MM-DDTHH:mm" in local time
           const d = new Date(a.scheduled_at);
@@ -67,15 +70,29 @@ export default function AdminArticleEditor() {
 
   const selectedCategory = categoryOptions.find((c) => c.key === categoryKey);
 
-  const baseData = useMemo(() => ({
-    title, excerpt, body, author,
-    category: selectedCategory?.label ?? "الجزائر",
-    category_key: categoryKey,
-    image_url: imageUrl || null,
-    is_breaking: isBreaking,
-    is_featured: isFeatured,
-    tags: tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
-  }), [title, excerpt, body, author, selectedCategory, categoryKey, imageUrl, isBreaking, isFeatured, tagsInput]);
+  const baseData = useMemo(() => {
+    const sources: MockSource[] = sourcesInput
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const [title, url] = line.split("|").map((s) => s?.trim() ?? "");
+        return { title: title || url, url: url || title };
+      })
+      .filter((s) => s.url);
+    return {
+      title, excerpt, body, author,
+      category: selectedCategory?.label ?? "الجزائر",
+      category_key: categoryKey,
+      image_url: imageUrl || null,
+      is_breaking: isBreaking,
+      is_featured: isFeatured,
+      is_premium: isPremium,
+      fact_check: factCheck,
+      sources,
+      tags: tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
+    };
+  }, [title, excerpt, body, author, selectedCategory, categoryKey, imageUrl, isBreaking, isFeatured, isPremium, factCheck, sourcesInput, tagsInput]);
 
   const requireTitle = () => {
     if (!title.trim()) {
