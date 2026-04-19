@@ -1,14 +1,18 @@
 import { Link } from "react-router-dom";
-import type { Article } from "@/lib/data";
+import type { Article } from "@/hooks/useArticles";
+import FactCheckBadge from "@/components/FactCheckBadge";
+import PremiumBadge from "@/components/PremiumBadge";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function StoryCard({ article, index = 0 }: { article: Article; index?: number }) {
+  const { isRTL } = useLanguage();
   return (
     <Link
       to={`/article/${article.id}`}
       className="group flex gap-4 py-4 border-b border-border last:border-b-0 md:flex-col md:border-b-0 animate-fade-in-up"
       style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
     >
-      <div className="w-[40%] md:w-full flex-shrink-0 rounded-lg overflow-hidden">
+      <div className="w-[40%] md:w-full flex-shrink-0 rounded-lg overflow-hidden relative">
         <img
           src={article.image}
           alt={article.title}
@@ -17,9 +21,15 @@ export default function StoryCard({ article, index = 0 }: { article: Article; in
           height={256}
           className="w-full h-24 md:h-44 object-cover group-hover:scale-105 transition-transform duration-500"
         />
+        {article.isPremium && (
+          <div className="absolute top-2 start-2"><PremiumBadge size="sm" /></div>
+        )}
       </div>
       <div className="flex flex-col justify-center flex-1 md:pt-3">
-        <span className="text-[11px] font-bold text-dz-green mb-1">{article.category}</span>
+        <div className="flex items-center gap-2 mb-1 flex-wrap">
+          <span className="text-[11px] font-bold text-dz-green">{article.category}</span>
+          {article.factCheck && article.factCheck !== "none" && <FactCheckBadge label={article.factCheck} size="sm" />}
+        </div>
         <h3 className="font-bold text-foreground leading-snug line-clamp-2 mb-1.5 group-hover:text-primary transition-colors text-sm md:text-base">
           {article.title}
         </h3>
@@ -29,7 +39,7 @@ export default function StoryCard({ article, index = 0 }: { article: Article; in
           <span>·</span>
           <span>{article.date}</span>
           <span>·</span>
-          <span>{article.readTime} قراءة</span>
+          <span>{article.readTime} {isRTL ? "قراءة" : "read"}</span>
         </div>
       </div>
     </Link>

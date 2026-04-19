@@ -10,6 +10,7 @@ import SearchPage from "./pages/SearchPage";
 import TopicPage from "./pages/TopicPage";
 import BookmarksPage from "./pages/BookmarksPage";
 import NotFound from "./pages/NotFound";
+import AuthorPage from "./pages/AuthorPage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminArticles from "./pages/AdminArticles";
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/search" element={<SearchPage />} />
           <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/author/:slug" element={<AuthorPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />}>
             <Route path="articles" element={<AdminArticles />} />

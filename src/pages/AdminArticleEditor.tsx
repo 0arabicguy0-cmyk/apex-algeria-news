@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { articlesApi, type ArticleStatus } from "@/lib/mockStore";
+import { articlesApi, type ArticleStatus, type FactCheckLabel, type MockSource } from "@/lib/mockStore";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,9 @@ export default function AdminArticleEditor() {
   const [tagsInput, setTagsInput] = useState("");
   const [status, setStatus] = useState<ArticleStatus>("draft");
   const [scheduledAt, setScheduledAt] = useState<string>(""); // local datetime-input value
+  const [isPremium, setIsPremium] = useState(false);
+  const [factCheck, setFactCheck] = useState<FactCheckLabel>("none");
+  const [sourcesInput, setSourcesInput] = useState(""); // one per line: "Title|https://url"
 
   useEffect(() => {
     if (!isNew && id) {
@@ -51,6 +54,9 @@ export default function AdminArticleEditor() {
         setCategoryKey(a.category_key); setImageUrl(a.image_url ?? "");
         setIsBreaking(a.is_breaking); setIsFeatured(a.is_featured);
         setTagsInput(a.tags.join(", ")); setStatus(a.status);
+        setIsPremium(a.is_premium ?? false);
+        setFactCheck(a.fact_check ?? "none");
+        setSourcesInput((a.sources ?? []).map((s) => `${s.title}|${s.url}`).join("\n"));
         if (a.scheduled_at) {
           // ISO -> "YYYY-MM-DDTHH:mm" in local time
           const d = new Date(a.scheduled_at);
@@ -64,15 +70,29 @@ export default function AdminArticleEditor() {
 
   const selectedCategory = categoryOptions.find((c) => c.key === categoryKey);
 
-  const baseData = useMemo(() => ({
-    title, excerpt, body, author,
-    category: selectedCategory?.label ?? "الجزائر",
-    category_key: categoryKey,
-    image_url: imageUrl || null,
-    is_breaking: isBreaking,
-    is_featured: isFeatured,
-    tags: tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
-  }), [title, excerpt, body, author, selectedCategory, categoryKey, imageUrl, isBreaking, isFeatured, tagsInput]);
+  const baseData = useMemo(() => {
+    const sources: MockSource[] = sourcesInput
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .map((line) => {
+        const [title, url] = line.split("|").map((s) => s?.trim() ?? "");
+        return { title: title || url, url: url || title };
+      })
+      .filter((s) => s.url);
+    return {
+      title, excerpt, body, author,
+      category: selectedCategory?.label ?? "الجزائر",
+      category_key: categoryKey,
+      image_url: imageUrl || null,
+      is_breaking: isBreaking,
+      is_featured: isFeatured,
+      is_premium: isPremium,
+      fact_check: factCheck,
+      sources,
+      tags: tagsInput.split(",").map((t) => t.trim()).filter(Boolean),
+    };
+  }, [title, excerpt, body, author, selectedCategory, categoryKey, imageUrl, isBreaking, isFeatured, isPremium, factCheck, sourcesInput, tagsInput]);
 
   const requireTitle = () => {
     if (!title.trim()) {
@@ -209,6 +229,39 @@ export default function AdminArticleEditor() {
             <Switch checked={isFeatured} onCheckedChange={setIsFeatured} />
             <Label>{isRTL ? "مقال مميّز" : "Featured"}</Label>
           </div>
+          <div className="flex items-center gap-3">
+            <Switch checked={isPremium} onCheckedChange={setIsPremium} />
+            <Label>{isRTL ? "محتوى بريميوم (مدفوع)" : "Premium (paywall)"}</Label>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <Label>{isRTL ? "تصنيف التحقق" : "Fact-check label"}</Label>
+            <Select value={factCheck} onValueChange={(v) => setFactCheck(v as FactCheckLabel)}>
+              <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">{isRTL ? "بدون" : "None"}</SelectItem>
+                <SelectItem value="verified">{isRTL ? "تم التحقق" : "Verified"}</SelectItem>
+                <SelectItem value="opinion">{isRTL ? "رأي" : "Opinion"}</SelectItem>
+                <SelectItem value="developing">{isRTL ? "خبر متطوّر" : "Developing"}</SelectItem>
+                <SelectItem value="analysis">{isRTL ? "تحليل" : "Analysis"}</SelectItem>
+                <SelectItem value="satire">{isRTL ? "ساخر" : "Satire"}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div>
+          <Label>{isRTL ? "المصادر (سطر لكل مصدر بصيغة: العنوان|الرابط)" : "Sources (one per line: Title|https://url)"}</Label>
+          <Textarea
+            value={sourcesInput}
+            onChange={(e) => setSourcesInput(e.target.value)}
+            className="mt-1 font-mono text-xs"
+            rows={4}
+            placeholder={isRTL ? "وزارة الطاقة|https://www.energy.gov.dz" : "Reuters|https://www.reuters.com"}
+            dir="ltr"
+          />
         </div>
 
         {/* Workflow panel */}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { articlesApi, subscribe, type MockArticle } from "@/lib/mockStore";
+import { articlesApi, subscribe, type MockArticle, type MockSource, type FactCheckLabel } from "@/lib/mockStore";
 
 export interface Article {
   id: string;
@@ -14,6 +14,9 @@ export interface Article {
   readTime: string;
   isBreaking?: boolean;
   isFeatured?: boolean;
+  isPremium?: boolean;
+  factCheck?: FactCheckLabel;
+  sources: MockSource[];
   tags: string[];
   viewCount: number;
   publishedAt: string | null;
@@ -51,6 +54,9 @@ export function mapArticle(a: MockArticle): Article {
     readTime: readTime(a.body),
     isBreaking: a.is_breaking,
     isFeatured: a.is_featured,
+    isPremium: a.is_premium ?? false,
+    factCheck: a.fact_check ?? "none",
+    sources: a.sources ?? [],
     tags: a.tags ?? [],
     viewCount: a.view_count ?? 0,
     publishedAt: a.published_at,

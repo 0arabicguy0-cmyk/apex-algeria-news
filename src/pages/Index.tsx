@@ -6,6 +6,7 @@ import BreakingTicker from "@/components/BreakingTicker";
 import CategoryTabs from "@/components/CategoryTabs";
 import HeroSection from "@/components/HeroSection";
 import StoryCard from "@/components/StoryCard";
+import AdBanner from "@/components/AdBanner";
 import MostRead from "@/components/MostRead";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import Footer from "@/components/Footer";
@@ -17,6 +18,18 @@ import { HeroSkeleton, StoryCardSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Link, useSearchParams } from "react-router-dom";
+
+import { Fragment } from "react";
+import type { Article } from "@/hooks/useArticles";
+
+function FeedItem({ article, index }: { article: Article; index: number }) {
+  return (
+    <Fragment>
+      <StoryCard article={article} index={index} />
+      {index === 3 && <div className="md:col-span-2"><AdBanner variant="inline" /></div>}
+    </Fragment>
+  );
+}
 
 export default function Index() {
   const { isDark, toggle } = useTheme();
@@ -76,6 +89,8 @@ export default function Index() {
       <PageTransition>
         <HeroSection featured={featured} sidebar={sidebar} />
 
+        <div className="container"><AdBanner variant="leaderboard" /></div>
+
         <WeatherPrayerWidget />
 
         <ContinueReading />
@@ -100,7 +115,7 @@ export default function Index() {
               </div>
               <div className="md:grid md:grid-cols-2 md:gap-4">
                 {feedItems.map((article, i) => (
-                  <StoryCard key={article.id} article={article} index={i} />
+                  <FeedItem key={article.id} article={article} index={i} />
                 ))}
               </div>
               {feedItems.length === 0 && (
