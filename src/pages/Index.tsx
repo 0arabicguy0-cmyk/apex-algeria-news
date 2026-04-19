@@ -103,10 +103,7 @@ export default function Index() {
               </div>
               <div className="md:grid md:grid-cols-2 md:gap-4">
                 {feedItems.map((article, i) => (
-                  <>
-                    <StoryCard key={article.id} article={article} index={i} />
-                    {i === 3 && <div className="md:col-span-2"><AdBanner variant="inline" /></div>}
-                  </>
+                  <FeedItem key={article.id} article={article} index={i} />
                 ))}
               </div>
               {feedItems.length === 0 && (
