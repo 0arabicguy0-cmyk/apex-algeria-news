@@ -14,17 +14,26 @@ import TranslateButton from "@/components/TranslateButton";
 import ShareMenu from "@/components/ShareMenu";
 import PageTransition from "@/components/PageTransition";
 import FontSizeControl from "@/components/FontSizeControl";
+import FactCheckBadge from "@/components/FactCheckBadge";
+import PremiumBadge from "@/components/PremiumBadge";
+import SourceCitations from "@/components/SourceCitations";
+import AuthorCard from "@/components/AuthorCard";
+import AdBanner from "@/components/AdBanner";
+import Paywall from "@/components/Paywall";
 import { ArticleSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
+import { useSubscription } from "@/hooks/useSubscription";
+import { authorSlug } from "@/lib/mockStore";
 import { ArrowUp, Eye } from "lucide-react";
 
 export default function ArticlePage() {
   const { id } = useParams();
   const { isDark, toggle } = useTheme();
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const { article, loading } = useArticle(id);
   const related = useRelated(article);
+  const { active: isSubscribed } = useSubscription();
 
   useEffect(() => {
     if (article) trackView(article.id);
@@ -79,9 +88,13 @@ export default function ArticlePage() {
         </div>
 
       <article className="container max-w-3xl py-6">
-        <Link to={`/topic/${article.categoryKey}`} className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold hover:opacity-90">
-          {article.category}
-        </Link>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Link to={`/topic/${article.categoryKey}`} className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold hover:opacity-90">
+            {article.category}
+          </Link>
+          {article.isPremium && <PremiumBadge />}
+          <FactCheckBadge label={article.factCheck} />
+        </div>
 
         <h1 className="text-2xl md:text-4xl font-bold text-foreground mt-4 mb-4 leading-snug">
           {article.title}
