@@ -107,12 +107,12 @@ export default function ArticlePage() {
         )}
 
         <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <div className="w-9 h-9 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-sm">
+          <Link to={`/author/${authorSlug(article.author)}`} className="flex items-center gap-3 text-sm text-muted-foreground group">
+            <div className="w-9 h-9 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-sm group-hover:bg-primary/30 transition-colors">
               {article.author[0]}
             </div>
             <div>
-              <span className="font-medium text-foreground">{article.author}</span>
+              <span className="font-medium text-foreground group-hover:text-primary transition-colors">{article.author}</span>
               <div className="text-xs flex items-center gap-2">
                 <span>{article.date}</span>
                 <span>·</span>
@@ -121,7 +121,7 @@ export default function ArticlePage() {
                 <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {article.viewCount}</span>
               </div>
             </div>
-          </div>
+          </Link>
           <div className="flex items-center gap-2">
             <FontSizeControl />
             <AudioPlayer text={`${article.title}. ${article.body}`} />
@@ -135,23 +135,45 @@ export default function ArticlePage() {
 
         <TableOfContents body={article.body} />
 
-        <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6">
-          {paragraphs.map(renderParagraph)}
-        </div>
+        {article.isPremium && !isSubscribed ? (
+          <>
+            <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6 max-h-[420px] overflow-hidden relative">
+              {paragraphs.slice(0, 2).map(renderParagraph)}
+            </div>
+            <Paywall />
+          </>
+        ) : (
+          <>
+            <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6">
+              {paragraphs.map((p, i) => (
+                <>
+                  {renderParagraph(p, i)}
+                  {i === 1 && <AdBanner variant="inline" />}
+                </>
+              ))}
+            </div>
+
+            <SourceCitations sources={article.sources} />
+          </>
+        )}
 
         {article.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-8 pt-4 border-t border-border">
-            {article.tags.map((t) => (
-              <Link key={t} to={`/search?tag=${encodeURIComponent(t)}`} className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs hover:bg-primary/10 hover:text-primary transition-colors">
-                #{t}
+            {article.tags.map((tag) => (
+              <Link key={tag} to={`/search?tag=${encodeURIComponent(tag)}`} className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs hover:bg-primary/10 hover:text-primary transition-colors">
+                #{tag}
               </Link>
             ))}
           </div>
         )}
 
+        <AuthorCard name={article.author} />
+
         <div className="mt-8">
           <Reactions articleId={article.id} />
         </div>
+
+        <AdBanner variant="leaderboard" />
 
         {related.length > 0 && (
           <div className="mt-10">
