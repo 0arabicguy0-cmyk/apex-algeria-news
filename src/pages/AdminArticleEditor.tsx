@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { articlesApi, type ArticleStatus } from "@/lib/mockStore";
+import { articlesApi, type ArticleStatus, type FactCheckLabel, type MockSource } from "@/lib/mockStore";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,9 @@ export default function AdminArticleEditor() {
   const [tagsInput, setTagsInput] = useState("");
   const [status, setStatus] = useState<ArticleStatus>("draft");
   const [scheduledAt, setScheduledAt] = useState<string>(""); // local datetime-input value
+  const [isPremium, setIsPremium] = useState(false);
+  const [factCheck, setFactCheck] = useState<FactCheckLabel>("none");
+  const [sourcesInput, setSourcesInput] = useState(""); // one per line: "Title|https://url"
 
   useEffect(() => {
     if (!isNew && id) {
