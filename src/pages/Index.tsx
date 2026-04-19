@@ -6,6 +6,7 @@ import BreakingTicker from "@/components/BreakingTicker";
 import CategoryTabs from "@/components/CategoryTabs";
 import HeroSection from "@/components/HeroSection";
 import StoryCard from "@/components/StoryCard";
+import AdBanner from "@/components/AdBanner";
 import MostRead from "@/components/MostRead";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import Footer from "@/components/Footer";
@@ -76,6 +77,8 @@ export default function Index() {
       <PageTransition>
         <HeroSection featured={featured} sidebar={sidebar} />
 
+        <div className="container"><AdBanner variant="leaderboard" /></div>
+
         <WeatherPrayerWidget />
 
         <ContinueReading />
@@ -100,7 +103,10 @@ export default function Index() {
               </div>
               <div className="md:grid md:grid-cols-2 md:gap-4">
                 {feedItems.map((article, i) => (
-                  <StoryCard key={article.id} article={article} index={i} />
+                  <>
+                    <StoryCard key={article.id} article={article} index={i} />
+                    {i === 3 && <div className="md:col-span-2"><AdBanner variant="inline" /></div>}
+                  </>
                 ))}
               </div>
               {feedItems.length === 0 && (

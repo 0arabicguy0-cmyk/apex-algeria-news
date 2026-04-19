@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
-import type { Article } from "@/lib/data";
+import type { Article } from "@/hooks/useArticles";
+import FactCheckBadge from "@/components/FactCheckBadge";
+import PremiumBadge from "@/components/PremiumBadge";
 
 interface HeroSectionProps {
   featured: Article;
@@ -18,7 +20,7 @@ export default function HeroSection({ featured, sidebar }: HeroSectionProps) {
             className="w-full h-64 md:h-[420px] object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
-          <div className="absolute top-4 right-4 flex gap-2">
+          <div className="absolute top-4 right-4 flex gap-2 flex-wrap">
             <span className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold">{featured.category}</span>
             {featured.isBreaking && (
               <span className="bg-amber text-amber-foreground px-3 py-1 rounded-sm text-xs font-bold flex items-center gap-1.5">
@@ -26,6 +28,8 @@ export default function HeroSection({ featured, sidebar }: HeroSectionProps) {
                 عاجل
               </span>
             )}
+            {featured.isPremium && <PremiumBadge />}
+            {featured.factCheck && featured.factCheck !== "none" && <FactCheckBadge label={featured.factCheck} size="sm" />}
           </div>
           <div className="absolute bottom-0 right-0 left-0 p-4 md:p-6">
             <h2 className="text-xl md:text-3xl font-bold text-primary-foreground leading-snug mb-2 line-clamp-3">
@@ -54,9 +58,12 @@ export default function HeroSection({ featured, sidebar }: HeroSectionProps) {
                 className="w-full h-32 md:h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-transparent to-transparent" />
-              <span className="absolute top-3 right-3 bg-dz-green text-accent-foreground px-2 py-0.5 rounded-sm text-[11px] font-bold">
-                {article.category}
-              </span>
+              <div className="absolute top-3 right-3 flex gap-1.5 flex-wrap">
+                <span className="bg-dz-green text-accent-foreground px-2 py-0.5 rounded-sm text-[11px] font-bold">
+                  {article.category}
+                </span>
+                {article.isPremium && <PremiumBadge size="sm" />}
+              </div>
               <div className="absolute bottom-0 right-0 left-0 p-3">
                 <h3 className="text-sm md:text-base font-bold text-primary-foreground leading-snug line-clamp-2">
                   {article.title}
