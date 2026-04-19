@@ -6,6 +6,8 @@ import sportsImg from "@/assets/news-sports.jpg";
 import economyImg from "@/assets/news-economy.jpg";
 import cultureImg from "@/assets/news-culture.jpg";
 
+export type ArticleStatus = "draft" | "in_review" | "scheduled" | "published";
+
 export interface MockArticle {
   id: string;
   title: string;
@@ -15,13 +17,16 @@ export interface MockArticle {
   category: string;
   category_key: string;
   author: string;
-  status: "draft" | "published";
+  status: ArticleStatus;
   is_breaking: boolean;
   is_featured: boolean;
   tags: string[];
   view_count: number;
   created_at: string;
   published_at: string | null;
+  scheduled_at?: string | null;
+  submitted_by?: string | null;
+  reviewed_by?: string | null;
 }
 
 export interface MockComment {
@@ -236,15 +241,24 @@ export const feedbackApi = {
   },
 };
 
-// --- Mock auth (any email + password "admin" works) ---
-const AUTH_KEY = "mockAuth_v1";
+// --- Mock auth with roles (password "admin" works for any email) ---
+export type UserRole = "journalist" | "editor" | "admin";
+export interface MockUser { id: string; email: string; role: UserRole; }
+
+const AUTH_KEY = "mockAuth_v2";
 export const mockAuth = {
-  getUser(): { id: string; email: string } | null {
-    try { return JSON.parse(localStorage.getItem(AUTH_KEY) ?? "null"); } catch { return null; }
+  getUser(): MockUser | null {
+    try {
+      const raw = localStorage.getItem(AUTH_KEY);
+      if (!raw) return null;
+      const u = JSON.parse(raw);
+      if (!u?.role) return null;
+      return u;
+    } catch { return null; }
   },
-  signIn(email: string, password: string): { error: string | null } {
-    if (password !== "admin") return { error: "كلمة المرور غير صحيحة (استخدم: admin)" };
-    const user = { id: "mock-admin", email };
+  signIn(email: string, password: string, role: UserRole = "admin"): { error: string | null } {
+    if (password !== "admin") return { error: "كلمة المرور غير صحيحة (استخدم: admin) / Wrong password (use: admin)" };
+    const user: MockUser = { id: `mock-${role}`, email, role };
     localStorage.setItem(AUTH_KEY, JSON.stringify(user));
     window.dispatchEvent(new Event("mockauth"));
     return { error: null };
@@ -254,3 +268,21 @@ export const mockAuth = {
     window.dispatchEvent(new Event("mockauth"));
   },
 };
+
+// --- Scheduled-publish runner: flips scheduled -> published when time hits ---
+export function runScheduledPublish() {
+  const t = Date.now();
+  let changed = false;
+  for (const a of state.articles) {
+    if (a.status === "scheduled" && a.scheduled_at && new Date(a.scheduled_at).getTime() <= t) {
+      a.status = "published";
+      a.published_at = a.scheduled_at;
+      changed = true;
+    }
+  }
+  if (changed) persist();
+}
+if (typeof window !== "undefined") {
+  runScheduledPublish();
+  setInterval(runScheduledPublish, 30_000);
+}
