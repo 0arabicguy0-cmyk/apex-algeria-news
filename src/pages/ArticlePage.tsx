@@ -145,12 +145,12 @@ export default function ArticlePage() {
         ) : (
           <>
             <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6">
-              {paragraphs.map((p, i) => (
-                <>
-                  {renderParagraph(p, i)}
-                  {i === 1 && <AdBanner variant="inline" />}
-                </>
-              ))}
+              {paragraphs.flatMap((p, i) => {
+                const node = renderParagraph(p, i);
+                return i === 1
+                  ? [node, <AdBanner key={`ad-${i}`} variant="inline" />]
+                  : [node];
+              })}
             </div>
 
             <SourceCitations sources={article.sources} />
