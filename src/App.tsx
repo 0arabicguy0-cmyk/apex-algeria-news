@@ -19,6 +19,7 @@ import AdminFeedback from "./pages/AdminFeedback";
 import AdminBreakingNews from "./pages/AdminBreakingNews";
 import AdminComments from "./pages/AdminComments";
 import AdminNewsletter from "./pages/AdminNewsletter";
+import AdminPushNotifications from "./pages/AdminPushNotifications";
 import SplashScreen from "./components/SplashScreen";
 import CommandPalette from "./components/CommandPalette";
 import BackToTop from "./components/BackToTop";
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="breaking" element={<AdminBreakingNews />} />
             <Route path="comments" element={<AdminComments />} />
             <Route path="newsletter" element={<AdminNewsletter />} />
+            <Route path="push" element={<AdminPushNotifications />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

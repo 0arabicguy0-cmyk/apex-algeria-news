@@ -172,6 +172,20 @@ export default function NotificationsBell() {
               )}
             </div>
 
+            {/* Phone push row */}
+            {pushSupported() && (
+              <div className="px-4 py-2.5 bg-primary/5 border-b border-border text-xs">
+                <button
+                  onClick={togglePush}
+                  disabled={pushBusy}
+                  className={`font-semibold flex items-center gap-1.5 ${pushOn ? "text-accent" : "text-primary"} hover:underline disabled:opacity-60`}
+                >
+                  <Smartphone className="w-3.5 h-3.5" />
+                  {pushOn ? labels.pushOn : labels.pushOff}
+                </button>
+              </div>
+            )}
+
             {/* List */}
             <div className="max-h-[60vh] overflow-y-auto">
               {items.length === 0 ? (
