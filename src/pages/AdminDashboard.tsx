@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { articlesApi, feedbackApi, subscribe } from "@/lib/mockStore";
-import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X } from "lucide-react";
+import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
@@ -36,6 +36,7 @@ export default function AdminDashboard() {
     { to: "/admin/comments", icon: MessageCircle, label: "التعليقات" },
     { to: "/admin/newsletter", icon: Mail, label: "النشرة" },
     { to: "/admin/feedback", icon: MessageSquare, label: "الرسائل" },
+    { to: "/admin/push", icon: Bell, label: "الإشعارات الفورية" },
   ];
 
 
