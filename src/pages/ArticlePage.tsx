@@ -83,7 +83,11 @@ export default function ArticlePage() {
       <Header isDark={isDark} onToggleTheme={toggle} />
 
       <PageTransition>
-        <div className="w-full h-56 md:h-96 overflow-hidden">
+        <div className="w-full h-56 md:h-96 overflow-hidden relative">
+          <Link to="/" className="absolute top-4 right-4 z-10 bg-background/80 backdrop-blur-sm text-foreground px-3 py-1.5 rounded-full text-sm font-medium hover:bg-background transition-colors flex items-center gap-1.5 shadow-sm">
+            <ArrowUp className="w-4 h-4 rotate-45" />
+            {t("backToHome")}
+          </Link>
           <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
         </div>
 
