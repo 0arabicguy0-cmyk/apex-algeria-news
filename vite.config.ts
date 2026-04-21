@@ -23,8 +23,9 @@ export default defineConfig(({ mode }) => ({
         enabled: false,
       },
       manifest: false,
-      includeAssets: ["icon-192.png", "icon-512.png", "manifest.webmanifest", "robots.txt"],
+      includeAssets: ["icon-192.png", "icon-512.png", "manifest.webmanifest", "robots.txt", "push-sw.js"],
       workbox: {
+        importScripts: ["/push-sw.js"],
         globPatterns: ["**/*.{js,css,html,svg,png,webp,woff2}"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/~oauth/, /^\/admin/, /^\/api/],
