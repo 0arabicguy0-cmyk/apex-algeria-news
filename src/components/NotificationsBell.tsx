@@ -1,4 +1,4 @@
-import { Bell, BellOff, Check, Trash2, X } from "lucide-react";
+import { Bell, BellOff, Check, Smartphone, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
 } from "@/hooks/useNotifications";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useToast } from "@/hooks/use-toast";
+import { enablePush, isPushSubscribedLocally, pushSupported, disablePush } from "@/lib/push";
 
 function timeAgo(iso: string, lang: "ar" | "en") {
   const diff = Math.max(0, Date.now() - new Date(iso).getTime());
@@ -26,6 +27,8 @@ export default function NotificationsBell() {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [perm, setPerm] = useState<NotificationPermission | "unsupported">(getPermissionState());
+  const [pushOn, setPushOn] = useState(isPushSubscribedLocally());
+  const [pushBusy, setPushBusy] = useState(false);
   const [lastSeenCount, setLastSeenCount] = useState(items.length);
 
   // Toast when a new notification arrives
@@ -61,12 +64,47 @@ export default function NotificationsBell() {
     }
   };
 
+  const togglePush = async () => {
+    setPushBusy(true);
+    if (pushOn) {
+      await disablePush();
+      setPushOn(false);
+      toast({ title: lang === "ar" ? "تم إيقاف إشعارات الجهاز" : "Device push disabled" });
+    } else {
+      const res = await enablePush();
+      if (res.ok) {
+        setPushOn(true);
+        toast({
+          title: lang === "ar" ? "تم تفعيل إشعارات الهاتف ✓" : "Phone push enabled ✓",
+          description:
+            lang === "ar"
+              ? "ستصلك الأخبار العاجلة على هاتفك حتى عند إغلاق التطبيق"
+              : "Breaking news will arrive even when the app is closed",
+        });
+      } else {
+        toast({
+          title: lang === "ar" ? "تعذّر التفعيل" : "Couldn't enable push",
+          description:
+            res.reason === "unsupported"
+              ? lang === "ar"
+                ? "غير مدعوم هنا. جرّب بعد نشر التطبيق وتثبيته على الهاتف."
+                : "Not supported here. Try after publishing and installing the app."
+              : res.reason,
+          variant: "destructive",
+        });
+      }
+    }
+    setPushBusy(false);
+  };
+
   const labels = {
     title: lang === "ar" ? "التنبيهات" : "Notifications",
     enable: lang === "ar" ? "تفعيل تنبيهات المتصفح" : "Enable browser alerts",
     enabled: lang === "ar" ? "التنبيهات مفعّلة ✓" : "Alerts enabled ✓",
     blocked: lang === "ar" ? "التنبيهات محظورة" : "Alerts blocked",
     unsupported: lang === "ar" ? "غير مدعوم في هذا المتصفح" : "Not supported in this browser",
+    pushOn: lang === "ar" ? "إشعارات الهاتف مفعّلة — اضغط للإيقاف" : "Phone push ON — tap to disable",
+    pushOff: lang === "ar" ? "تفعيل إشعارات الهاتف (حتى عند إغلاق التطبيق)" : "Enable phone push (works when app is closed)",
     markAll: lang === "ar" ? "تعليم الكل كمقروء" : "Mark all read",
     clear: lang === "ar" ? "مسح الكل" : "Clear all",
     empty: lang === "ar" ? "لا توجد تنبيهات" : "No notifications",
