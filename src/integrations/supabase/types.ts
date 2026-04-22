@@ -196,6 +196,47 @@ export type Database = {
           },
         ]
       }
+      corrections_log: {
+        Row: {
+          article_id: string | null
+          article_title: string
+          corrected_at: string
+          correction: string
+          created_at: string
+          id: string
+          is_published: boolean
+          original_text: string | null
+        }
+        Insert: {
+          article_id?: string | null
+          article_title: string
+          corrected_at?: string
+          correction: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          original_text?: string | null
+        }
+        Update: {
+          article_id?: string | null
+          article_title?: string
+          corrected_at?: string
+          correction?: string
+          created_at?: string
+          id?: string
+          is_published?: boolean
+          original_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "corrections_log_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       feedback_messages: {
         Row: {
           created_at: string

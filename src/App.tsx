@@ -20,6 +20,8 @@ import AdminBreakingNews from "./pages/AdminBreakingNews";
 import AdminComments from "./pages/AdminComments";
 import AdminNewsletter from "./pages/AdminNewsletter";
 import AdminPushNotifications from "./pages/AdminPushNotifications";
+import AdminCorrections from "./pages/AdminCorrections";
+import CorrectionsLogPage from "./pages/CorrectionsLogPage";
 import AboutPage from "./pages/AboutPage";
 import ImprintPage from "./pages/ImprintPage";
 import EditorialPolicyPage from "./pages/EditorialPolicyPage";
@@ -54,6 +56,7 @@ const App = () => (
           <Route path="/imprint" element={<ImprintPage />} />
           <Route path="/editorial-policy" element={<EditorialPolicyPage />} />
           <Route path="/corrections" element={<CorrectionsPage />} />
+          <Route path="/corrections-log" element={<CorrectionsLogPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/cookies" element={<CookiesPage />} />
           <Route path="/terms" element={<TermsPage />} />
@@ -66,6 +69,7 @@ const App = () => (
             <Route path="comments" element={<AdminComments />} />
             <Route path="newsletter" element={<AdminNewsletter />} />
             <Route path="push" element={<AdminPushNotifications />} />
+            <Route path="corrections" element={<AdminCorrections />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

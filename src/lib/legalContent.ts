@@ -94,10 +94,38 @@ export const editorialContent: LegalContent = {
       },
     },
     {
-      heading: { ar: "الاعتذار عن الأخطاء", en: "Apology for Errors" },
+      heading: { ar: "التحقق من المعلومات", en: "Fact-Checking" },
       body: {
-        ar: "نعترف بأن الخطأ وارد في العمل الصحفي. عند ثبوت أي خطأ، نلتزم بنشر تصحيح واضح في موقع بارز خلال 48 ساعة، وتقديم الاعتذار العلني عند الاقتضاء.",
-        en: "We acknowledge that errors can occur in journalism. When proven, we commit to publishing a clear correction in a prominent location within 48 hours, with public apology where appropriate.",
+        ar: "نتحقق ونتقاطع كل معلومة قبل نشرها (Nous vérifions et recoupons chaque info). لا نعتمد على مصدر واحد في الأخبار الحساسة، ونميّز بوضوح بين المعلومة المؤكدة، والمعلومة قيد التحقق، والشائعة. كل خبر منقول من وكالة أو وسيلة إعلام أخرى يُنسب صراحةً إلى مصدره.",
+        en: "We verify and cross-check every piece of information before publication (Nous vérifions et recoupons chaque info). We never rely on a single source for sensitive stories, and we clearly distinguish confirmed information, information being verified, and rumors. Every story sourced from an agency or another outlet is explicitly credited.",
+      },
+    },
+    {
+      heading: { ar: "الإسناد والمصادر (Bylines)", en: "Bylines & Attribution" },
+      body: {
+        ar: "كل مقال يحمل اسم كاتبه أو مصدره وتاريخ النشر. لا ننسخ محتوى من وسائل إعلام أخرى دون ذكر المصدر، طبقاً لقانون الإعلام الجزائري وحقوق الملكية الفكرية.",
+        en: "Every article displays its author or source and publication date. We do not copy content from other outlets without credit, in accordance with Algerian press law and intellectual property rights.",
+      },
+    },
+    {
+      heading: { ar: "الحياد ورفض الإثارة", en: "Neutrality & No Sensationalism" },
+      body: {
+        ar: "نلتزم صراحةً بعدم الانحياز السياسي أو الحزبي أو الطائفي، ونرفض العناوين المضلِّلة (clickbait) والإثارة على حساب الدقة. الافتتاحيات والآراء تُنشر في قسم منفصل وموسومة بوضوح كرأي.",
+        en: "We explicitly commit to no political, partisan, or sectarian bias, and reject misleading headlines (clickbait) and sensationalism at the expense of accuracy. Editorials and opinions are published in a separate section and clearly labeled as opinion.",
+      },
+    },
+    {
+      heading: { ar: "اللغة والمحتوى الوطني", en: "Language & National Content" },
+      body: {
+        ar: "تُنشر محتوياتنا أساساً باللغة العربية واللغة الأمازيغية، احتراماً للقانون 23-20 وأحكام الدستور المتعلقة باللغات الوطنية. اللغتان الفرنسية والإنجليزية تُستعملان كلغتَي تكميل فقط. نولي الأولوية للتغطية المحلية الجزائرية والسياق الوطني، تماشياً مع روح حصة المحتوى الوطني (60%) المعتمدة في الإعلام الجزائري.",
+        en: "Our content is primarily published in Arabic and Tamazight, in respect of Law 23-20 and constitutional provisions on national languages. French and English are used only as supplementary languages. We prioritize local Algerian reporting and national context, in line with the spirit of the 60% national content quota applied in Algerian media.",
+      },
+    },
+    {
+      heading: { ar: "التصحيحات والاعتذار", en: "Corrections & Apology" },
+      body: {
+        ar: "نعترف بأن الخطأ وارد في العمل الصحفي. عند ثبوت أي خطأ نلتزم بنشر تصحيح واضح في موقع بارز خلال 48 ساعة، وإخطار الأشخاص المعنيين (حق التصحيح). يُحفظ سجل علني للتصحيحات يمكن الاطلاع عليه عبر صفحة سجل التصحيحات.",
+        en: "We acknowledge that errors can occur in journalism. When proven, we commit to publishing a clear correction in a prominent location within 48 hours and notifying the persons concerned (right of rectification). A public corrections log is maintained and accessible via the Corrections Log page.",
       },
     },
   ],
