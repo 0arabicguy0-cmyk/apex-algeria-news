@@ -10,6 +10,7 @@ export default function Footer() {
     { to: "/imprint", ar: "البيانات القانونية", en: "Legal notice" },
     { to: "/editorial-policy", ar: "الميثاق التحريري", en: "Editorial charter" },
     { to: "/corrections", ar: "التصحيحات وحق الرد", en: "Corrections & reply" },
+    { to: "/corrections-log", ar: "سجل التصحيحات", en: "Corrections log" },
     { to: "/privacy", ar: "سياسة الخصوصية", en: "Privacy policy" },
     { to: "/cookies", ar: "ملفات تعريف الارتباط", en: "Cookies" },
     { to: "/terms", ar: "شروط الاستخدام", en: "Terms of use" },
