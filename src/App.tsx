@@ -20,6 +20,13 @@ import AdminBreakingNews from "./pages/AdminBreakingNews";
 import AdminComments from "./pages/AdminComments";
 import AdminNewsletter from "./pages/AdminNewsletter";
 import AdminPushNotifications from "./pages/AdminPushNotifications";
+import AboutPage from "./pages/AboutPage";
+import ImprintPage from "./pages/ImprintPage";
+import EditorialPolicyPage from "./pages/EditorialPolicyPage";
+import CorrectionsPage from "./pages/CorrectionsPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import CookiesPage from "./pages/CookiesPage";
+import TermsPage from "./pages/TermsPage";
 import SplashScreen from "./components/SplashScreen";
 import CommandPalette from "./components/CommandPalette";
 import BackToTop from "./components/BackToTop";
@@ -43,6 +50,13 @@ const App = () => (
           <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/author/:slug" element={<AuthorPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/imprint" element={<ImprintPage />} />
+          <Route path="/editorial-policy" element={<EditorialPolicyPage />} />
+          <Route path="/corrections" element={<CorrectionsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/cookies" element={<CookiesPage />} />
+          <Route path="/terms" element={<TermsPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />}>
             <Route path="articles" element={<AdminArticles />} />
