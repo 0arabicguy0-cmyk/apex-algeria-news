@@ -69,6 +69,7 @@ const App = () => (
             <Route path="comments" element={<AdminComments />} />
             <Route path="newsletter" element={<AdminNewsletter />} />
             <Route path="push" element={<AdminPushNotifications />} />
+            <Route path="corrections" element={<AdminCorrections />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
