@@ -268,3 +268,100 @@ export const termsContent: LegalContent = {
     },
   ],
 };
+
+export const copyrightContent: LegalContent = {
+  title: { ar: "سياسة حقوق النشر", en: "Copyright Policy" },
+  intro: {
+    ar: "جميع المحتويات المنشورة على Apex News DZ محمية بموجب قوانين حقوق المؤلف الجزائرية والدولية، لا سيما الأمر رقم 03-05 المتعلق بحقوق المؤلف والحقوق المجاورة.",
+    en: "All content published on Apex News DZ is protected under Algerian and international copyright laws, in particular Ordinance 03-05 on copyright and related rights.",
+  },
+  sections: [
+    {
+      heading: { ar: "ملكية المحتوى", en: "Ownership of Content" },
+      body: {
+        ar: "النصوص والصور ومقاطع الفيديو والرسوم التوضيحية والشعارات المنشورة على الموقع هي ملك حصري لـ Apex News DZ أو لأصحاب الحقوق الذين منحونا ترخيصاً للنشر. يُحظر إعادة الإنتاج أو النسخ أو التوزيع أو التعديل دون إذن خطي مسبق.",
+        en: "Texts, images, videos, illustrations and logos published on the site are the exclusive property of Apex News DZ or of rights holders who have granted us a publishing license. Reproduction, copying, distribution or modification without prior written authorization is prohibited.",
+      },
+    },
+    {
+      heading: { ar: "الاقتباس المسموح به", en: "Permitted Citation" },
+      body: {
+        ar: "يُسمح بالاقتباس القصير لأغراض النقد أو المراجعة أو التعليم أو الصحافة، بشرط ذكر المصدر بوضوح (Apex News DZ) ووضع رابط مباشر للمقال الأصلي.",
+        en: "Short quotations are permitted for criticism, review, education or journalism, provided that the source (Apex News DZ) is clearly cited and a direct link to the original article is included.",
+      },
+    },
+    {
+      heading: { ar: "محتوى الأطراف الثالثة", en: "Third-Party Content" },
+      body: {
+        ar: "بعض الصور أو المقاطع تنتمي إلى وكالات أنباء (AFP, AP, Reuters) أو إلى مؤلفيها الأصليين. يُشار إلى المصدر بجانب كل عنصر. يُمنع إعادة استخدامها دون الرجوع إلى صاحب الحق المعني.",
+        en: "Some images or clips belong to news agencies (AFP, AP, Reuters) or to their original authors. The source is indicated next to each element. They may not be reused without referring to the relevant rights holder.",
+      },
+    },
+    {
+      heading: { ar: "الإبلاغ عن انتهاك", en: "Reporting Infringement" },
+      body: {
+        ar: "إذا كنت تعتقد أن أحد محتوياتك المحمية قد نُشر دون إذن، يُرجى مراسلتنا عبر صفحة \"اتصل بنا\" مع تقديم: تحديد العمل المحمي، رابط النشر المخالف، وإثبات ملكيتك. سنتعامل مع طلبك خلال 7 أيام عمل.",
+        en: "If you believe that one of your protected works has been published without authorization, please contact us via the \"Contact\" page providing: identification of the protected work, link to the infringing publication, and proof of your ownership. We will process your request within 7 business days.",
+      },
+    },
+    {
+      heading: { ar: "العقوبات", en: "Sanctions" },
+      body: {
+        ar: "أي انتهاك لحقوق النشر يُعرّض صاحبه للملاحقة القضائية وفقاً للمواد 151 إلى 160 من الأمر 03-05، والتي تنص على عقوبات مالية وسجنية.",
+        en: "Any copyright infringement exposes the offender to legal proceedings under articles 151 to 160 of Ordinance 03-05, which provide for financial and custodial penalties.",
+      },
+    },
+  ],
+};
+
+export const disclaimerContent: LegalContent = {
+  title: { ar: "إخلاء مسؤولية المحتوى", en: "Content Responsibility Disclaimer" },
+  intro: {
+    ar: "يحرص فريق Apex News DZ على تقديم معلومات دقيقة ومحققة، لكن استخدام محتوى الموقع يخضع للشروط والتنبيهات التالية.",
+    en: "The Apex News DZ team strives to provide accurate and verified information, but use of the site's content is subject to the following terms and warnings.",
+  },
+  sections: [
+    {
+      heading: { ar: "طبيعة المعلومات", en: "Nature of Information" },
+      body: {
+        ar: "المعلومات المنشورة ذات طابع إخباري وعام. لا تُشكّل استشارة قانونية أو طبية أو مالية أو مهنية. يُنصح القارئ بالرجوع إلى مختص قبل اتخاذ أي قرار يستند إلى محتوى الموقع.",
+        en: "The information published is of a journalistic and general nature. It does not constitute legal, medical, financial or professional advice. Readers are advised to consult a specialist before making any decision based on the site's content.",
+      },
+    },
+    {
+      heading: { ar: "دقة المحتوى", en: "Accuracy of Content" },
+      body: {
+        ar: "رغم تحققنا من كل خبر قبل النشر، قد تتغير المعطيات بمرور الوقت أو تظهر معلومات جديدة. لا نضمن الدقة المطلقة أو اكتمال المحتوى في جميع الأوقات. التصحيحات تُنشر في سجل التصحيحات.",
+        en: "Although we verify every story before publication, data may change over time or new information may emerge. We do not guarantee absolute accuracy or completeness of content at all times. Corrections are published in the corrections log.",
+      },
+    },
+    {
+      heading: { ar: "آراء الكتّاب والمعلقين", en: "Opinions of Authors and Commenters" },
+      body: {
+        ar: "آراء الكتّاب في أعمدة الرأي والتحليل تُعبّر عن أصحابها ولا تُلزم بالضرورة هيئة تحرير Apex News DZ. التعليقات المنشورة من القراء هي مسؤولية أصحابها وحدهم.",
+        en: "Opinions expressed by authors in opinion and analysis columns reflect their own views and do not necessarily commit the Apex News DZ editorial board. Comments posted by readers are the sole responsibility of their authors.",
+      },
+    },
+    {
+      heading: { ar: "الروابط الخارجية", en: "External Links" },
+      body: {
+        ar: "قد يحتوي الموقع على روابط لمواقع خارجية. لا نتحكم في محتوى هذه المواقع ولا نتحمل أي مسؤولية عن دقتها أو سياساتها أو ممارساتها.",
+        en: "The site may contain links to external websites. We do not control the content of these sites and accept no responsibility for their accuracy, policies or practices.",
+      },
+    },
+    {
+      heading: { ar: "حدود المسؤولية", en: "Limitation of Liability" },
+      body: {
+        ar: "لا يتحمل Apex News DZ أي مسؤولية عن الأضرار المباشرة أو غير المباشرة الناتجة عن استخدام الموقع أو عدم القدرة على الوصول إليه، أو عن أي قرار يتخذه القارئ بناءً على المحتوى المنشور.",
+        en: "Apex News DZ accepts no liability for direct or indirect damages arising from use of the site or inability to access it, or from any decision taken by the reader based on the published content.",
+      },
+    },
+    {
+      heading: { ar: "التواصل والتصحيح", en: "Contact & Correction" },
+      body: {
+        ar: "لأي ملاحظة أو طلب تصحيح، استخدم صفحة \"التصحيحات وحق الرد\" أو \"اتصل بنا\". نلتزم بالرد خلال 48 ساعة عمل.",
+        en: "For any remark or correction request, use the \"Corrections & Right of Reply\" or \"Contact\" page. We commit to respond within 48 business hours.",
+      },
+    },
+  ],
+};
