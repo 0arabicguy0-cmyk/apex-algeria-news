@@ -14,6 +14,8 @@ export default function Footer() {
     { to: "/privacy", ar: "سياسة الخصوصية", en: "Privacy policy" },
     { to: "/cookies", ar: "ملفات تعريف الارتباط", en: "Cookies" },
     { to: "/terms", ar: "شروط الاستخدام", en: "Terms of use" },
+    { to: "/copyright", ar: "سياسة حقوق النشر", en: "Copyright policy" },
+    { to: "/disclaimer", ar: "إخلاء مسؤولية المحتوى", en: "Content disclaimer" },
     { to: "/contact", ar: "اتصل بنا", en: "Contact" },
   ];
 

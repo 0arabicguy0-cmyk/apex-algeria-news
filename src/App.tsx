@@ -29,6 +29,8 @@ import CorrectionsPage from "./pages/CorrectionsPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import CookiesPage from "./pages/CookiesPage";
 import TermsPage from "./pages/TermsPage";
+import CopyrightPage from "./pages/CopyrightPage";
+import DisclaimerPage from "./pages/DisclaimerPage";
 import SplashScreen from "./components/SplashScreen";
 import CommandPalette from "./components/CommandPalette";
 import BackToTop from "./components/BackToTop";
@@ -61,6 +63,8 @@ const App = () => (
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/cookies" element={<CookiesPage />} />
           <Route path="/terms" element={<TermsPage />} />
+          <Route path="/copyright" element={<CopyrightPage />} />
+          <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />}>
             <Route path="articles" element={<AdminArticles />} />
