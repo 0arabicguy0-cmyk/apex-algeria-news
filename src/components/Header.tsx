@@ -53,7 +53,7 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
           </button>
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" onClick={handleLogoTap} className="flex items-center gap-2 select-none">
             <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg leading-none">A</span>
             </div>
