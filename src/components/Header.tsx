@@ -1,6 +1,6 @@
 import { Menu, Moon, Sun, Search, X } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { categories } from "@/lib/data";
 import LanguageToggle from "@/components/LanguageToggle";
 import NotificationsBell from "@/components/NotificationsBell";
@@ -14,6 +14,17 @@ interface HeaderProps {
 export default function Header({ isDark, onToggleTheme }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const tapsRef = useRef<number[]>([]);
+
+  const handleLogoTap = () => {
+    const now = Date.now();
+    tapsRef.current = [...tapsRef.current.filter((t) => now - t < 3000), now];
+    if (tapsRef.current.length >= 5) {
+      tapsRef.current = [];
+      navigate("/admin/login");
+    }
+  };
 
   return (
     <>
@@ -42,7 +53,7 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
           </button>
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/" onClick={handleLogoTap} className="flex items-center gap-2 select-none">
             <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg leading-none">A</span>
             </div>
@@ -120,6 +131,15 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
                 </Link>
               ))}
             </nav>
+            <div className="absolute bottom-6 right-6 left-6">
+              <Link
+                to="/admin/login"
+                onClick={() => setMenuOpen(false)}
+                className="block text-center text-[11px] text-muted-foreground/60 hover:text-primary transition-colors py-2"
+              >
+                ·
+              </Link>
+            </div>
           </div>
         </div>
       )}
