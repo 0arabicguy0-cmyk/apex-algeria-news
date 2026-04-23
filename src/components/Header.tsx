@@ -131,6 +131,15 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
                 </Link>
               ))}
             </nav>
+            <div className="absolute bottom-6 right-6 left-6">
+              <Link
+                to="/admin/login"
+                onClick={() => setMenuOpen(false)}
+                className="block text-center text-[11px] text-muted-foreground/60 hover:text-primary transition-colors py-2"
+              >
+                ·
+              </Link>
+            </div>
           </div>
         </div>
       )}
