@@ -1,6 +1,6 @@
 import { Menu, Moon, Sun, Search, X } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { categories } from "@/lib/data";
 import LanguageToggle from "@/components/LanguageToggle";
 import NotificationsBell from "@/components/NotificationsBell";
