@@ -14,6 +14,17 @@ interface HeaderProps {
 export default function Header({ isDark, onToggleTheme }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const tapsRef = useRef<number[]>([]);
+
+  const handleLogoTap = () => {
+    const now = Date.now();
+    tapsRef.current = [...tapsRef.current.filter((t) => now - t < 3000), now];
+    if (tapsRef.current.length >= 5) {
+      tapsRef.current = [];
+      navigate("/admin/login");
+    }
+  };
 
   return (
     <>
