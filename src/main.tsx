@@ -3,6 +3,18 @@ import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import "./index.css";
 
+// Force HTTPS: redirect any http:// load to https:// (skip localhost for dev).
+if (
+  typeof window !== "undefined" &&
+  window.location.protocol === "http:" &&
+  window.location.hostname !== "localhost" &&
+  window.location.hostname !== "127.0.0.1"
+) {
+  window.location.replace(
+    "https:" + window.location.href.substring(window.location.protocol.length)
+  );
+}
+
 // PWA: register service worker only in production AND outside Lovable preview/iframe.
 const isInIframe = (() => {
   try {
