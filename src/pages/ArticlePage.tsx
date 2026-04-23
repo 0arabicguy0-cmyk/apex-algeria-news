@@ -209,6 +209,7 @@ export default function ArticlePage() {
         <Comments articleId={article.id} />
       </article>
       </PageTransition>
+      </main>
 
       <div className="md:hidden fixed bottom-14 right-0 left-0 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-around h-12 z-40">
         <ShareMenu title={article.title} />
