@@ -5,6 +5,7 @@ import BottomNav from "@/components/BottomNav";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import SEO from "@/components/SEO";
 
 export interface LegalSection {
   heading: { ar: string; en: string };
@@ -24,8 +25,9 @@ export default function LegalPage({ content }: { content: LegalContent }) {
 
   return (
     <div className="min-h-screen pb-16 md:pb-0 bg-background">
+      <SEO title={content.title[lang]} description={content.intro?.[lang]} />
       <Header isDark={isDark} onToggleTheme={toggle} />
-      <main className="container max-w-3xl py-8">
+      <main id="main-content" className="container max-w-3xl py-8">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-sm text-primary hover:underline mb-6"
