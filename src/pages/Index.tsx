@@ -92,6 +92,7 @@ export default function Index() {
       <CategoryTabs active={activeCategory} onChange={setActive} />
 
       <main id="main-content">
+      <PageTransition>
         <HeroSection featured={featured} sidebar={sidebar} />
 
         <div className="container"><AdBanner variant="leaderboard" /></div>
@@ -136,6 +137,7 @@ export default function Index() {
           <NewsletterSignup />
         </section>
       </PageTransition>
+      </main>
 
       <Footer />
       <BottomNav />

@@ -20,6 +20,7 @@ import SourceCitations from "@/components/SourceCitations";
 import AuthorCard from "@/components/AuthorCard";
 import AdBanner from "@/components/AdBanner";
 import Paywall from "@/components/Paywall";
+import SEO from "@/components/SEO";
 import { ArticleSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -79,9 +80,18 @@ export default function ArticlePage() {
 
   return (
     <div className="min-h-screen pb-20 md:pb-0 transition-colors duration-300">
+      <SEO
+        title={article.title}
+        description={article.excerpt}
+        keywords={article.tags.join(", ")}
+        author={article.author}
+        image={article.image}
+        type="article"
+      />
       <ReadingProgress />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
+      <main id="main-content">
       <PageTransition>
         <div className="w-full h-56 md:h-96 overflow-hidden relative">
           <Link to="/" className="absolute top-4 right-4 z-10 bg-background/80 backdrop-blur-sm text-foreground px-3 py-1.5 rounded-full text-sm font-medium hover:bg-background transition-colors flex items-center gap-1.5 shadow-sm">
