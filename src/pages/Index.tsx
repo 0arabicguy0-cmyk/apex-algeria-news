@@ -10,6 +10,7 @@ import AdBanner from "@/components/AdBanner";
 import MostRead from "@/components/MostRead";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import BottomNav from "@/components/BottomNav";
 import ContinueReading from "@/components/ContinueReading";
 import PageTransition from "@/components/PageTransition";
@@ -82,10 +83,15 @@ export default function Index() {
 
   return (
     <div className="min-h-screen pb-16 md:pb-0 transition-colors duration-300">
+      <SEO
+        title={activeCategory === "all" ? undefined : (lang === "en" ? categories.find(c=>c.key===activeCategory)?.labelEn : categories.find(c=>c.key===activeCategory)?.label)}
+        keywords={lang === "en" ? "Algeria news, Arab news, world news, politics, sports, economy" : "أخبار الجزائر, أخبار عربية, أخبار دولية, سياسة, رياضة, اقتصاد"}
+      />
       <Header isDark={isDark} onToggleTheme={toggle} />
       <BreakingTicker />
       <CategoryTabs active={activeCategory} onChange={setActive} />
 
+      <main id="main-content">
       <PageTransition>
         <HeroSection featured={featured} sidebar={sidebar} />
 
@@ -131,6 +137,7 @@ export default function Index() {
           <NewsletterSignup />
         </section>
       </PageTransition>
+      </main>
 
       <Footer />
       <BottomNav />

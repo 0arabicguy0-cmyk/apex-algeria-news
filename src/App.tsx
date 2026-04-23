@@ -42,6 +42,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <a href="#main-content" className="skip-link">Skip to content / تخطّى إلى المحتوى</a>
         <CommandPalette />
         <BackToTop />
         <Routes>
