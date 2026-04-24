@@ -32,7 +32,6 @@ export default function AuthorPage() {
     );
   }
 
-  const articles = authorsApi.articlesBy(author.name).map(mapArticle);
   const totalViews = articles.reduce((s, a) => s + a.viewCount, 0);
 
   return (
