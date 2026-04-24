@@ -35,17 +35,11 @@ export default function AdminLogin() {
       return;
     }
 
-    if (mode === "signup") {
-      toast({
-        title: isRTL ? "تم إنشاء الحساب" : "Account created",
-        description: isRTL
-          ? "تحقق من بريدك الإلكتروني لتأكيد الحساب ثم سجّل الدخول."
-          : "Check your email to confirm your account, then sign in.",
-      });
-      setMode("signin");
-      return;
-    }
-
+    toast({
+      title: mode === "signup"
+        ? (isRTL ? "تم إنشاء الحساب" : "Account created")
+        : (isRTL ? "مرحباً بعودتك" : "Welcome back"),
+    });
     navigate("/admin");
   };
 
