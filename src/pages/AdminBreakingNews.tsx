@@ -1,25 +1,71 @@
 import { useEffect, useState } from "react";
-import { breakingApi, subscribe } from "@/lib/mockStore";
+import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus } from "lucide-react";
 
+type BreakingRow = Tables<"breaking_news_items">;
+
 export default function AdminBreakingNews() {
-  const [, force] = useState(0);
+  const [items, setItems] = useState<BreakingRow[]>([]);
   const [text, setText] = useState("");
   const [linkId, setLinkId] = useState("");
   const { toast } = useToast();
 
-  useEffect(() => subscribe(() => force((n) => n + 1)), []);
-  const items = breakingApi.all();
+  const load = async () => {
+    const { data } = await supabase
+      .from("breaking_news_items")
+      .select("*")
+      .order("display_order", { ascending: true });
+    setItems(data ?? []);
+  };
 
-  const add = (e: React.FormEvent) => {
+  useEffect(() => {
+    load();
+  }, []);
+
+  const add = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
-    breakingApi.add(text.trim(), linkId.trim() || null);
-    setText(""); setLinkId("");
+    const { error } = await supabase.from("breaking_news_items").insert({
+      text: text.trim(),
+      link_article_id: linkId.trim() || null,
+      is_active: true,
+      display_order: items.length,
+    });
+    if (error) {
+      toast({ title: "خطأ", description: error.message, variant: "destructive" });
+      return;
+    }
+    setText("");
+    setLinkId("");
+    load();
+  };
+
+  const toggle = async (id: string, value: boolean) => {
+    const { error } = await supabase
+      .from("breaking_news_items")
+      .update({ is_active: value })
+      .eq("id", id);
+    if (error) {
+      toast({ title: "خطأ", description: error.message, variant: "destructive" });
+      return;
+    }
+    load();
+  };
+
+  const remove = async (id: string) => {
+    const { error } = await supabase.from("breaking_news_items").delete().eq("id", id);
+    if (error) {
+      toast({ title: "خطأ", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "تم الحذف" });
+    load();
   };
 
   return (
@@ -35,9 +81,16 @@ export default function AdminBreakingNews() {
       <div className="space-y-2">
         {items.map((it) => (
           <div key={it.id} className="bg-card border border-border rounded-lg p-3 flex items-center gap-3">
-            <Switch checked={it.is_active} onCheckedChange={(v) => breakingApi.toggle(it.id, v)} />
-            <p className="flex-1 text-sm text-foreground">{it.text}</p>
-            <button onClick={() => { breakingApi.remove(it.id); toast({ title: "تم الحذف" }); }} className="text-destructive hover:opacity-70" aria-label="حذف">
+            <Switch checked={it.is_active} onCheckedChange={(v) => toggle(it.id, v)} />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground truncate">{it.text}</p>
+              {it.link_article_id && (
+                <Link to={`/article/${it.link_article_id}`} className="text-xs text-primary hover:underline truncate block" dir="ltr">
+                  /article/{it.link_article_id}
+                </Link>
+              )}
+            </div>
+            <button onClick={() => remove(it.id)} className="text-destructive hover:opacity-70" aria-label="حذف">
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
