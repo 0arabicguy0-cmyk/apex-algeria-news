@@ -1,83 +1,114 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import type { UserRole } from "@/lib/mockStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
-import { PenTool, ClipboardCheck, ShieldCheck } from "lucide-react";
-
-const ROLES: { value: UserRole; emailKey: string; labelKey: "roleJournalist" | "roleEditor" | "roleAdmin"; icon: typeof PenTool }[] = [
-  { value: "journalist", emailKey: "journalist@apex.dz", labelKey: "roleJournalist", icon: PenTool },
-  { value: "editor", emailKey: "editor@apex.dz", labelKey: "roleEditor", icon: ClipboardCheck },
-  { value: "admin", emailKey: "admin@apex.dz", labelKey: "roleAdmin", icon: ShieldCheck },
-];
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function AdminLogin() {
-  const [role, setRole] = useState<UserRole>("admin");
-  const [email, setEmail] = useState("admin@apex.dz");
-  const [password, setPassword] = useState("admin");
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = useLanguage();
-
-  const pickRole = (r: UserRole) => {
-    setRole(r);
-    setEmail(ROLES.find((x) => x.value === r)!.emailKey);
-  };
+  const { t, isRTL } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await signIn(email, password, role);
+    const { error } = mode === "signin"
+      ? await signIn(email, password)
+      : await signUp(email, password);
     setSubmitting(false);
+
     if (error) {
-      toast({ title: t("signInError"), description: error.message, variant: "destructive" });
+      toast({
+        title: t("signInError"),
+        description: error.message,
+        variant: "destructive",
+      });
       return;
     }
+
+    if (mode === "signup") {
+      toast({
+        title: isRTL ? "تم إنشاء الحساب" : "Account created",
+        description: isRTL
+          ? "تحقق من بريدك الإلكتروني لتأكيد الحساب ثم سجّل الدخول."
+          : "Check your email to confirm your account, then sign in.",
+      });
+      setMode("signin");
+      return;
+    }
+
     navigate("/admin");
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-sm p-8 rounded-xl border border-border bg-card shadow-lg">
-        <h1 className="text-2xl font-bold text-foreground text-center mb-1">{t("adminPanel")}</h1>
-        <p className="text-muted-foreground text-center text-sm mb-6">{t("adminDemoMode")}</p>
+        <h1 className="text-2xl font-bold text-foreground text-center mb-1">
+          {t("adminPanel")}
+        </h1>
+        <p className="text-muted-foreground text-center text-sm mb-6">
+          {isRTL ? "وصول مسؤولي التحرير فقط" : "Editors access only"}
+        </p>
 
-        <div className="mb-5">
-          <Label className="text-xs text-muted-foreground mb-2 block">{t("role")}</Label>
-          <div className="grid grid-cols-3 gap-2">
-            {ROLES.map((r) => {
-              const Icon = r.icon;
-              const active = role === r.value;
-              return (
-                <button
-                  key={r.value}
-                  type="button"
-                  onClick={() => pickRole(r.value)}
-                  className={`flex flex-col items-center gap-1 p-3 rounded-lg border text-xs transition-colors ${
-                    active ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {t(r.labelKey)}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <Tabs value={mode} onValueChange={(v) => setMode(v as "signin" | "signup")} className="mb-4">
+          <TabsList className="grid grid-cols-2 w-full">
+            <TabsTrigger value="signin">{isRTL ? "دخول" : "Sign in"}</TabsTrigger>
+            <TabsTrigger value="signup">{isRTL ? "إنشاء حساب" : "Sign up"}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="signin" />
+          <TabsContent value="signup" />
+        </Tabs>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input type="email" placeholder={t("fEmail")} value={email} onChange={(e) => setEmail(e.target.value)} required dir="ltr" />
-          <Input type="password" placeholder={t("password")} value={password} onChange={(e) => setPassword(e.target.value)} required dir="ltr" />
-          <Button type="submit" className="w-full" disabled={submitting}>{submitting ? t("signingIn") : t("signIn")}</Button>
+          <div>
+            <Label htmlFor="email" className="text-xs text-muted-foreground">{t("fEmail")}</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              dir="ltr"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="password" className="text-xs text-muted-foreground">{t("password")}</Label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+              dir="ltr"
+              className="mt-1"
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={submitting}>
+            {submitting
+              ? t("signingIn")
+              : mode === "signin"
+                ? t("signIn")
+                : (isRTL ? "إنشاء حساب" : "Create account")}
+          </Button>
         </form>
+
         <p className="text-xs text-muted-foreground text-center mt-4">
-          {t("adminHint")} <code className="bg-muted px-1.5 py-0.5 rounded" dir="ltr">admin</code>
+          {isRTL
+            ? "أول حساب يُسجَّل يصبح مسؤولاً تلقائياً."
+            : "The first account you create becomes the admin."}
         </p>
       </div>
     </div>
