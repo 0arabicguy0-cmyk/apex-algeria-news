@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { articlesApi, feedbackApi, subscribe } from "@/lib/mockStore";
+import { supabase } from "@/integrations/supabase/client";
+import { feedbackApi, subscribe } from "@/lib/mockStore";
 import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +12,7 @@ export default function AdminDashboard() {
   const location = useLocation();
   const [, force] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [articleStats, setArticleStats] = useState({ total: 0, published: 0 });
 
   useEffect(() => subscribe(() => force((n) => n + 1)), []);
 
@@ -18,13 +20,23 @@ export default function AdminDashboard() {
     if (!loading && (!user || !isAdmin)) navigate("/admin/login");
   }, [user, isAdmin, loading, navigate]);
 
+  useEffect(() => {
+    if (!isAdmin) return;
+    (async () => {
+      const [{ count: total }, { count: published }] = await Promise.all([
+        supabase.from("articles").select("*", { count: "exact", head: true }),
+        supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
+      ]);
+      setArticleStats({ total: total ?? 0, published: published ?? 0 });
+    })();
+  }, [isAdmin, location.pathname]);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">جارٍ التحميل...</div>;
   if (!isAdmin) return null;
 
-  const all = articlesApi.all();
   const stats = {
-    articles: all.length,
-    published: all.filter((a) => a.status === "published").length,
+    articles: articleStats.total,
+    published: articleStats.published,
     feedback: feedbackApi.all().length,
     unread: feedbackApi.unreadCount(),
   };
