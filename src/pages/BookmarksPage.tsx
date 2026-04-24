@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useBookmarks } from "@/hooks/useBookmarks";
-import { articlesApi } from "@/lib/mockStore";
-import { mapArticle } from "@/hooks/useArticles";
+import { useArticlesByIds } from "@/hooks/useArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
@@ -14,7 +13,7 @@ export default function BookmarksPage() {
   const { isDark, toggle } = useTheme();
   const { t } = useLanguage();
   const { ids } = useBookmarks();
-  const items = articlesApi.byIds(ids).map(mapArticle);
+  const items = useArticlesByIds(ids);
 
   return (
     <div className="min-h-screen pb-16 md:pb-0">

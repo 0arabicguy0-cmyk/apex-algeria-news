@@ -1,43 +1,62 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { articlesApi, subscribe, type MockArticle, type ArticleStatus } from "@/lib/mockStore";
+import { supabase } from "@/integrations/supabase/client";
+import type { Tables } from "@/integrations/supabase/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, CalendarClock } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const statusVariant: Record<ArticleStatus, "outline" | "secondary" | "default"> = {
+type ArticleRow = Tables<"articles">;
+
+const statusVariant: Record<string, "outline" | "secondary" | "default"> = {
   draft: "outline",
-  in_review: "secondary",
-  scheduled: "secondary",
   published: "default",
 };
 
 export default function AdminArticles() {
-  const [, force] = useState(0);
+  const [articles, setArticles] = useState<ArticleRow[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { t, isRTL, lang } = useLanguage();
   const { isPublisher } = useAuth();
 
-  useEffect(() => subscribe(() => force((n) => n + 1)), []);
+  const load = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("articles")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    }
+    setArticles(data ?? []);
+    setLoading(false);
+  };
 
-  const articles: MockArticle[] = articlesApi.all();
+  useEffect(() => {
+    load();
+  }, []);
 
-  const remove = (id: string) => {
+  const remove = async (id: string) => {
     if (!isPublisher) {
       toast({ title: t("permissionDenied"), variant: "destructive" });
       return;
     }
-    articlesApi.remove(id);
+    if (!confirm(isRTL ? "هل أنت متأكد؟" : "Are you sure?")) return;
+    const { error } = await supabase.from("articles").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      return;
+    }
     toast({ title: isRTL ? "تم حذف المقال" : "Article deleted" });
+    load();
   };
 
-  const statusKey = (s: ArticleStatus) =>
-    s === "in_review" ? "statusInReview" :
-    s === "scheduled" ? "statusScheduled" :
+  const statusKey = (s: string) =>
     s === "published" ? "statusPublished" : "statusDraft";
 
   return (
@@ -65,17 +84,9 @@ export default function AdminArticles() {
                 <TableCell className="font-medium max-w-xs truncate">{a.title}</TableCell>
                 <TableCell><Badge variant="secondary">{a.category}</Badge></TableCell>
                 <TableCell>
-                  <div className="flex flex-col gap-1">
-                    <Badge variant={statusVariant[a.status]}>
-                      {t(statusKey(a.status) as any)}
-                    </Badge>
-                    {a.status === "scheduled" && a.scheduled_at && (
-                      <span className="text-[11px] text-muted-foreground flex items-center gap-1" dir="ltr">
-                        <CalendarClock className="w-3 h-3" />
-                        {new Date(a.scheduled_at).toLocaleString(lang === "ar" ? "ar-DZ" : "en-GB")}
-                      </span>
-                    )}
-                  </div>
+                  <Badge variant={statusVariant[a.status] ?? "outline"}>
+                    {t(statusKey(a.status) as any)}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-sm text-muted-foreground">
                   {new Date(a.created_at).toLocaleDateString(lang === "ar" ? "ar-DZ" : "en-GB")}
@@ -92,9 +103,14 @@ export default function AdminArticles() {
                 </TableCell>
               </TableRow>
             ))}
-            {articles.length === 0 && (
+            {!loading && articles.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-muted-foreground py-8">{isRTL ? "لا توجد مقالات بعد" : "No articles yet"}</TableCell>
+              </TableRow>
+            )}
+            {loading && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">{isRTL ? "جارٍ التحميل..." : "Loading..."}</TableCell>
               </TableRow>
             )}
           </TableBody>

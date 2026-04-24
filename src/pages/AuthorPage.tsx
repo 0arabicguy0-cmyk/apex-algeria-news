@@ -7,7 +7,7 @@ import AdBanner from "@/components/AdBanner";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { authorsApi } from "@/lib/mockStore";
-import { mapArticle } from "@/hooks/useArticles";
+import { useArticlesByAuthor } from "@/hooks/useArticles";
 import { Mail, Twitter, Eye } from "lucide-react";
 
 export default function AuthorPage() {
@@ -15,6 +15,7 @@ export default function AuthorPage() {
   const { isDark, toggle } = useTheme();
   const { isRTL } = useLanguage();
   const author = slug ? authorsApi.bySlug(slug) : null;
+  const articles = useArticlesByAuthor(author?.name);
 
   if (!author) {
     return (
@@ -32,7 +33,6 @@ export default function AuthorPage() {
     );
   }
 
-  const articles = authorsApi.articlesBy(author.name).map(mapArticle);
   const totalViews = articles.reduce((s, a) => s + a.viewCount, 0);
 
   return (

@@ -1,18 +1,17 @@
 import { Link } from "react-router-dom";
 import { Clock, X } from "lucide-react";
 import { useReadingHistory, clearHistory } from "@/hooks/useReadingHistory";
-import { articlesApi } from "@/lib/mockStore";
-import { mapArticle } from "@/hooks/useArticles";
+import { useArticlesByIds } from "@/hooks/useArticles";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export default function ContinueReading() {
   const ids = useReadingHistory();
   const { t } = useLanguage();
+  const fetched = useArticlesByIds(ids);
+
   if (ids.length === 0) return null;
 
-  const items = articlesApi
-    .byIds(ids)
-    .map(mapArticle)
+  const items = [...fetched]
     .sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id))
     .slice(0, 8);
 

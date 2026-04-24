@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { articlesApi } from "@/lib/mockStore";
-import { mapArticle, type Article } from "@/hooks/useArticles";
+import { useSearchArticles } from "@/hooks/useArticles";
 import { categories } from "@/lib/data";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -22,12 +21,8 @@ export default function SearchPage() {
   const [cat, setCat] = useState(params.get("cat") || "all");
   const [tag, setTag] = useState(params.get("tag") || "");
   const [sort, setSort] = useState<SortKey>("newest");
-  const [results, setResults] = useState<Article[]>([]);
 
-  useEffect(() => {
-    const data = articlesApi.search({ q, cat, tag, sort });
-    setResults(data.map(mapArticle));
-  }, [q, cat, tag, sort]);
+  const { results } = useSearchArticles({ q, cat, tag, sort });
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
