@@ -140,7 +140,7 @@ export default function AdminDashboard() {
                 </div>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground mt-6">⚠️ وضع البيانات التجريبية — التغييرات تُحفظ محلياً في متصفحك فقط.</p>
+            <p className="text-xs text-muted-foreground mt-6">📡 المقالات والأخبار العاجلة متصلة بقاعدة البيانات الحيّة. (التعليقات والنشرة لا تزال تجريبية في هذه المرحلة.)</p>
           </div>
         ) : (
           <Outlet />
