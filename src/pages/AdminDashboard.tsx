@@ -17,7 +17,13 @@ export default function AdminDashboard() {
   useEffect(() => subscribe(() => force((n) => n + 1)), []);
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) navigate("/admin/login");
+    if (loading) return;
+    if (!user) {
+      navigate("/admin/login", { replace: true });
+    } else if (!isAdmin) {
+      // Authenticated but not an admin — bounce to homepage, not login (avoids loop).
+      navigate("/", { replace: true });
+    }
   }, [user, isAdmin, loading, navigate]);
 
   useEffect(() => {
