@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,21 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user, isAdmin, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, isRTL } = useLanguage();
+
+  // Guard: if already authenticated, route by role.
+  useEffect(() => {
+    if (loading) return;
+    if (user && isAdmin) {
+      navigate("/admin", { replace: true });
+    } else if (user && !isAdmin) {
+      // Signed-in non-admin should not see the admin login. Sign them out and send home.
+      signOut().finally(() => navigate("/", { replace: true }));
+    }
+  }, [user, isAdmin, loading, navigate, signOut]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
