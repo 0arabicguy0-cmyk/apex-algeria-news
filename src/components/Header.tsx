@@ -34,9 +34,9 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
         <div className="container flex items-center justify-between py-1.5 text-sm opacity-80">
           <span>{t("dateLine")}</span>
           <div className="flex gap-4">
-            <a href="#" className="hover:text-primary transition-colors">{t("facebook")}</a>
-            <a href="#" className="hover:text-primary transition-colors">{t("twitter")}</a>
-            <a href="#" className="hover:text-primary transition-colors">{t("youtube")}</a>
+            <a href="#" aria-label={`Apex News DZ on ${t("facebook")}`} className="hover:text-primary transition-colors">{t("facebook")}</a>
+            <a href="#" aria-label={`Apex News DZ on ${t("twitter")}`} className="hover:text-primary transition-colors">{t("twitter")}</a>
+            <a href="#" aria-label={`Apex News DZ on ${t("youtube")}`} className="hover:text-primary transition-colors">{t("youtube")}</a>
           </div>
         </div>
       </div>
@@ -54,15 +54,18 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
           </button>
 
           {/* Logo */}
-          <div  onClick={handleLogoTap} className="flex items-center gap-2 select-none">
-            <div onClick={handleLogoTap} className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
-              <button onClick={handleLogoTap} className="text-primary-foreground font-bold text-lg leading-none">A</button>
-            </div>
-            <div className="flex flex-col leading-tight">
+          <button
+            type="button"
+            onClick={handleLogoTap}
+            aria-label="Apex News DZ — الصفحة الرئيسية"
+            className="flex items-center gap-2 select-none bg-transparent border-0 p-0"
+          >
+            <span className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center text-primary-foreground font-bold text-lg leading-none" aria-hidden="true">A</span>
+            <span className="flex flex-col leading-tight text-start">
               <span className="font-bold text-lg text-foreground tracking-tight">Apex News</span>
               <span className="text-[10px] text-muted-foreground -mt-1">الجزائر</span>
-            </div>
-          </div>
+            </span>
+          </button>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">
