@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import StoryCard from "@/components/StoryCard";
+import SEO from "@/components/SEO";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Search as SearchIcon, X } from "lucide-react";
@@ -37,6 +38,12 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen pb-16 md:pb-0">
+      <SEO
+        title={lang === "en" ? "Search" : "بحث"}
+        description={lang === "en"
+          ? "Search Apex News DZ for the latest Algerian, Arab and international news, by keyword, category or tag."
+          : "ابحث في أبكس نيوز الجزائر عن آخر الأخبار الجزائرية والعربية والدولية حسب الكلمة أو القسم أو الوسم."}
+      />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
       <section className="container py-6 md:py-10">

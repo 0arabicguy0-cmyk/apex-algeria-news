@@ -5,18 +5,25 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import StoryCard from "@/components/StoryCard";
+import SEO from "@/components/SEO";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Bookmark } from "lucide-react";
 
 export default function BookmarksPage() {
   const { isDark, toggle } = useTheme();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { ids } = useBookmarks();
   const items = useArticlesByIds(ids);
 
   return (
     <div className="min-h-screen pb-16 md:pb-0">
+      <SEO
+        title={lang === "en" ? "Bookmarks" : "المحفوظات"}
+        description={lang === "en"
+          ? "Your saved articles on Apex News DZ — revisit your bookmarked Algerian, Arab and world news anytime."
+          : "مقالاتك المحفوظة على أبكس نيوز الجزائر — عُد إلى الأخبار التي حفظتها في أي وقت."}
+      />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
       <section className="container py-6 md:py-10">
