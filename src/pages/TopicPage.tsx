@@ -43,6 +43,7 @@ export default function TopicPage() {
         </div>
       </div>
 
+      <main id="main-content">
       {loading ? (
         <div className="container py-16 text-center text-muted-foreground">{t("loading")}</div>
       ) : articles.length === 0 ? (
@@ -73,6 +74,7 @@ export default function TopicPage() {
           </section>
         </>
       )}
+      </main>
 
       <Footer />
       <BottomNav />

@@ -26,7 +26,7 @@ export default function BookmarksPage() {
       />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
-      <section className="container py-6 md:py-10">
+      <main id="main-content" className="container py-6 md:py-10">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
           <Bookmark className="w-6 h-6 text-primary fill-primary" />
           {t("bookmarksTitle")}
@@ -45,7 +45,7 @@ export default function BookmarksPage() {
             {items.map((a) => <StoryCard key={a.id} article={a} />)}
           </div>
         )}
-      </section>
+      </main>
 
       <Footer />
       <BottomNav />
