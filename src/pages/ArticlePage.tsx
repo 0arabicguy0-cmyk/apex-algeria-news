@@ -21,6 +21,7 @@ import AuthorCard from "@/components/AuthorCard";
 import AdBanner from "@/components/AdBanner";
 import Paywall from "@/components/Paywall";
 import SEO from "@/components/SEO";
+import { Helmet } from "react-helmet-async";
 import { ArticleSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -88,6 +89,21 @@ export default function ArticlePage() {
         image={article.image}
         type="article"
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: article.title,
+          description: article.excerpt,
+          image: [article.image],
+          datePublished: article.date,
+          author: { "@type": "Person", name: article.author },
+          publisher: { "@type": "NewsMediaOrganization", name: "Apex News DZ", logo: { "@type": "ImageObject", url: "https://apex-algeria-news.lovable.app/icon-512.png" } },
+          mainEntityOfPage: typeof window !== "undefined" ? window.location.href : `https://apex-algeria-news.lovable.app/article/${article.id}`,
+          articleSection: article.category,
+          keywords: article.tags.join(", "),
+        })}</script>
+      </Helmet>
       <ReadingProgress />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
