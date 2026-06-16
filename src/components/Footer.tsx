@@ -61,10 +61,10 @@ export default function Footer() {
           <div>
             <h4 className="font-bold mb-4">{t("followUs")}</h4>
             <div className="flex flex-wrap gap-4 text-sm opacity-70">
-              <a href="#" className="hover:opacity-100 transition-opacity">{t("facebook")}</a>
-              <a href="#" className="hover:opacity-100 transition-opacity">{t("twitter")}</a>
-              <a href="#" className="hover:opacity-100 transition-opacity">{t("youtube")}</a>
-              <a href="#" className="hover:opacity-100 transition-opacity">{t("instagram")}</a>
+              <a href="#" aria-label={`Apex News DZ on ${t("facebook")}`} className="hover:opacity-100 transition-opacity">{t("facebook")}</a>
+              <a href="#" aria-label={`Apex News DZ on ${t("twitter")}`} className="hover:opacity-100 transition-opacity">{t("twitter")}</a>
+              <a href="#" aria-label={`Apex News DZ on ${t("youtube")}`} className="hover:opacity-100 transition-opacity">{t("youtube")}</a>
+              <a href="#" aria-label={`Apex News DZ on ${t("instagram")}`} className="hover:opacity-100 transition-opacity">{t("instagram")}</a>
             </div>
           </div>
         </div>

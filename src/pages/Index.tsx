@@ -19,6 +19,7 @@ import { HeroSkeleton, StoryCardSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Link, useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 import { Fragment } from "react";
 import type { Article } from "@/hooks/useArticles";
@@ -87,11 +88,21 @@ export default function Index() {
         title={activeCategory === "all" ? undefined : (lang === "en" ? categories.find(c=>c.key===activeCategory)?.labelEn : categories.find(c=>c.key===activeCategory)?.label)}
         keywords={lang === "en" ? "Algeria news, Arab news, world news, politics, sports, economy" : "أخبار الجزائر, أخبار عربية, أخبار دولية, سياسة, رياضة, اقتصاد"}
       />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            { "@type": "NewsMediaOrganization", name: "Apex News DZ", url: "https://apex-algeria-news.lovable.app/", logo: "https://apex-algeria-news.lovable.app/icon-512.png" },
+            { "@type": "WebSite", name: "Apex News DZ", url: "https://apex-algeria-news.lovable.app/", inLanguage: lang === "en" ? "en" : "ar", potentialAction: { "@type": "SearchAction", target: "https://apex-algeria-news.lovable.app/search?q={search_term_string}", "query-input": "required name=search_term_string" } }
+          ]
+        })}</script>
+      </Helmet>
       <Header isDark={isDark} onToggleTheme={toggle} />
       <BreakingTicker />
       <CategoryTabs active={activeCategory} onChange={setActive} />
 
       <main id="main-content">
+        <h1 className="sr-only">{lang === "en" ? "Apex News DZ — Latest news from Algeria and the world" : "أبكس نيوز الجزائر — آخر الأخبار من الجزائر والعالم"}</h1>
       <PageTransition>
         <HeroSection featured={featured} sidebar={sidebar} />
 

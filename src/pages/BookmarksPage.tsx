@@ -5,21 +5,28 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import StoryCard from "@/components/StoryCard";
+import SEO from "@/components/SEO";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Bookmark } from "lucide-react";
 
 export default function BookmarksPage() {
   const { isDark, toggle } = useTheme();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { ids } = useBookmarks();
   const items = useArticlesByIds(ids);
 
   return (
     <div className="min-h-screen pb-16 md:pb-0">
+      <SEO
+        title={lang === "en" ? "Bookmarks" : "المحفوظات"}
+        description={lang === "en"
+          ? "Your saved articles on Apex News DZ — revisit your bookmarked Algerian, Arab and world news anytime."
+          : "مقالاتك المحفوظة على أبكس نيوز الجزائر — عُد إلى الأخبار التي حفظتها في أي وقت."}
+      />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
-      <section className="container py-6 md:py-10">
+      <main id="main-content" className="container py-6 md:py-10">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2 flex items-center gap-2">
           <Bookmark className="w-6 h-6 text-primary fill-primary" />
           {t("bookmarksTitle")}
@@ -38,7 +45,7 @@ export default function BookmarksPage() {
             {items.map((a) => <StoryCard key={a.id} article={a} />)}
           </div>
         )}
-      </section>
+      </main>
 
       <Footer />
       <BottomNav />

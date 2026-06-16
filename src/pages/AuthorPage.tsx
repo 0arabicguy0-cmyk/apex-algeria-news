@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import StoryCard from "@/components/StoryCard";
 import AdBanner from "@/components/AdBanner";
+import SEO from "@/components/SEO";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { authorsApi } from "@/lib/mockStore";
@@ -13,7 +14,7 @@ import { Mail, Twitter, Eye } from "lucide-react";
 export default function AuthorPage() {
   const { slug } = useParams();
   const { isDark, toggle } = useTheme();
-  const { isRTL } = useLanguage();
+  const { isRTL, lang } = useLanguage();
   const author = slug ? authorsApi.bySlug(slug) : null;
   const articles = useArticlesByAuthor(author?.name);
 
@@ -37,6 +38,14 @@ export default function AuthorPage() {
 
   return (
     <div className="min-h-screen pb-20 md:pb-0">
+      <SEO
+        title={author.name}
+        description={author.bio
+          ? author.bio.slice(0, 155)
+          : (lang === "en"
+            ? `Articles by ${author.name} on Apex News DZ — latest reporting and analysis.`
+            : `مقالات ${author.name} على أبكس نيوز الجزائر — أحدث التقارير والتحليلات.`)}
+      />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
       <div className="bg-gradient-to-br from-primary/10 via-background to-background border-b border-border">

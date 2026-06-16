@@ -7,6 +7,7 @@ import BottomNav from "@/components/BottomNav";
 import StoryCard from "@/components/StoryCard";
 import MostRead from "@/components/MostRead";
 import HeroSection from "@/components/HeroSection";
+import SEO from "@/components/SEO";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 
@@ -24,6 +25,12 @@ export default function TopicPage() {
 
   return (
     <div className="min-h-screen pb-16 md:pb-0">
+      <SEO
+        title={catLabel ?? (lang === "en" ? "Section" : "قسم")}
+        description={lang === "en"
+          ? `Latest ${catLabel ?? "news"} stories from Algeria and around the world on Apex News DZ.`
+          : `أحدث أخبار ${catLabel ?? ""} من الجزائر والعالم على أبكس نيوز الجزائر.`}
+      />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
       <div className="bg-gradient-to-l from-navy via-navy/95 to-primary text-primary-foreground py-8 md:py-12">
@@ -36,6 +43,7 @@ export default function TopicPage() {
         </div>
       </div>
 
+      <main id="main-content">
       {loading ? (
         <div className="container py-16 text-center text-muted-foreground">{t("loading")}</div>
       ) : articles.length === 0 ? (
@@ -66,6 +74,7 @@ export default function TopicPage() {
           </section>
         </>
       )}
+      </main>
 
       <Footer />
       <BottomNav />

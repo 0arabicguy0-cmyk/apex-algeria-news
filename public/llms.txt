@@ -1,0 +1,32 @@
+# Apex News DZ
+
+> Apex News DZ (أبكس نيوز الجزائر) — a bilingual Arabic/English news site covering Algeria, the Arab world, and international affairs across politics, sports, economy, culture, and technology.
+
+## Pages
+
+- [Home](/): Latest headlines, breaking news ticker, and featured stories.
+- [Search](/search): Full-text search across articles, filterable by category and tag.
+- [Bookmarks](/bookmarks): Reader-saved articles (stored locally in the browser).
+- [Contact](/contact): Contact form and editorial inquiries.
+
+## Sections
+
+- [Algeria](/topic/algeria): National news from Algeria.
+- [World](/topic/world): International news.
+- [Economy](/topic/economy): Business, markets, energy.
+- [Sports](/topic/sports): Football and other sports.
+- [Culture](/topic/culture): Arts, heritage, society.
+- [Technology](/topic/tech): Tech, science, digital.
+
+## Editorial & Legal
+
+- [About us](/about): Mission, team, editorial values.
+- [Editorial charter](/editorial-policy): Standards for sourcing, accuracy, and independence.
+- [Corrections & right of reply](/corrections): How to request a correction.
+- [Corrections log](/corrections-log): Public record of published corrections.
+- [Legal notice / Imprint](/imprint): Publisher information.
+- [Privacy policy](/privacy): How we handle reader data.
+- [Cookies policy](/cookies): Cookies and tracking.
+- [Terms of use](/terms): Terms governing use of the site.
+- [Copyright policy](/copyright): Reuse and DMCA contacts.
+- [Content disclaimer](/disclaimer): Limits of liability on published content.

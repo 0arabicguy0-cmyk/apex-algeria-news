@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomNav from "@/components/BottomNav";
 import StoryCard from "@/components/StoryCard";
+import SEO from "@/components/SEO";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Search as SearchIcon, X } from "lucide-react";
@@ -37,9 +38,15 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen pb-16 md:pb-0">
+      <SEO
+        title={lang === "en" ? "Search" : "بحث"}
+        description={lang === "en"
+          ? "Search Apex News DZ for the latest Algerian, Arab and international news, by keyword, category or tag."
+          : "ابحث في أبكس نيوز الجزائر عن آخر الأخبار الجزائرية والعربية والدولية حسب الكلمة أو القسم أو الوسم."}
+      />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
-      <section className="container py-6 md:py-10">
+      <main id="main-content" className="container py-6 md:py-10">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4 flex items-center gap-2">
           <SearchIcon className="w-6 h-6 text-primary" />
           {t("searchTitle")}
@@ -52,15 +59,16 @@ export default function SearchPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder={t("searchPlaceholder")}
+              aria-label={t("searchPlaceholder")}
               className={`w-full ${lang === "ar" ? "pr-10 pl-4" : "pl-10 pr-4"} py-3 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary text-foreground`}
             />
           </div>
 
           <div className="flex flex-wrap gap-2 items-center">
-            <select value={cat} onChange={(e) => setCat(e.target.value)} className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground">
+            <select value={cat} onChange={(e) => setCat(e.target.value)} aria-label={lang === "en" ? "Category" : "القسم"} className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground">
               {categories.map((c) => <option key={c.key} value={c.key}>{lang === "en" ? c.labelEn : c.label}</option>)}
             </select>
-            <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground">
+            <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} aria-label={lang === "en" ? "Sort" : "الترتيب"} className="px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground">
               <option value="newest">{t("sortNewest")}</option>
               <option value="oldest">{t("sortOldest")}</option>
               <option value="popular">{t("sortPopular")}</option>
@@ -68,7 +76,7 @@ export default function SearchPage() {
             {tag && (
               <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-xs font-medium">
                 #{tag}
-                <button type="button" onClick={() => setTag("")}><X className="w-3 h-3" /></button>
+                <button type="button" onClick={() => setTag("")} aria-label={lang === "en" ? "Remove tag" : "إزالة الوسم"}><X className="w-3 h-3" /></button>
               </span>
             )}
             <button type="submit" className="px-5 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90">{t("searchBtn")}</button>
@@ -85,7 +93,7 @@ export default function SearchPage() {
           </div>
           {results.length === 0 && <div className="text-center py-16 text-muted-foreground">{t("noResults")}</div>}
         </div>
-      </section>
+      </main>
 
       <Footer />
       <BottomNav />
