@@ -20,6 +20,7 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
   const handleLogoTap = () => {
     const now = Date.now();
     tapsRef.current = [...tapsRef.current.filter((t) => now - t < 3000), now];
+    console.log(tapsRef.current.length);
     if (tapsRef.current.length >= 5) {
       tapsRef.current = [];
       navigate("/admin/login");
@@ -53,15 +54,15 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
           </button>
 
           {/* Logo */}
-          <Link to="/" onClick={handleLogoTap} className="flex items-center gap-2 select-none">
-            <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg leading-none">A</span>
+          <div  onClick={handleLogoTap} className="flex items-center gap-2 select-none">
+            <div onClick={handleLogoTap} className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
+              <button onClick={handleLogoTap} className="text-primary-foreground font-bold text-lg leading-none">A</button>
             </div>
             <div className="flex flex-col leading-tight">
               <span className="font-bold text-lg text-foreground tracking-tight">Apex News</span>
               <span className="text-[10px] text-muted-foreground -mt-1">الجزائر</span>
             </div>
-          </Link>
+          </div>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">

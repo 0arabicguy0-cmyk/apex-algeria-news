@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { feedbackApi, subscribe } from "@/lib/mockStore";
-import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle } from "lucide-react";
+import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
@@ -58,7 +58,6 @@ export default function AdminDashboard() {
     { to: "/admin/corrections", icon: AlertCircle, label: "سجل التصحيحات" },
   ];
 
-
   const NavList = ({ onNavigate }: { onNavigate?: () => void }) => (
     <nav className="space-y-1 flex-1">
       {navItems.map((item) => (
@@ -81,6 +80,17 @@ export default function AdminDashboard() {
     <div className="flex flex-col h-full p-4">
       <h2 className="font-bold text-lg text-foreground mb-6">لوحة التحكم</h2>
       <NavList onNavigate={onNavigate} />
+      
+      {/* Go back to homepage */}
+      <Link
+        to="/"
+        onClick={onNavigate}
+        className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-muted transition-colors mb-2"
+      >
+        <Home className="w-4 h-4" />
+        العودة للموقع
+      </Link>
+      
       <Button variant="ghost" size="sm" onClick={async () => { await signOut(); navigate("/admin/login"); }} className="justify-start gap-2 text-muted-foreground">
         <LogOut className="w-4 h-4" />
         خروج
