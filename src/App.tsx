@@ -34,10 +34,23 @@ import DisclaimerPage from "./pages/DisclaimerPage";
 import SplashScreen from "./components/SplashScreen";
 import CommandPalette from "./components/CommandPalette";
 import BackToTop from "./components/BackToTop";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient();
+async function requestNotificationPermission() {
+  const permission = await Notification.requestPermission();
 
-const App = () => (
+  if (permission === "granted") {
+    console.log("Notifications allowed");
+  }
+}
+
+const App = () => {
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <SplashScreen />
@@ -81,6 +94,6 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
-);
+)};
 
 export default App;
