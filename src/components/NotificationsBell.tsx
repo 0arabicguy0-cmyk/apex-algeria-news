@@ -82,15 +82,15 @@ export default function NotificationsBell() {
               : "Breaking news will arrive even when the app is closed",
         });
       } else {
-        const message = "message" in res ? res.message : undefined;
+        const fail = res as { ok: false; reason: string; message?: string };
         const reasonText: Record<string, { ar: string; en: string }> = {
           unsupported: { ar: "غير مدعوم في هذا المتصفح.", en: "Not supported in this browser." },
           denied: { ar: "تم رفض الإذن.", en: "Permission denied." },
           "no-vapid": { ar: "إعدادات Firebase ناقصة.", en: "Firebase VAPID key missing." },
           "no-token": { ar: "تعذّر إنشاء رمز الإشعار.", en: "Could not obtain push token." },
-          error: { ar: message ?? "خطأ غير معروف.", en: message ?? "Unknown error." },
+          error: { ar: fail.message ?? "خطأ غير معروف.", en: fail.message ?? "Unknown error." },
         };
-        const r = reasonText[res.reason] ?? reasonText.error;
+        const r = reasonText[fail.reason] ?? reasonText.error;
         toast({
           title: lang === "ar" ? "تعذّر التفعيل" : "Couldn't enable push",
           description: lang === "ar" ? r.ar : r.en,

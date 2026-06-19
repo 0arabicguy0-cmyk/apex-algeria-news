@@ -35,19 +35,15 @@ import SplashScreen from "./components/SplashScreen";
 import CommandPalette from "./components/CommandPalette";
 import BackToTop from "./components/BackToTop";
 import { useEffect } from "react";
+import { autoReregister } from "@/lib/fcm";
 
 const queryClient = new QueryClient();
-async function requestNotificationPermission() {
-  const permission = await Notification.requestPermission();
-
-  if (permission === "granted") {
-    console.log("Notifications allowed");
-  }
-}
 
 const App = () => {
   useEffect(() => {
-    requestNotificationPermission();
+    // Silently refresh the FCM token for users who already opted in.
+    // Permission prompt itself only happens when the user clicks Enable in the bell.
+    autoReregister();
   }, []);
 
   return (
