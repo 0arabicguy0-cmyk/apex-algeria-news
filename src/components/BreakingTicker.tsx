@@ -22,7 +22,7 @@ export default function BreakingTicker() {
   );
 
   return (
-    <div className="bg-navy text-navy-foreground overflow-hidden">
+    <div className="bg-navy text-navy-foreground overflow-hidden sticky top-14 z-50">
       <div className="container flex items-center h-9 gap-3">
         <span className="flex-shrink-0 bg-amber text-amber-foreground px-3 py-0.5 rounded-sm text-xs font-bold flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-destructive animate-pulse-dot" />
