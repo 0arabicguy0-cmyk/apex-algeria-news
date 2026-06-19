@@ -101,8 +101,8 @@ export async function enableFcm(): Promise<EnableResult> {
       dir: "rtl",
       lang: "ar",
       requireInteraction: isBreaking,
-      renotify: isBreaking,
-    });
+      ...(isBreaking ? { renotify: true } : {}),
+    } as NotificationOptions);
   });
 
   return { ok: true, token };
