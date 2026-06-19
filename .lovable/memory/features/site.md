@@ -10,7 +10,7 @@ type: feature
 - Newsletter: email-only, unique constraint, admin can export CSV.
 - TOC: built from `## ` prefixed paragraphs in article body. Editor doesn't enforce — markdown-style.
 - Audio: browser Web Speech API (`ar-SA`). No server cost.
-- Translation: `translate-article` edge function calls Lovable AI (`google/gemini-2.5-flash`) → JSON `{title, body}`. Targets fr/en.
+- Translation: `translate-article` edge function calls AI (`google/gemini-2.5-flash`) → JSON `{title, body}`. Targets fr/en.
 - Trending sidebar uses `view_count DESC`. Featured hero uses `is_featured=true` then falls back to newest.
 - Rotating breaking ticker: `breaking_news_items` table, 5s rotation. Admin manages from `/admin/breaking`.
 - Routes: `/`, `/article/:id`, `/topic/:key`, `/search`, `/bookmarks`, `/contact`, `/admin/*`.
