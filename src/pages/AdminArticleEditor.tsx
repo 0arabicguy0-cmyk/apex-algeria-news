@@ -98,13 +98,16 @@ export default function AdminArticleEditor() {
 
   const save = async (nextStatus: Status) => {
     if (!requireTitle()) return;
+    const wasPublished = status === "published";
     const payload = buildPayload(nextStatus);
+    let articleId = id && id !== "new" ? id : null;
     if (isNew) {
-      const { error } = await supabase.from("articles").insert(payload);
+      const { data, error } = await supabase.from("articles").insert(payload).select("id").single();
       if (error) {
         toast({ title: "Error", description: error.message, variant: "destructive" });
         return;
       }
+      articleId = data?.id ?? null;
     } else if (id) {
       const { error } = await supabase.from("articles").update(payload).eq("id", id);
       if (error) {
@@ -117,6 +120,29 @@ export default function AdminArticleEditor() {
         ? (isRTL ? "تم النشر" : "Published")
         : (isRTL ? "تم حفظ المسودة" : "Draft saved"),
     });
+
+    // Fire-and-forget FCM push when an article transitions to published.
+    if (nextStatus === "published" && !wasPublished && articleId) {
+      supabase.functions
+        .invoke("fcm-send-article", { body: { article_id: articleId } })
+        .then(({ data, error }) => {
+          if (error) {
+            toast({
+              title: isRTL ? "تعذّر إرسال الإشعار" : "Push notification failed",
+              description: error.message,
+              variant: "destructive",
+            });
+          } else if (data?.sent != null) {
+            toast({
+              title: isRTL ? "تم إرسال الإشعارات" : "Notifications sent",
+              description: isRTL
+                ? `أُرسل إلى ${data.sent} مشترك`
+                : `Sent to ${data.sent} subscribers`,
+            });
+          }
+        });
+    }
+
     navigate("/admin/articles");
   };
 
