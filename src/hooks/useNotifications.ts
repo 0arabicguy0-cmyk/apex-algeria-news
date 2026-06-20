@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface AppNotification {
   id: string;
@@ -10,88 +11,48 @@ export interface AppNotification {
   read: boolean;
 }
 
-const KEY = "apex-notifications";
-const PERM_KEY = "apex-notif-permission"; // mock subscribe state ("granted" | "denied" | "default")
+const PERM_KEY = "apex-notif-permission";
+const READ_IDS_KEY = "apex-notif-read-ids-v1";
+const LAST_READ_KEY = "apex-notif-last-read-v1";
+const CLEARED_AT_KEY = "apex-notif-cleared-at-v1";
+const MAX_ITEMS = 30;
 
-const uid = () => Math.random().toString(36).slice(2, 11);
-const now = () => new Date().toISOString();
+type ArticleRow = {
+  id: string;
+  title: string;
+  excerpt: string | null;
+  category: string | null;
+  is_breaking: boolean | null;
+  published_at: string | null;
+  created_at: string;
+};
 
-const seed = (): AppNotification[] => [
-  {
-    id: uid(),
-    title: "عاجل: مشروع الطاقة المتجددة",
-    body: "الجزائر تطلق أكبر مشروع للطاقة الشمسية في إفريقيا بقدرة ٥ غيغاواط.",
-    category: "breaking",
-    articleId: "1",
-    createdAt: new Date(Date.now() - 5 * 60_000).toISOString(),
-    read: false,
-  },
-  {
-    id: uid(),
-    title: "اقتصاد",
-    body: "البرلمان يصادق على قانون الاستثمار الجديد.",
-    category: "economy",
-    articleId: "2",
-    createdAt: new Date(Date.now() - 45 * 60_000).toISOString(),
-    read: false,
-  },
-  {
-    id: uid(),
-    title: "رياضة",
-    body: "المنتخب الوطني يحقق فوزاً تاريخياً في تصفيات كأس العالم.",
-    category: "sports",
-    articleId: "4",
-    createdAt: new Date(Date.now() - 3 * 3600_000).toISOString(),
-    read: true,
-  },
-];
-
-const load = (): AppNotification[] => {
+function readSet(key: string): Set<string> {
   try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  const s = seed();
-  localStorage.setItem(KEY, JSON.stringify(s));
-  return s;
-};
+    const raw = localStorage.getItem(key);
+    if (!raw) return new Set();
+    return new Set(JSON.parse(raw) as string[]);
+  } catch {
+    return new Set();
+  }
+}
+function writeSet(key: string, set: Set<string>) {
+  localStorage.setItem(key, JSON.stringify([...set]));
+}
 
-let state: AppNotification[] = typeof window !== "undefined" ? load() : [];
-const listeners = new Set<() => void>();
-
-const persist = () => {
-  localStorage.setItem(KEY, JSON.stringify(state));
-  listeners.forEach((l) => l());
-};
-
-export const notificationsApi = {
-  all: () => [...state].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
-  unreadCount: () => state.filter((n) => !n.read).length,
-  markAllRead: () => {
-    state = state.map((n) => ({ ...n, read: true }));
-    persist();
-  },
-  markRead: (id: string) => {
-    state = state.map((n) => (n.id === id ? { ...n, read: true } : n));
-    persist();
-  },
-  clearAll: () => {
-    state = [];
-    persist();
-  },
-  push: (n: Omit<AppNotification, "id" | "createdAt" | "read">) => {
-    const item: AppNotification = { ...n, id: uid(), createdAt: now(), read: false };
-    state = [item, ...state];
-    persist();
-    // Fire native browser notification if permission granted
-    try {
-      if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
-        new Notification(item.title, { body: item.body, icon: "/favicon.ico" });
-      }
-    } catch {}
-    return item;
-  },
-};
+function toNotification(a: ArticleRow, readIds: Set<string>, lastReadAt: string | null): AppNotification {
+  const createdAt = a.published_at ?? a.created_at;
+  const read = readIds.has(a.id) || (lastReadAt !== null && createdAt <= lastReadAt);
+  return {
+    id: a.id,
+    title: a.is_breaking ? `🚨 ${a.title}` : a.title,
+    body: a.excerpt ?? "",
+    category: a.category ?? "news",
+    articleId: a.id,
+    createdAt,
+    read,
+  };
+}
 
 export function getPermissionState(): NotificationPermission | "unsupported" {
   if (typeof window === "undefined" || !("Notification" in window)) return "unsupported";
@@ -106,37 +67,95 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
 }
 
 export function useNotifications() {
-  const [items, setItems] = useState<AppNotification[]>(notificationsApi.all());
+  const [rows, setRows] = useState<ArticleRow[]>([]);
+  const [readIds, setReadIds] = useState<Set<string>>(() => readSet(READ_IDS_KEY));
+  const [lastReadAt, setLastReadAt] = useState<string | null>(() => localStorage.getItem(LAST_READ_KEY));
+  const [clearedAt, setClearedAt] = useState<string | null>(() => localStorage.getItem(CLEARED_AT_KEY));
 
+  // Initial fetch
   useEffect(() => {
-    const fn = () => setItems(notificationsApi.all());
-    listeners.add(fn);
-    return () => {
-      listeners.delete(fn);
-    };
+    let active = true;
+    (async () => {
+      const { data, error } = await supabase
+        .from("articles")
+        .select("id, title, excerpt, category, is_breaking, published_at, created_at")
+        .eq("status", "published")
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .limit(MAX_ITEMS);
+      if (!active || error || !data) return;
+      setRows(data as ArticleRow[]);
+    })();
+    return () => { active = false; };
   }, []);
 
-  // Demo: simulate a fresh push notification 20s after first mount (once per session)
+  // Realtime — new/updated published articles
   useEffect(() => {
-    const FLAG = "apex-notif-demo-fired";
-    if (sessionStorage.getItem(FLAG)) return;
-    const t = setTimeout(() => {
-      notificationsApi.push({
-        title: "تنبيه: تكنولوجيا",
-        body: "الجزائر تحتضن أكبر مؤتمر تكنولوجي في شمال إفريقيا.",
-        category: "tech",
-        articleId: "3",
-      });
-      sessionStorage.setItem(FLAG, "1");
-    }, 20_000);
-    return () => clearTimeout(t);
+    const channel = supabase
+      .channel("notif-articles")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "articles" },
+        (payload) => {
+          const a = payload.new as ArticleRow & { status: string };
+          if (a.status !== "published") return;
+          setRows((prev) => [a, ...prev.filter((r) => r.id !== a.id)].slice(0, MAX_ITEMS));
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "articles" },
+        (payload) => {
+          const a = payload.new as ArticleRow & { status: string };
+          if (a.status !== "published") {
+            setRows((prev) => prev.filter((r) => r.id !== a.id));
+            return;
+          }
+          setRows((prev) => {
+            const exists = prev.some((r) => r.id === a.id);
+            const next = exists ? prev.map((r) => (r.id === a.id ? a : r)) : [a, ...prev];
+            return next
+              .sort((x, y) => (y.published_at ?? y.created_at).localeCompare(x.published_at ?? x.created_at))
+              .slice(0, MAX_ITEMS);
+          });
+        },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
+
+  const items: AppNotification[] = rows
+    .filter((a) => {
+      const t = a.published_at ?? a.created_at;
+      return !clearedAt || t > clearedAt;
+    })
+    .sort((a, b) =>
+      (b.published_at ?? b.created_at).localeCompare(a.published_at ?? a.created_at),
+    )
+    .map((a) => toNotification(a, readIds, lastReadAt));
 
   const unread = items.filter((n) => !n.read).length;
 
-  const markAllRead = useCallback(() => notificationsApi.markAllRead(), []);
-  const markRead = useCallback((id: string) => notificationsApi.markRead(id), []);
-  const clearAll = useCallback(() => notificationsApi.clearAll(), []);
+  const markAllRead = useCallback(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem(LAST_READ_KEY, now);
+    setLastReadAt(now);
+  }, []);
+
+  const markRead = useCallback((id: string) => {
+    setReadIds((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      writeSet(READ_IDS_KEY, next);
+      return next;
+    });
+  }, []);
+
+  const clearAll = useCallback(() => {
+    const now = new Date().toISOString();
+    localStorage.setItem(CLEARED_AT_KEY, now);
+    setClearedAt(now);
+  }, []);
 
   return { items, unread, markAllRead, markRead, clearAll };
 }
