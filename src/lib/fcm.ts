@@ -1,6 +1,8 @@
 import { getToken, deleteToken, onMessage } from "firebase/messaging";
+import { toast } from "sonner";
 import { getMessagingSafe } from "@/firebase";
 import { supabase } from "@/integrations/supabase/client";
+
 
 const SW_URL = "/firebase-messaging-sw.js";
 const TOKEN_KEY = "apex_fcm_token_v1";
@@ -86,24 +88,57 @@ export async function enableFcm(): Promise<EnableResult> {
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(OPTIN_KEY, "1");
 
-  // Foreground messages — show via the SW so styling matches background.
+  // Foreground messages — page is visible, so prefer an in-app toast
+  // (Telegram-web style) instead of an OS notification. Falls back to
+  // the SW notification if the page is hidden when a message arrives.
   onMessage(messaging, (payload) => {
     const d = payload.data || {};
     const isBreaking = d.is_breaking === "true";
-    const prefix = isBreaking ? "🚨 BREAKING NEWS" : "📰 New Article";
+    const prefix = isBreaking ? "🚨 عاجل" : "📰 خبر جديد";
     const title = `${prefix} — ${d.title || "Apex News"}`;
-    swReg.showNotification(title, {
-      body: d.body || "",
-      icon: isBreaking ? "/icon-512.png" : "/icon-192.png",
-      badge: "/icon-192.png",
-      tag: d.tag || (isBreaking ? "apex-breaking" : "apex-news"),
-      data: { url: d.url || "/" },
-      dir: "rtl",
-      lang: "ar",
-      requireInteraction: isBreaking,
-      ...(isBreaking ? { renotify: true } : {}),
-    } as NotificationOptions);
+    const url = d.url || "/";
+
+    const pageHidden = typeof document !== "undefined" && document.visibilityState !== "visible";
+    if (pageHidden) {
+      swReg.showNotification(title, {
+        body: d.body || "",
+        icon: isBreaking ? "/icon-512.png" : "/icon-192.png",
+        badge: "/icon-192.png",
+        tag: d.tag || (isBreaking ? "apex-breaking" : "apex-news"),
+        data: { url },
+        dir: "rtl",
+        lang: "ar",
+        requireInteraction: isBreaking,
+        ...(isBreaking ? { renotify: true } : {}),
+      } as NotificationOptions);
+      return;
+    }
+
+    const openArticle = () => {
+      try {
+        // Use SPA navigation when same-origin path.
+        if (url.startsWith("/")) {
+          window.history.pushState({}, "", url);
+          window.dispatchEvent(new PopStateEvent("popstate"));
+        } else {
+          window.open(url, "_self");
+        }
+      } catch {
+        window.location.href = url;
+      }
+    };
+
+    const opts = {
+      description: d.body || undefined,
+      duration: isBreaking ? 15000 : 8000,
+      action: { label: "فتح", onClick: openArticle },
+      onAutoClose: () => {},
+    } as const;
+
+    if (isBreaking) toast.error(title, opts);
+    else toast(title, opts);
   });
+
 
   return { ok: true, token };
 }
