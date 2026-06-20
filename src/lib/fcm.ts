@@ -1,6 +1,8 @@
 import { getToken, deleteToken, onMessage } from "firebase/messaging";
+import { toast } from "sonner";
 import { getMessagingSafe } from "@/firebase";
 import { supabase } from "@/integrations/supabase/client";
+
 
 const SW_URL = "/firebase-messaging-sw.js";
 const TOKEN_KEY = "apex_fcm_token_v1";
