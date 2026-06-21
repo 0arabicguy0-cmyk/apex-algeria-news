@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_submissions: {
+        Row: {
+          admin_note: string | null
+          advertiser_name: string
+          amount_dzd: number
+          approved_at: string | null
+          ccp_reference: string
+          click_count: number
+          contact_email: string
+          contact_phone: string | null
+          created_at: string
+          duration_days: number
+          expires_at: string | null
+          id: string
+          payment_receipt_url: string
+          product_description: string
+          product_image_url: string
+          product_title: string
+          product_url: string | null
+          status: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          admin_note?: string | null
+          advertiser_name: string
+          amount_dzd?: number
+          approved_at?: string | null
+          ccp_reference: string
+          click_count?: number
+          contact_email: string
+          contact_phone?: string | null
+          created_at?: string
+          duration_days?: number
+          expires_at?: string | null
+          id?: string
+          payment_receipt_url: string
+          product_description?: string
+          product_image_url: string
+          product_title: string
+          product_url?: string | null
+          status?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          admin_note?: string | null
+          advertiser_name?: string
+          amount_dzd?: number
+          approved_at?: string | null
+          ccp_reference?: string
+          click_count?: number
+          contact_email?: string
+          contact_phone?: string | null
+          created_at?: string
+          duration_days?: number
+          expires_at?: string | null
+          id?: string
+          payment_receipt_url?: string
+          product_description?: string
+          product_image_url?: string
+          product_title?: string
+          product_url?: string | null
+          status?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       article_comments: {
         Row: {
           article_id: string
