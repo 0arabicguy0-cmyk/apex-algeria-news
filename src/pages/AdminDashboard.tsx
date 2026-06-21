@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { feedbackApi, subscribe } from "@/lib/mockStore";
-import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home } from "lucide-react";
+import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
@@ -56,6 +56,7 @@ export default function AdminDashboard() {
     { to: "/admin/feedback", icon: MessageSquare, label: "الرسائل" },
     { to: "/admin/push", icon: Bell, label: "الإشعارات الفورية" },
     { to: "/admin/corrections", icon: AlertCircle, label: "سجل التصحيحات" },
+    { to: "/admin/ads", icon: BadgeDollarSign, label: "الإعلانات" },
   ];
 
   const NavList = ({ onNavigate }: { onNavigate?: () => void }) => (

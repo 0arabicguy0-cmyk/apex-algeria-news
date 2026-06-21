@@ -17,6 +17,7 @@ export default function Footer() {
     { to: "/copyright", ar: "سياسة حقوق النشر", en: "Copyright policy" },
     { to: "/disclaimer", ar: "إخلاء مسؤولية المحتوى", en: "Content disclaimer" },
     { to: "/contact", ar: "اتصل بنا", en: "Contact" },
+    { to: "/advertise", ar: "أعلن معنا", en: "Advertise with us" },
   ];
 
   return (
