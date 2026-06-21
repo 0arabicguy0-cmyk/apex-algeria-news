@@ -11,6 +11,7 @@ import { Copy, Upload, CheckCircle2, ImageIcon, Receipt } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
+import { useTheme } from "@/hooks/useTheme";
 
 const CCP_CODE = "123456789";
 
@@ -32,6 +33,7 @@ const schema = z.object({
 
 export default function AdvertisePage() {
   const navigate = useNavigate();
+  const { isDark, toggle } = useTheme();
   const [pkg, setPkg] = useState(PACKAGES[0]);
   const [productFile, setProductFile] = useState<File | null>(null);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
@@ -140,7 +142,7 @@ export default function AdvertisePage() {
   return (
     <div className="min-h-screen bg-background flex flex-col" dir="rtl">
       <SEO title="أعلن معنا — Apex News DZ" description="أعلن عن منتجك أو خدمتك على Apex News DZ — ادفع عبر CCP وستظهر إعلاناتك بعد التحقق." />
-      <Header />
+      <Header isDark={isDark} onToggleTheme={toggle} />
       <main className="flex-1 container py-6 md:py-10 max-w-3xl">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">أعلن معنا</h1>
         <p className="text-muted-foreground mb-6">
