@@ -7,7 +7,7 @@ import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, 
 import { Button } from "@/components/ui/button";
 
 export default function AdminDashboard() {
-  const { user, isAdmin, loading, signOut } = useAuth();
+  const { isAdmin, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [, force] = useState(0);
@@ -18,13 +18,8 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (loading) return;
-    if (!user) {
-      navigate("/admin/login", { replace: true });
-    } else if (!isAdmin) {
-      // Authenticated but not an admin — bounce to homepage, not login (avoids loop).
-      navigate("/", { replace: true });
-    }
-  }, [user, isAdmin, loading, navigate]);
+    if (!isAdmin) navigate("/admin/login", { replace: true });
+  }, [isAdmin, loading, navigate]);
 
   useEffect(() => {
     if (!isAdmin) return;
