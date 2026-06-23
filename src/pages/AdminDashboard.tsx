@@ -3,8 +3,9 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { feedbackApi, subscribe } from "@/lib/mockStore";
-import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign } from "lucide-react";
+import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign, PlusCircle, TrendingUp, Eye, Clock, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminDashboard() {
   const { isAdmin, loading, signOut } = useAuth();
@@ -12,7 +13,9 @@ export default function AdminDashboard() {
   const location = useLocation();
   const [, force] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [articleStats, setArticleStats] = useState({ total: 0, published: 0 });
+  const [articleStats, setArticleStats] = useState({ total: 0, published: 0, drafts: 0, totalViews: 0 });
+  const [pendingAds, setPendingAds] = useState(0);
+  const [recentArticles, setRecentArticles] = useState<Array<{ id: string; title: string; status: string; created_at: string; view_count: number | null }>>([]);
 
   useEffect(() => subscribe(() => force((n) => n + 1)), []);
 
@@ -24,11 +27,18 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [{ count: total }, { count: published }] = await Promise.all([
+      const [{ count: total }, { count: published }, { count: drafts }, viewsRes, adsRes, recentRes] = await Promise.all([
         supabase.from("articles").select("*", { count: "exact", head: true }),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
+        supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "draft"),
+        supabase.from("articles").select("view_count"),
+        supabase.from("ad_submissions").select("*", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("articles").select("id, title, status, created_at, view_count").order("created_at", { ascending: false }).limit(5),
       ]);
-      setArticleStats({ total: total ?? 0, published: published ?? 0 });
+      const totalViews = (viewsRes.data ?? []).reduce((sum, a: any) => sum + (a.view_count ?? 0), 0);
+      setArticleStats({ total: total ?? 0, published: published ?? 0, drafts: drafts ?? 0, totalViews });
+      setPendingAds(adsRes.count ?? 0);
+      setRecentArticles(recentRes.data ?? []);
     })();
   }, [isAdmin, location.pathname]);
 
@@ -38,8 +48,11 @@ export default function AdminDashboard() {
   const stats = {
     articles: articleStats.total,
     published: articleStats.published,
+    drafts: articleStats.drafts,
+    views: articleStats.totalViews,
     feedback: feedbackApi.all().length,
     unread: feedbackApi.unreadCount(),
+    pendingAds,
   };
 
   const isExact = location.pathname === "/admin";
