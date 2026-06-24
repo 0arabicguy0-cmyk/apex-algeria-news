@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { categories } from "@/lib/data";
-import { ArrowRight, ArrowLeft, ClipboardCheck, CheckCircle2 } from "lucide-react";
+import { ArrowRight, ArrowLeft, ClipboardCheck, CheckCircle2, Upload, Loader2, X } from "lucide-react";
 
 const categoryOptions = categories.filter((c) => c.key !== "all");
 
@@ -42,6 +42,32 @@ export default function AdminArticleEditor() {
   const [isFeatured, setIsFeatured] = useState(false);
   const [tagsInput, setTagsInput] = useState("");
   const [status, setStatus] = useState<Status>("draft");
+  const [uploading, setUploading] = useState(false);
+
+  const handleImageUpload = async (file: File) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: isRTL ? "ملف غير صالح" : "Invalid file", description: isRTL ? "يرجى اختيار صورة" : "Please choose an image", variant: "destructive" });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: isRTL ? "حجم الصورة كبير" : "File too large", description: isRTL ? "الحد الأقصى 5 ميغابايت" : "Max 5MB", variant: "destructive" });
+      return;
+    }
+    setUploading(true);
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("article-images").upload(path, file, { cacheControl: "3600", upsert: false });
+    if (upErr) {
+      toast({ title: "Error", description: upErr.message, variant: "destructive" });
+      setUploading(false);
+      return;
+    }
+    const { data } = supabase.storage.from("article-images").getPublicUrl(path);
+    setImageUrl(data.publicUrl);
+    setUploading(false);
+    toast({ title: isRTL ? "تم رفع الصورة" : "Image uploaded" });
+  };
 
   useEffect(() => {
     if (isNew || !id) return;
@@ -196,8 +222,46 @@ export default function AdminArticleEditor() {
           </div>
         </div>
         <div>
-          <Label>{isRTL ? "رابط الصورة" : "Image URL"}</Label>
-          <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="mt-1" dir="ltr" />
+          <Label>{isRTL ? "صورة المقال" : "Article image"}</Label>
+          <div className="mt-1 space-y-2">
+            {imageUrl ? (
+              <div className="relative w-full max-w-md rounded-lg overflow-hidden border border-border group">
+                <img src={imageUrl} alt="preview" className="w-full h-48 object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setImageUrl("")}
+                  className="absolute top-2 left-2 bg-background/90 hover:bg-background text-foreground rounded-full p-1.5 shadow-md"
+                  aria-label="remove"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center w-full max-w-md h-40 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/40 transition-colors">
+                {uploading ? (
+                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+                ) : (
+                  <>
+                    <Upload className="w-6 h-6 text-muted-foreground mb-2" />
+                    <span className="text-sm text-muted-foreground">
+                      {isRTL ? "اضغط لرفع صورة (حد أقصى 5 ميغا)" : "Click to upload (max 5MB)"}
+                    </span>
+                  </>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                  disabled={uploading}
+                />
+              </label>
+            )}
+            <details className="text-xs text-muted-foreground">
+              <summary className="cursor-pointer">{isRTL ? "أو استخدم رابطًا خارجيًا" : "Or use an external URL"}</summary>
+              <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="mt-2" dir="ltr" placeholder="https://..." />
+            </details>
+          </div>
         </div>
         <div>
           <Label>{isRTL ? "الوسوم (مفصولة بفاصلة)" : "Tags (comma separated)"}</Label>
