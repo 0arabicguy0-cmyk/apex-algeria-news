@@ -24,7 +24,7 @@ export default function TopicPage() {
   const rest = articles.slice(4);
 
   return (
-    <div className="min-h-screen pb-16 md:pb-0">
+    <div className="flex flex-col min-h-screen">
       <SEO
         title={catLabel ?? (lang === "en" ? "Section" : "قسم")}
         description={lang === "en"
@@ -43,37 +43,37 @@ export default function TopicPage() {
         </div>
       </div>
 
-      <main id="main-content">
-      {loading ? (
-        <div className="container py-16 text-center text-muted-foreground">{t("loading")}</div>
-      ) : articles.length === 0 ? (
-        <div className="container py-16 text-center text-muted-foreground">{t("noArticlesTopic")}</div>
-      ) : (
-        <>
-          {featured && (
-            <div className="container py-6">
-              <HeroSection featured={featured} sidebar={sidebar} />
-            </div>
-          )}
-
-          <section className="container pb-10">
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="md:col-span-2">
-                <h2 className="font-bold text-lg text-foreground mb-3">{t("moreFrom")} {catLabel}</h2>
-                <div className="md:grid md:grid-cols-2 md:gap-4">
-                  {rest.map((a) => <StoryCard key={a.id} article={a} />)}
-                </div>
-                {rest.length === 0 && (
-                  <p className="text-sm text-muted-foreground py-6 text-center">{t("noMoreArticles")}</p>
-                )}
+      <main id="main-content" className="flex-1 pb-16 md:pb-0">
+        {loading ? (
+          <div className="container py-16 text-center text-muted-foreground">{t("loading")}</div>
+        ) : articles.length === 0 ? (
+          <div className="container py-16 text-center text-muted-foreground">{t("noArticlesTopic")}</div>
+        ) : (
+          <>
+            {featured && (
+              <div className="container py-6">
+                <HeroSection featured={featured} sidebar={sidebar} />
               </div>
-              <aside className="hidden md:block">
-                <MostRead />
-              </aside>
-            </div>
-          </section>
-        </>
-      )}
+            )}
+
+            <section className="container pb-10">
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="md:col-span-2">
+                  <h2 className="font-bold text-lg text-foreground mb-3">{t("moreFrom")} {catLabel}</h2>
+                  <div className="md:grid md:grid-cols-2 md:gap-4">
+                    {rest.map((a) => <StoryCard key={a.id} article={a} />)}
+                  </div>
+                  {rest.length === 0 && (
+                    <p className="text-sm text-muted-foreground py-6 text-center">{t("noMoreArticles")}</p>
+                  )}
+                </div>
+                <aside className="hidden md:block">
+                  <MostRead />
+                </aside>
+              </div>
+            </section>
+          </>
+        )}
       </main>
 
       <Footer />

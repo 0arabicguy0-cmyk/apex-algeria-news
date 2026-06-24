@@ -37,7 +37,7 @@ export default function SearchPage() {
   const clear = () => { setQ(""); setCat("all"); setTag(""); setSort("newest"); setParams({}); };
 
   return (
-    <div className="min-h-screen pb-16 md:pb-0">
+    <div className="flex flex-col min-h-screen">
       <SEO
         title={lang === "en" ? "Search" : "بحث"}
         description={lang === "en"
@@ -46,7 +46,7 @@ export default function SearchPage() {
       />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
-      <main id="main-content" className="container py-6 md:py-10">
+      <main id="main-content" className="flex-1 container py-6 md:py-10 pb-16 md:pb-0">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4 flex items-center gap-2">
           <SearchIcon className="w-6 h-6 text-primary" />
           {t("searchTitle")}

@@ -44,9 +44,9 @@ export default function CorrectionsLogPage() {
     });
 
   return (
-    <div className="min-h-screen pb-16 md:pb-0 bg-background">
+    <div className="flex flex-col min-h-screen bg-background">
       <Header isDark={isDark} onToggleTheme={toggle} />
-      <main className="container max-w-3xl py-8">
+      <main className="flex-1 container max-w-3xl py-8 pb-16 md:pb-0">
         <Link to="/" className="inline-flex items-center gap-2 text-sm text-primary hover:underline mb-6">
           <Arrow className="w-4 h-4" />
           {lang === "ar" ? "العودة للرئيسية" : "Back to home"}

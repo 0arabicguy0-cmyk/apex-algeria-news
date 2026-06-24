@@ -43,8 +43,6 @@ const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {
-    // Silently refresh the FCM token for users who already opted in.
-    // Permission prompt itself only happens when the user clicks Enable in the bell.
     autoReregister();
   }, []);
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useArticles } from "@/hooks/useArticles";
 import { categories } from "@/lib/data";
 import Header from "@/components/Header";
@@ -19,8 +19,6 @@ import { HeroSkeleton, StoryCardSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Link, useSearchParams } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-
 import { Fragment } from "react";
 import type { Article } from "@/hooks/useArticles";
 
@@ -53,101 +51,113 @@ export default function Index() {
   const sidebar = filtered.filter((a) => a.id !== featured?.id).slice(0, 3);
   const feedItems = filtered.filter((a) => a.id !== featured?.id && !sidebar.some((s) => s.id === a.id));
 
-  if (loading) {
-    return (
-      <div className="min-h-screen pb-16 md:pb-0">
-        <Header isDark={isDark} onToggleTheme={toggle} />
-        <HeroSkeleton />
-        <div className="container grid md:grid-cols-2 gap-4 pb-8">
-          {Array.from({ length: 4 }).map((_, i) => (
+  const hasArticles = filtered.length > 0;
+  const isLoading = loading;
+
+  // Helper to render skeleton cards for the feed (with optional count)
+  const renderSkeletonFeed = (count = 4) => (
+    <div className="md:grid md:grid-cols-2 md:gap-4">
+      {Array.from({ length: count }).map((_, i) => (
+        <StoryCardSkeleton key={i} />
+      ))}
+    </div>
+  );
+
+  // Helper to render skeleton sidebar
+  const renderSkeletonSidebar = () => (
+    <aside className="hidden md:block space-y-6">
+      <div className="bg-muted/20 rounded-lg p-4">
+        <h3 className="font-bold text-lg mb-4">{t("mostRead")}</h3>
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
             <StoryCardSkeleton key={i} />
           ))}
         </div>
       </div>
-    );
-  }
-
-  if (!featured) {
-    return (
-      <div className="min-h-screen pb-16 md:pb-0">
-        <Header isDark={isDark} onToggleTheme={toggle} />
-        <BreakingTicker />
-        <CategoryTabs active={activeCategory} onChange={setActive} />
-        <div className="container py-20 text-center">
-          <p className="text-muted-foreground">{t("noArticlesInCat")}</p>
-        </div>
-        <Footer />
-        <BottomNav />
-      </div>
-    );
-  }
+    </aside>
+  );
 
   return (
-    <div className="min-h-screen pb-16 md:pb-0 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col transition-colors duration-300">
       <SEO
         title={activeCategory === "all" ? undefined : (lang === "en" ? categories.find(c=>c.key===activeCategory)?.labelEn : categories.find(c=>c.key===activeCategory)?.label)}
         keywords={lang === "en" ? "Algeria news, Arab news, world news, politics, sports, economy" : "أخبار الجزائر, أخبار عربية, أخبار دولية, سياسة, رياضة, اقتصاد"}
       />
-      <Helmet>
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": [
-            { "@type": "NewsMediaOrganization", name: "Apex News DZ", url: "https://apex-algeria-news.lovable.app/", logo: "https://apex-algeria-news.lovable.app/icon-512.png" },
-            { "@type": "WebSite", name: "Apex News DZ", url: "https://apex-algeria-news.lovable.app/", inLanguage: lang === "en" ? "en" : "ar", potentialAction: { "@type": "SearchAction", target: "https://apex-algeria-news.lovable.app/search?q={search_term_string}", "query-input": "required name=search_term_string" } }
-          ]
-        })}</script>
-      </Helmet>
       <Header isDark={isDark} onToggleTheme={toggle} />
       <BreakingTicker />
       <CategoryTabs active={activeCategory} onChange={setActive} />
 
-      <main id="main-content">
+      <main id="main-content" className="flex-1 pb-16 md:pb-0">
         <h1 className="sr-only">{lang === "en" ? "Apex News DZ — Latest news from Algeria and the world" : "أبكس نيوز الجزائر — آخر الأخبار من الجزائر والعالم"}</h1>
-      <PageTransition>
-        <HeroSection featured={featured} sidebar={sidebar} />
+        <PageTransition>
+          {/* Hero Section – show skeleton if loading or no articles */}
+          {isLoading || !hasArticles ? (
+            <HeroSkeleton />
+          ) : (
+            <HeroSection featured={featured} sidebar={sidebar} />
+          )}
 
-        <div className="container"><AdBanner variant="leaderboard" /></div>
+          <div className="container"><AdBanner variant="leaderboard" /></div>
 
-        <WeatherPrayerWidget />
+          {/* Weather & Prayer – always visible */}
+          <WeatherPrayerWidget />
 
-        <ContinueReading />
+          <ContinueReading />
 
-        <section className="container pb-8">
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <div className="flex items-baseline justify-between mb-2">
-                <h2 className="font-bold text-lg text-foreground">
-                  {activeCategory === "all"
-                    ? t("latestNews")
-                    : (() => {
-                        const cat = categories.find((c) => c.key === activeCategory);
-                        return lang === "en" ? cat?.labelEn : cat?.label;
-                      })()}
-                </h2>
-                {activeCategory !== "all" && (
-                  <Link to={`/topic/${activeCategory}`} className="text-xs text-primary hover:underline">
-                    {t("viewSection")}
-                  </Link>
+          <section className="container pb-8">
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Left column – feed */}
+              <div className="md:col-span-2">
+                <div className="flex items-baseline justify-between mb-2">
+                  <h2 className="font-bold text-lg text-foreground">
+                    {activeCategory === "all"
+                      ? t("latestNews")
+                      : (() => {
+                          const cat = categories.find((c) => c.key === activeCategory);
+                          return lang === "en" ? cat?.labelEn : cat?.label;
+                        })()}
+                  </h2>
+                  {activeCategory !== "all" && !isLoading && hasArticles && (
+                    <Link to={`/topic/${activeCategory}`} className="text-xs text-primary hover:underline">
+                      {t("viewSection")}
+                    </Link>
+                  )}
+                </div>
+
+                {/* Feed content */}
+                {isLoading ? (
+                  renderSkeletonFeed(4)
+                ) : !hasArticles ? (
+                  <>
+                    <div className="text-center py-4">
+                      <p className="text-muted-foreground">{t("noArticlesInCat")}</p>
+                    </div>
+                    {renderSkeletonFeed(4)}
+                  </>
+                ) : feedItems.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-6 text-center">{t("noMoreArticles")}</p>
+                ) : (
+                  <div className="md:grid md:grid-cols-2 md:gap-4">
+                    {feedItems.map((article, i) => (
+                      <FeedItem key={article.id} article={article} index={i} />
+                    ))}
+                  </div>
                 )}
               </div>
-              <div className="md:grid md:grid-cols-2 md:gap-4">
-                {feedItems.map((article, i) => (
-                  <FeedItem key={article.id} article={article} index={i} />
-                ))}
-              </div>
-              {feedItems.length === 0 && (
-                <p className="text-sm text-muted-foreground py-6 text-center">{t("noMoreArticles")}</p>
+
+              {/* Right column – MostRead (skeleton if loading or empty) */}
+              {isLoading || !hasArticles ? (
+                renderSkeletonSidebar()
+              ) : (
+                <aside className="hidden md:block space-y-6">
+                  <MostRead />
+                </aside>
               )}
             </div>
 
-            <aside className="hidden md:block space-y-6">
-              <MostRead />
-            </aside>
-          </div>
-
-          <NewsletterSignup />
-        </section>
-      </PageTransition>
+            <NewsletterSignup />
+          </section>
+        </PageTransition>
       </main>
 
       <Footer />

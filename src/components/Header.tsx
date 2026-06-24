@@ -16,15 +16,31 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const tapsRef = useRef<number[]>([]);
+  const timeoutRef = useRef<number | undefined>();
 
   const handleLogoTap = () => {
     const now = Date.now();
+    // Keep only taps within the last 3 seconds
     tapsRef.current = [...tapsRef.current.filter((t) => now - t < 3000), now];
-    console.log(tapsRef.current.length);
-    if (tapsRef.current.length >= 5) {
-      tapsRef.current = [];
-      navigate("/admin/login");
+
+    // Clear any pending navigation
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
+
+    // Wait a short moment to allow multiple taps to accumulate
+    timeoutRef.current = window.setTimeout(() => {
+      const recent = tapsRef.current.filter((t) => Date.now() - t < 3000);
+      if (recent.length >= 5) {
+        // Five taps → admin login
+        tapsRef.current = [];
+        navigate("/admin/login");
+      } else {
+        // Single (or few) taps → home page
+        navigate("/");
+      }
+      timeoutRef.current = undefined;
+    }, 250);
   };
 
   return (
