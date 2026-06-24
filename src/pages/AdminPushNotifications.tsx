@@ -72,9 +72,10 @@ export default function AdminPushNotifications() {
       <div className="bg-muted/40 border border-border rounded-xl p-4 text-sm text-muted-foreground max-w-2xl">
         <p className="mb-2 font-medium text-foreground">ℹ️ ملاحظات هامة:</p>
         <ul className="list-disc pr-5 space-y-1">
-          <li>الإشعارات الفورية تعمل فقط بعد نشر التطبيق (Publish) على دومين حقيقي.</li>
-          <li>لا تعمل داخل معاينة Lovable لأنها تُحمّل في إطار iframe.</li>
-          <li>على iOS، يجب على المستخدم تثبيت التطبيق أولاً (iOS 16.4+).</li>
+          <li>الإشعارات الفورية تعمل فقط بعد نشر التطبيق على دومين حقيقي (HTTPS).</li>
+          <li>يجب على المستخدم تثبيت التطبيق (PWA) وقبول الإشعارات أولاً.</li>
+          <li>على iOS، يحتاج المستخدم إلى iOS 16.4+ وإضافة التطبيق إلى الشاشة الرئيسية.</li>
+          <li>تأكد من تعيين مفاتيح VAPID في إعدادات Edge Function.</li>
         </ul>
       </div>
     </div>

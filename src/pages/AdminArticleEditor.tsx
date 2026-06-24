@@ -6,13 +6,27 @@ import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { categories } from "@/lib/data";
-import { ArrowRight, ArrowLeft, ClipboardCheck, CheckCircle2, Upload, Loader2, X } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowLeft,
+  ClipboardCheck,
+  CheckCircle2,
+  Upload,
+  Loader2,
+  X,
+} from "lucide-react";
 
 const categoryOptions = categories.filter((c) => c.key !== "all");
 
@@ -47,19 +61,35 @@ export default function AdminArticleEditor() {
   const handleImageUpload = async (file: File) => {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      toast({ title: isRTL ? "ملف غير صالح" : "Invalid file", description: isRTL ? "يرجى اختيار صورة" : "Please choose an image", variant: "destructive" });
+      toast({
+        title: isRTL ? "ملف غير صالح" : "Invalid file",
+        description: isRTL ? "يرجى اختيار صورة" : "Please choose an image",
+        variant: "destructive",
+      });
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast({ title: isRTL ? "حجم الصورة كبير" : "File too large", description: isRTL ? "الحد الأقصى 5 ميغابايت" : "Max 5MB", variant: "destructive" });
+      toast({
+        title: isRTL ? "حجم الصورة كبير" : "File too large",
+        description: isRTL ? "الحد الأقصى 5 ميغابايت" : "Max 5MB",
+        variant: "destructive",
+      });
       return;
     }
     setUploading(true);
     const ext = file.name.split(".").pop() || "jpg";
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("article-images").upload(path, file, { cacheControl: "3600", upsert: false });
+    const path = `${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)}.${ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("article-images")
+      .upload(path, file, { cacheControl: "3600", upsert: false });
     if (upErr) {
-      toast({ title: "Error", description: upErr.message, variant: "destructive" });
+      toast({
+        title: "Error",
+        description: upErr.message,
+        variant: "destructive",
+      });
       setUploading(false);
       return;
     }
@@ -73,10 +103,18 @@ export default function AdminArticleEditor() {
     if (isNew || !id) return;
     let cancelled = false;
     (async () => {
-      const { data, error } = await supabase.from("articles").select("*").eq("id", id).maybeSingle();
+      const { data, error } = await supabase
+        .from("articles")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
       if (cancelled) return;
       if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
         setLoading(false);
         return;
       }
@@ -94,14 +132,19 @@ export default function AdminArticleEditor() {
       }
       setLoading(false);
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [id, isNew, toast]);
 
   const selectedCategory = categoryOptions.find((c) => c.key === categoryKey);
 
   const requireTitle = () => {
     if (!title.trim()) {
-      toast({ title: isRTL ? "العنوان مطلوب" : "Title is required", variant: "destructive" });
+      toast({
+        title: isRTL ? "العنوان مطلوب" : "Title is required",
+        variant: "destructive",
+      });
       return false;
     }
     return true;
@@ -117,7 +160,10 @@ export default function AdminArticleEditor() {
     image_url: imageUrl.trim() || null,
     is_breaking: isBreaking,
     is_featured: isFeatured,
-    tags: tagsInput.split(",").map((s) => s.trim()).filter(Boolean),
+    tags: tagsInput
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean),
     status: nextStatus,
     published_at: nextStatus === "published" ? new Date().toISOString() : null,
   });
@@ -127,38 +173,46 @@ export default function AdminArticleEditor() {
     const wasPublished = status === "published";
     const payload = buildPayload(nextStatus);
     let articleId = id && id !== "new" ? id : null;
-    if (isNew) {
-      const { data, error } = await supabase.from("articles").insert(payload).select("id").single();
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-        return;
-      }
-      articleId = data?.id ?? null;
-    } else if (id) {
-      const { error } = await supabase.from("articles").update(payload).eq("id", id);
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-        return;
-      }
-    }
-    toast({
-      title: nextStatus === "published"
-        ? (isRTL ? "تم النشر" : "Published")
-        : (isRTL ? "تم حفظ المسودة" : "Draft saved"),
-    });
 
-    // Fire-and-forget FCM push when an article transitions to published.
-    if (nextStatus === "published" && !wasPublished && articleId) {
-      supabase.functions
-        .invoke("fcm-send-article", { body: { article_id: articleId } })
-        .then(({ data, error }) => {
-          if (error) {
-            toast({
-              title: isRTL ? "تعذّر إرسال الإشعار" : "Push notification failed",
-              description: error.message,
-              variant: "destructive",
-            });
-          } else if (data?.sent != null) {
+    try {
+      if (isNew) {
+        const { data, error } = await supabase
+          .from("articles")
+          .insert(payload)
+          .select("id")
+          .single();
+        if (error) throw error;
+        articleId = data?.id ?? null;
+      } else if (id) {
+        const { error } = await supabase
+          .from("articles")
+          .update(payload)
+          .eq("id", id);
+        if (error) throw error;
+      }
+
+      toast({
+        title:
+          nextStatus === "published"
+            ? isRTL
+              ? "تم النشر"
+              : "Published"
+            : isRTL
+            ? "تم حفظ المسودة"
+            : "Draft saved",
+      });
+
+      // Fire-and-forget FCM push – handle errors silently
+      if (nextStatus === "published" && !wasPublished && articleId) {
+        try {
+          const { data, error } = await supabase.functions.invoke(
+            "fcm-send-article",
+            {
+              body: { article_id: articleId },
+            }
+          );
+          if (error) throw error;
+          if (data?.sent != null) {
             toast({
               title: isRTL ? "تم إرسال الإشعارات" : "Notifications sent",
               description: isRTL
@@ -166,27 +220,59 @@ export default function AdminArticleEditor() {
                 : `Sent to ${data.sent} subscribers`,
             });
           }
-        });
-    }
+        } catch (notifErr: any) {
+          console.error("FCM notification failed:", notifErr);
+          toast({
+            title: isRTL
+              ? "تعذر إرسال الإشعارات"
+              : "Could not send notifications",
+            description: isRTL
+              ? "نُشر المقال، لكن الإشعارات لم تصل. يمكنك المحاولة لاحقاً."
+              : "Article published, but notifications failed. You can retry later.",
+            variant: "default", // Use a neutral/warning style
+          });
+        }
+      }
 
-    navigate("/admin/articles");
+      navigate("/admin/articles");
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const BackIcon = isRTL ? ArrowRight : ArrowLeft;
 
   if (loading) {
-    return <div className="text-muted-foreground">{isRTL ? "جارٍ التحميل..." : "Loading..."}</div>;
+    return (
+      <div className="text-muted-foreground">
+        {isRTL ? "جارٍ التحميل..." : "Loading..."}
+      </div>
+    );
   }
 
   return (
     <div className="max-w-3xl">
-      <button onClick={() => navigate("/admin/articles")} className="flex items-center gap-1 text-sm text-muted-foreground mb-4 hover:text-foreground">
-        <BackIcon className="w-4 h-4" /> {isRTL ? "العودة للمقالات" : "Back to articles"}
+      <button
+        onClick={() => navigate("/admin/articles")}
+        className="flex items-center gap-1 text-sm text-muted-foreground mb-4 hover:text-foreground"
+      >
+        <BackIcon className="w-4 h-4" />{" "}
+        {isRTL ? "العودة للمقالات" : "Back to articles"}
       </button>
 
       <div className="flex items-center gap-3 mb-6 flex-wrap">
         <h1 className="text-2xl font-bold text-foreground">
-          {isNew ? (isRTL ? "مقال جديد" : "New article") : (isRTL ? "تعديل المقال" : "Edit article")}
+          {isNew
+            ? isRTL
+              ? "مقال جديد"
+              : "New article"
+            : isRTL
+            ? "تعديل المقال"
+            : "Edit article"}
         </h1>
         <Badge variant={statusBadgeVariant[status]}>
           {status === "published" ? t("statusPublished") : t("statusDraft")}
@@ -196,27 +282,50 @@ export default function AdminArticleEditor() {
       <div className="space-y-5">
         <div>
           <Label>{isRTL ? "العنوان" : "Title"}</Label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} className="mt-1" />
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="mt-1"
+          />
         </div>
         <div>
           <Label>{isRTL ? "المقتطف" : "Excerpt"}</Label>
-          <Textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} className="mt-1" rows={2} />
+          <Textarea
+            value={excerpt}
+            onChange={(e) => setExcerpt(e.target.value)}
+            className="mt-1"
+            rows={2}
+          />
         </div>
         <div>
           <Label>{isRTL ? "المحتوى" : "Content"}</Label>
-          <Textarea value={body} onChange={(e) => setBody(e.target.value)} className="mt-1 min-h-[300px] leading-relaxed" />
+          <Textarea
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            className="mt-1 min-h-[300px] leading-relaxed"
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <Label>{isRTL ? "الكاتب" : "Author"}</Label>
-            <Input value={author} onChange={(e) => setAuthor(e.target.value)} className="mt-1" />
+            <Input
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              className="mt-1"
+            />
           </div>
           <div>
             <Label>{isRTL ? "التصنيف" : "Category"}</Label>
             <Select value={categoryKey} onValueChange={setCategoryKey}>
-              <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="mt-1">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
-                {categoryOptions.map((c) => <SelectItem key={c.key} value={c.key}>{c.label}</SelectItem>)}
+                {categoryOptions.map((c) => (
+                  <SelectItem key={c.key} value={c.key}>
+                    {c.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -226,7 +335,11 @@ export default function AdminArticleEditor() {
           <div className="mt-1 space-y-2">
             {imageUrl ? (
               <div className="relative w-full max-w-md rounded-lg overflow-hidden border border-border group">
-                <img src={imageUrl} alt="preview" className="w-full h-48 object-cover" />
+                <img
+                  src={imageUrl}
+                  alt="preview"
+                  className="w-full h-48 object-cover"
+                />
                 <button
                   type="button"
                   onClick={() => setImageUrl("")}
@@ -244,7 +357,9 @@ export default function AdminArticleEditor() {
                   <>
                     <Upload className="w-6 h-6 text-muted-foreground mb-2" />
                     <span className="text-sm text-muted-foreground">
-                      {isRTL ? "اضغط لرفع صورة (حد أقصى 5 ميغا)" : "Click to upload (max 5MB)"}
+                      {isRTL
+                        ? "اضغط لرفع صورة (حد أقصى 5 ميغا)"
+                        : "Click to upload (max 5MB)"}
                     </span>
                   </>
                 )}
@@ -252,20 +367,36 @@ export default function AdminArticleEditor() {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                  onChange={(e) =>
+                    e.target.files?.[0] && handleImageUpload(e.target.files[0])
+                  }
                   disabled={uploading}
                 />
               </label>
             )}
             <details className="text-xs text-muted-foreground">
-              <summary className="cursor-pointer">{isRTL ? "أو استخدم رابطًا خارجيًا" : "Or use an external URL"}</summary>
-              <Input value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} className="mt-2" dir="ltr" placeholder="https://..." />
+              <summary className="cursor-pointer">
+                {isRTL ? "أو استخدم رابطًا خارجيًا" : "Or use an external URL"}
+              </summary>
+              <Input
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+                className="mt-2"
+                dir="ltr"
+                placeholder="https://..."
+              />
             </details>
           </div>
         </div>
         <div>
-          <Label>{isRTL ? "الوسوم (مفصولة بفاصلة)" : "Tags (comma separated)"}</Label>
-          <Input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} className="mt-1" />
+          <Label>
+            {isRTL ? "الوسوم (مفصولة بفاصلة)" : "Tags (comma separated)"}
+          </Label>
+          <Input
+            value={tagsInput}
+            onChange={(e) => setTagsInput(e.target.value)}
+            className="mt-1"
+          />
         </div>
         <div className="flex items-center gap-6 flex-wrap">
           <div className="flex items-center gap-3">
@@ -288,7 +419,8 @@ export default function AdminArticleEditor() {
             </Button>
             {isPublisher && (
               <Button onClick={() => save("published")} className="gap-1">
-                <CheckCircle2 className="w-4 h-4" /> {isRTL ? "نشر الآن" : "Publish now"}
+                <CheckCircle2 className="w-4 h-4" />{" "}
+                {isRTL ? "نشر الآن" : "Publish now"}
               </Button>
             )}
           </div>
