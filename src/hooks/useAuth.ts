@@ -2,77 +2,129 @@ import { useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-const ADMIN_FLAG_KEY = "apex_admin_session";
-
-function readAdminFlag(): boolean {
-  try {
-    return localStorage.getItem(ADMIN_FLAG_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
+type AuthError = {
+  message: string;
+};
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean>(readAdminFlag());
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Track Supabase session for any data-layer calls that still rely on it.
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
-      setSession(sess);
-      setUser(sess?.user ?? null);
-    });
+  const checkAdminRole = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .single();
 
-    supabase.auth.getSession().then(({ data: { session: sess } }) => {
-      setSession(sess);
-      setUser(sess?.user ?? null);
+    if (error) return false;
+
+    return data?.role === "admin";
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        const admin = await checkAdminRole(session.user.id);
+        setIsAdmin(admin);
+
+        if (!admin) {
+          await supabase.auth.signOut();
+          setSession(null);
+          setUser(null);
+        }
+      }
+
+      setLoading(false);
+    };
+
+    initialize();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session);
+      setUser(session?.user ??null);
+
+      if (session?.user) {
+        const admin = await checkAdminRole(session.user.id);
+        setIsAdmin(admin);
+
+        if (!admin) {
+          await supabase.auth.signOut();
+          setSession(null);
+          setUser(null);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+
       setLoading(false);
     });
 
-    // Keep isAdmin in sync across tabs.
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === ADMIN_FLAG_KEY) setIsAdmin(readAdminFlag());
-    };
-    window.addEventListener("storage", onStorage);
-
-    return () => {
-      sub.subscription.unsubscribe();
-      window.removeEventListener("storage", onStorage);
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async (username: string, password: string) => {
-    const expectedUser = import.meta.env.VITE_ADMIN_USERNAME;
-    const expectedPass = import.meta.env.VITE_ADMIN_PASSWORD;
-    if (!expectedUser || !expectedPass) {
-      return { error: { message: "Admin credentials are not configured." } as { message: string } };
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) return { error };
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return {
+        error: {
+          message: "Unable to retrieve authenticated user.",
+        } satisfies AuthError,
+      };
     }
-    if (username === expectedUser && password === expectedPass) {
-      try {
-        localStorage.setItem(ADMIN_FLAG_KEY, "1");
-      } catch {
-        /* ignore */
-      }
-      setIsAdmin(true);
-      return { error: null };
+
+    const admin = await checkAdminRole(user.id);
+
+    if (!admin) {
+      await supabase.auth.signOut();
+
+      return {
+        error: {
+          message: "You are not authorized to access the admin panel.",
+        } satisfies AuthError,
+      };
     }
-    return { error: { message: "Invalid username or password." } as { message: string } };
+
+    setUser(user);
+    setIsAdmin(true);
+
+    return { error: null };
   };
 
   const signOut = async () => {
-    try {
-      localStorage.removeItem(ADMIN_FLAG_KEY);
-    } catch {
-      /* ignore */
-    }
-    setIsAdmin(false);
     await supabase.auth.signOut();
+
+    setUser(null);
+    setSession(null);
+    setIsAdmin(false);
   };
 
-  // signUp kept as a no-op for any legacy callers; registration is disabled.
-  const signUp = async () => ({ error: { message: "Registration is disabled." } as { message: string } });
+  const signUp = async () => ({
+    error: {
+      message: "Registration is disabled.",
+    } satisfies AuthError,
+  });
 
   return {
     user,
@@ -84,7 +136,7 @@ export function useAuth() {
     role: isAdmin ? "admin" : null,
     loading,
     signIn,
-    signUp,
     signOut,
+    signUp,
   };
 }

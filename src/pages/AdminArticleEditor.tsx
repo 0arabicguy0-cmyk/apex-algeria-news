@@ -170,27 +170,31 @@ export default function AdminArticleEditor() {
 
   const save = async (nextStatus: Status) => {
     if (!requireTitle()) return;
+  
     const wasPublished = status === "published";
     const payload = buildPayload(nextStatus);
     let articleId = id && id !== "new" ? id : null;
-
+  
     try {
+      // Save article
       if (isNew) {
         const { data, error } = await supabase
           .from("articles")
           .insert(payload)
           .select("id")
           .single();
+  
         if (error) throw error;
-        articleId = data?.id ?? null;
+        articleId = data.id;
       } else if (id) {
         const { error } = await supabase
           .from("articles")
           .update(payload)
           .eq("id", id);
+  
         if (error) throw error;
       }
-
+  
       toast({
         title:
           nextStatus === "published"
@@ -201,39 +205,50 @@ export default function AdminArticleEditor() {
             ? "تم حفظ المسودة"
             : "Draft saved",
       });
-
-      // Fire-and-forget FCM push – handle errors silently
+  
+      // Send push notification only when publishing for the first time
       if (nextStatus === "published" && !wasPublished && articleId) {
         try {
           const { data, error } = await supabase.functions.invoke(
             "fcm-send-article",
             {
-              body: { article_id: articleId },
+              body: {
+                article_id: articleId,
+              },
             }
           );
-          if (error) throw error;
+  
+          if (error) {
+            console.error("FCM invoke error:", error);
+  
+            if ("context" in error && error.context) {
+              console.error(await error.context.text());
+            }
+  
+            throw error;
+          }
+  
+          console.log("FCM response:", data);
+  
           if (data?.sent != null) {
             toast({
               title: isRTL ? "تم إرسال الإشعارات" : "Notifications sent",
               description: isRTL
-                ? `أُرسل إلى ${data.sent} مشترك`
+                ? `تم الإرسال إلى ${data.sent} مشترك`
                 : `Sent to ${data.sent} subscribers`,
             });
           }
         } catch (notifErr: any) {
           console.error("FCM notification failed:", notifErr);
-          toast({
-            title: isRTL
-              ? "تعذر إرسال الإشعارات"
-              : "Could not send notifications",
-            description: isRTL
-              ? "نُشر المقال، لكن الإشعارات لم تصل. يمكنك المحاولة لاحقاً."
-              : "Article published, but notifications failed. You can retry later.",
-            variant: "default", // Use a neutral/warning style
-          });
+  
+          if ("context" in notifErr && notifErr.context) {
+            console.error(await notifErr.context.text());
+          }
+  
+          // Don't prevent navigation if notifications fail.
         }
       }
-
+  
       navigate("/admin/articles");
     } catch (err: any) {
       toast({
@@ -241,6 +256,8 @@ export default function AdminArticleEditor() {
         description: err.message,
         variant: "destructive",
       });
+  
+      console.error(err);
     }
   };
 

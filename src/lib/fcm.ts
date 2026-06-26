@@ -92,6 +92,7 @@ export async function enableFcm(): Promise<EnableResult> {
   // (Telegram-web style) instead of an OS notification. Falls back to
   // the SW notification if the page is hidden when a message arrives.
   onMessage(messaging, (payload) => {
+    console.log("🔥 onMessage fired", payload);
     const d = payload.data || {};
     const isBreaking = d.is_breaking === "true";
     const prefix = isBreaking ? "🚨 عاجل" : "📰 خبر جديد";
@@ -117,6 +118,7 @@ export async function enableFcm(): Promise<EnableResult> {
     const openArticle = () => {
       try {
         // Use SPA navigation when same-origin path.
+        toast.dismiss();
         if (url.startsWith("/")) {
           window.history.pushState({}, "", url);
           window.dispatchEvent(new PopStateEvent("popstate"));
@@ -136,7 +138,11 @@ export async function enableFcm(): Promise<EnableResult> {
     } as const;
 
     if (isBreaking) toast.error(title, opts);
-    else toast(title, opts);
+    else {
+      console.log("TOAST CREATED", new Date().toISOString());
+console.trace();
+toast(title, opts);
+    }
   });
 
 

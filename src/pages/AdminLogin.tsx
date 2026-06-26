@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/useLanguage";
 
 export default function AdminLogin() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { signIn, isAdmin, loading } = useAuth();
@@ -24,7 +24,7 @@ export default function AdminLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await signIn(username, password);
+    const { error } = await signIn(email, password);
     setSubmitting(false);
 
     if (error) {
@@ -52,22 +52,25 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="username" className="text-xs text-muted-foreground">
-              {isRTL ? "اسم المستخدم" : "Username"}
+            <Label htmlFor="email" className="text-xs text-muted-foreground">
+              Email
             </Label>
+
             <Input
-              id="username"
-              type="text"
-              autoComplete="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               dir="ltr"
               className="mt-1"
             />
           </div>
           <div>
-            <Label htmlFor="password" className="text-xs text-muted-foreground">{t("password")}</Label>
+            <Label htmlFor="password" className="text-xs text-muted-foreground">
+              {t("password")}
+            </Label>
             <Input
               id="password"
               type="password"
@@ -84,6 +87,13 @@ export default function AdminLogin() {
             {submitting ? t("signingIn") : t("signIn")}
           </Button>
         </form>
+        <div className="mt-6">
+          <Button asChild variant="outline" className="w-full">
+            <Link to="/">
+              {isRTL ? "← العودة إلى الصفحة الرئيسية" : "← Back to Home"}
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

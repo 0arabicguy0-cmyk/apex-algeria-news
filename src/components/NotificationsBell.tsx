@@ -29,16 +29,6 @@ export default function NotificationsBell() {
   const [perm, setPerm] = useState<NotificationPermission | "unsupported">(getPermissionState());
   const [pushOn, setPushOn] = useState(isPushSubscribedLocally());
   const [pushBusy, setPushBusy] = useState(false);
-  const [lastSeenCount, setLastSeenCount] = useState(items.length);
-
-  // Toast when a new notification arrives
-  useEffect(() => {
-    if (items.length > lastSeenCount) {
-      const latest = items[0];
-      toast({ title: latest.title, description: latest.body });
-    }
-    setLastSeenCount(items.length);
-  }, [items.length, lastSeenCount, items, toast]);
 
   // Close on Escape
   useEffect(() => {

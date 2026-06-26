@@ -26,7 +26,11 @@ function FeedItem({ article, index }: { article: Article; index: number }) {
   return (
     <Fragment>
       <StoryCard article={article} index={index} />
-      {index === 3 && <div className="md:col-span-2"><AdBanner variant="inline" /></div>}
+      {index === 3 && (
+        <div className="md:col-span-2">
+          <AdBanner variant="inline" />
+        </div>
+      )}
     </Fragment>
   );
 }
@@ -34,22 +38,29 @@ function FeedItem({ article, index }: { article: Article; index: number }) {
 export default function Index() {
   const { isDark, toggle } = useTheme();
   const { t, lang } = useLanguage();
+  const isRTL = lang === "ar";
   const [params, setParams] = useSearchParams();
   const activeCategory = params.get("cat") || "all";
   const { articles, loading } = useArticles();
 
   const setActive = (key: string) => {
-    if (key === "all") setParams({}); else setParams({ cat: key });
+    if (key === "all") setParams({});
+    else setParams({ cat: key });
   };
 
   const filtered = useMemo(
-    () => activeCategory === "all" ? articles : articles.filter((a) => a.categoryKey === activeCategory),
+    () =>
+      activeCategory === "all"
+        ? articles
+        : articles.filter((a) => a.categoryKey === activeCategory),
     [articles, activeCategory]
   );
 
   const featured = filtered.find((a) => a.isFeatured) || filtered[0];
   const sidebar = filtered.filter((a) => a.id !== featured?.id).slice(0, 3);
-  const feedItems = filtered.filter((a) => a.id !== featured?.id && !sidebar.some((s) => s.id === a.id));
+  const feedItems = filtered.filter(
+    (a) => a.id !== featured?.id && !sidebar.some((s) => s.id === a.id)
+  );
 
   const hasArticles = filtered.length > 0;
   const isLoading = loading;
@@ -80,24 +91,54 @@ export default function Index() {
   return (
     <div className="min-h-screen flex flex-col transition-colors duration-300">
       <SEO
-        title={activeCategory === "all" ? undefined : (lang === "en" ? categories.find(c=>c.key===activeCategory)?.labelEn : categories.find(c=>c.key===activeCategory)?.label)}
-        keywords={lang === "en" ? "Algeria news, Arab news, world news, politics, sports, economy" : "أخبار الجزائر, أخبار عربية, أخبار دولية, سياسة, رياضة, اقتصاد"}
+        title={
+          activeCategory === "all"
+            ? undefined
+            : lang === "en"
+            ? categories.find((c) => c.key === activeCategory)?.labelEn
+            : categories.find((c) => c.key === activeCategory)?.label
+        }
+        keywords={
+          lang === "en"
+            ? "Algeria news, Arab news, world news, politics, sports, economy"
+            : "أخبار الجزائر, أخبار عربية, أخبار دولية, سياسة, رياضة, اقتصاد"
+        }
       />
       <Header isDark={isDark} onToggleTheme={toggle} />
       <BreakingTicker />
       <CategoryTabs active={activeCategory} onChange={setActive} />
 
       <main id="main-content" className="flex-1 pb-16 md:pb-0">
-        <h1 className="sr-only">{lang === "en" ? "Apex News DZ — Latest news from Algeria and the world" : "أبكس نيوز الجزائر — آخر الأخبار من الجزائر والعالم"}</h1>
+        <h1 className="sr-only">
+          {lang === "en"
+            ? "Apex News DZ — Latest news from Algeria and the world"
+            : "أبكس نيوز الجزائر — آخر الأخبار من الجزائر والعالم"}
+        </h1>
         <PageTransition>
           {/* Hero Section – show skeleton if loading or no articles */}
-          {isLoading || !hasArticles ? (
+          {isLoading ? (
             <HeroSkeleton />
-          ) : (
+          ) : hasArticles ? (
             <HeroSection featured={featured} sidebar={sidebar} />
+          ) : (
+            <section className="container py-16">
+              <div className="rounded-xl border border-dashed border-border bg-card p-10 text-center">
+                <div className="text-5xl mb-4">📰</div>
+                <h2 className="text-2xl font-bold">
+                  {isRTL ? "لا توجد مقالات بعد" : "No articles yet"}
+                </h2>
+                <p className="mt-2 text-muted-foreground">
+                  {isRTL
+                    ? "سيتم نشر أول الأخبار قريبًا، تابعنا لاحقًا."
+                    : "We'll publish our first stories soon. Please check back later."}
+                </p>
+              </div>
+            </section>
           )}
 
-          <div className="container"><AdBanner variant="leaderboard" /></div>
+          <div className="container">
+            <AdBanner variant="leaderboard" />
+          </div>
 
           {/* Weather & Prayer – always visible */}
           <WeatherPrayerWidget />
@@ -113,12 +154,17 @@ export default function Index() {
                     {activeCategory === "all"
                       ? t("latestNews")
                       : (() => {
-                          const cat = categories.find((c) => c.key === activeCategory);
+                          const cat = categories.find(
+                            (c) => c.key === activeCategory
+                          );
                           return lang === "en" ? cat?.labelEn : cat?.label;
                         })()}
                   </h2>
                   {activeCategory !== "all" && !isLoading && hasArticles && (
-                    <Link to={`/topic/${activeCategory}`} className="text-xs text-primary hover:underline">
+                    <Link
+                      to={`/topic/${activeCategory}`}
+                      className="text-xs text-primary hover:underline"
+                    >
                       {t("viewSection")}
                     </Link>
                   )}
@@ -128,14 +174,23 @@ export default function Index() {
                 {isLoading ? (
                   renderSkeletonFeed(4)
                 ) : !hasArticles ? (
-                  <>
-                    <div className="text-center py-4">
-                      <p className="text-muted-foreground">{t("noArticlesInCat")}</p>
-                    </div>
-                    {renderSkeletonFeed(4)}
-                  </>
+                  <div className="rounded-xl border border-dashed border-border bg-card p-8 text-center">
+                    <div className="text-4xl mb-3">📰</div>
+                    <h3 className="font-semibold text-lg">
+                      {isRTL
+                        ? "لا توجد أخبار منشورة بعد"
+                        : "No published articles yet"}
+                    </h3>
+                    <p className="mt-2 text-muted-foreground">
+                      {isRTL
+                        ? "سيظهر المحتوى هنا بمجرد نشر أول مقال."
+                        : "Articles will appear here once the first story is published."}
+                    </p>
+                  </div>
                 ) : feedItems.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-6 text-center">{t("noMoreArticles")}</p>
+                  <p className="text-sm text-muted-foreground py-6 text-center">
+                    {t("noMoreArticles")}
+                  </p>
                 ) : (
                   <div className="md:grid md:grid-cols-2 md:gap-4">
                     {feedItems.map((article, i) => (
@@ -146,11 +201,19 @@ export default function Index() {
               </div>
 
               {/* Right column – MostRead (skeleton if loading or empty) */}
-              {isLoading || !hasArticles ? (
+              {isLoading ? (
                 renderSkeletonSidebar()
-              ) : (
+              ) : hasArticles ? (
                 <aside className="hidden md:block space-y-6">
                   <MostRead />
+                </aside>
+              ) : (
+                <aside className="hidden md:block">
+                  <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center text-muted-foreground">
+                    {isRTL
+                      ? "لا توجد مقالات لعرض الأكثر قراءة."
+                      : "No articles available yet."}
+                  </div>
                 </aside>
               )}
             </div>
