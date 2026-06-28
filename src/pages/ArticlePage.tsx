@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useArticle, useRelated, trackView } from "@/hooks/useArticles";
 import Header from "@/components/Header";
@@ -27,7 +27,27 @@ import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useSubscription } from "@/hooks/useSubscription";
 import { authorSlug } from "@/lib/mockStore";
-import { ArrowUp, Eye } from "lucide-react";
+import { ArrowUp, Eye, Play } from "lucide-react";
+
+// ---- Utility: extract YouTube ID ----
+function getYoutubeId(url: string): string | null {
+  const patterns = [
+    /youtu\.be\/([^?&/]+)/,
+    /youtube\.com\/watch\?v=([^?&/]+)/,
+    /youtube\.com\/shorts\/([^?&/]+)/,
+    /youtube\.com\/embed\/([^?&/]+)/,
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+}
+
+function getYoutubeEmbedUrl(url: string): string | null {
+  const id = getYoutubeId(url);
+  return id ? `https://www.youtube.com/embed/${id}` : null;
+}
 
 export default function ArticlePage() {
   const { id } = useParams();
@@ -37,12 +57,30 @@ export default function ArticlePage() {
   const related = useRelated(article);
   const { active: isSubscribed } = useSubscription();
 
+  const [showYoutubeEmbed, setShowYoutubeEmbed] = useState(false);
+
+  // Track view on load
   useEffect(() => {
     if (article) trackView(article.id);
   }, [article?.id]);
 
-  useEffect(() => { window.scrollTo(0, 0); }, [id]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
+  // ---- Helpers ----
+  const isVideo = (art: typeof article) =>
+    art?.media_type === "youtube" || art?.media_type === "video";
+
+  const getDisplayImage = (art: typeof article) => {
+    if (!art) return "";
+    if (isVideo(art)) {
+      return art.video_thumbnail || art.image_url || art.image || "";
+    }
+    return art.image_url || art.image || "";
+  };
+
+  // ---- Render ----
   if (loading) {
     return (
       <div className="min-h-screen">
@@ -56,28 +94,42 @@ export default function ArticlePage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <p className="text-foreground">{t("articleNotFound")}</p>
-        <Link to="/" className="text-primary hover:underline">{t("backToHome")}</Link>
+        <Link to="/" className="text-primary hover:underline">
+          {t("backToHome")}
+        </Link>
       </div>
     );
   }
-
 
   const paragraphs = article.body.split("\n\n");
   const renderParagraph = (p: string, i: number) => {
     const trimmed = p.trim();
     if (trimmed.startsWith("## ")) {
       return (
-        <h2 key={i} id={`h-${i}`} className="text-xl md:text-2xl font-bold text-foreground mt-8 mb-4 scroll-mt-20">
+        <h2
+          key={i}
+          id={`h-${i}`}
+          className="text-xl md:text-2xl font-bold text-foreground mt-8 mb-4 scroll-mt-20"
+        >
           {trimmed.replace(/^##\s+/, "")}
         </h2>
       );
     }
     return (
-      <p key={i} className={i === 0 ? "first-letter:text-4xl first-letter:font-bold first-letter:text-primary first-letter:float-right first-letter:ml-2 first-letter:mt-1" : ""}>
+      <p
+        key={i}
+        className={
+          i === 0
+            ? "first-letter:text-4xl first-letter:font-bold first-letter:text-primary first-letter:float-right first-letter:ml-2 first-letter:mt-1"
+            : ""
+        }
+      >
         {p}
       </p>
     );
   };
+
+  const seoImage = isVideo(article) ? article.video_thumbnail || article.image : article.image;
 
   return (
     <div className="min-h-screen pb-20 md:pb-0 transition-colors duration-300">
@@ -86,151 +138,265 @@ export default function ArticlePage() {
         description={article.excerpt}
         keywords={article.tags.join(", ")}
         author={article.author}
-        image={article.image}
+        image={seoImage}
         type="article"
       />
       <Helmet>
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "NewsArticle",
-          headline: article.title,
-          description: article.excerpt,
-          image: [article.image],
-          datePublished: article.date,
-          author: { "@type": "Person", name: article.author },
-          publisher: { "@type": "NewsMediaOrganization", name: "Apex News DZ", logo: { "@type": "ImageObject", url: "https://apex-algeria-news.lovable.app/icon-512.png" } },
-          mainEntityOfPage: typeof window !== "undefined" ? window.location.href : `https://apex-algeria-news.lovable.app/article/${article.id}`,
-          articleSection: article.category,
-          keywords: article.tags.join(", "),
-        })}</script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            headline: article.title,
+            description: article.excerpt,
+            image: [seoImage],
+            datePublished: article.date,
+            author: { "@type": "Person", name: article.author },
+            publisher: {
+              "@type": "NewsMediaOrganization",
+              name: "Apex News DZ",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://apex-algeria-news.lovable.app/icon-512.png",
+              },
+            },
+            mainEntityOfPage:
+              typeof window !== "undefined"
+                ? window.location.href
+                : `https://apex-algeria-news.lovable.app/article/${article.id}`,
+            articleSection: article.category,
+            keywords: article.tags.join(", "),
+          })}
+        </script>
       </Helmet>
+
       <ReadingProgress />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
       <main id="main-content">
-      <PageTransition>
-        <div className="w-full h-56 md:h-96 overflow-hidden relative">
-          <Link to="/" className="absolute top-4 right-4 z-10 bg-background/80 backdrop-blur-sm text-foreground px-3 py-1.5 rounded-full text-sm font-medium hover:bg-background transition-colors flex items-center gap-1.5 shadow-sm">
-            <ArrowUp className="w-4 h-4 rotate-45" />
-            {t("backToHome")}
-          </Link>
-          <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
-        </div>
+        <PageTransition>
+          {/* ---------- Hero ---------- */}
+          <div className="w-full h-56 md:h-96 overflow-hidden relative">
+            <Link
+              to="/"
+              className="absolute top-4 right-4 z-10 bg-background/80 backdrop-blur-sm text-foreground px-3 py-1.5 rounded-full text-sm font-medium hover:bg-background transition-colors flex items-center gap-1.5 shadow-sm"
+            >
+              <ArrowUp className="w-4 h-4 rotate-45" />
+              {t("backToHome")}
+            </Link>
 
-      <article className="container max-w-3xl py-6">
-        <div className="flex items-center gap-2 flex-wrap">
-          <Link to={`/topic/${article.categoryKey}`} className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold hover:opacity-90">
-            {article.category}
-          </Link>
-          {article.isPremium && <PremiumBadge />}
-          <FactCheckBadge label={article.factCheck} />
-        </div>
+            {isVideo(article) && article.media_type === "youtube" ? (
+              // ---- YouTube ----
+              <div className="w-full h-full bg-black">
+                {showYoutubeEmbed ? (
+                  <iframe
+                    src={getYoutubeEmbedUrl(article.video_url) + "?autoplay=1"}
+                    title="YouTube video"
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <div
+                    className="relative w-full h-full cursor-pointer group"
+                    onClick={() => setShowYoutubeEmbed(true)}
+                  >
+                    <img
+                      src={getDisplayImage(article)}
+                      alt={article.title}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition">
+                      <div className="bg-red-600/90 rounded-full p-4 md:p-6 shadow-lg group-hover:scale-110 transition">
+                        <Play className="w-8 h-8 md:w-12 md:h-12 text-white fill-white" />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : isVideo(article) && article.media_type === "video" ? (
+              // ---- Uploaded video ----
+              <div className="w-full h-full bg-black">
+                <video
+                  src={article.video_url}
+                  poster={article.video_thumbnail || article.image}
+                  controls
+                  className="w-full h-full object-cover"
+                  playsInline
+                />
+              </div>
+            ) : (
+              // ---- Image fallback ----
+              <div className="w-full h-full">
+                <img
+                  src={getDisplayImage(article)}
+                  alt={article.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+          </div>
 
-        <h1 className="text-2xl md:text-4xl font-bold text-foreground mt-4 mb-4 leading-snug">
-          {article.title}
-        </h1>
-
-        {article.excerpt && (
-          <p className="text-base md:text-lg text-muted-foreground mb-4 leading-relaxed">
-            {article.excerpt}
-          </p>
-        )}
-
-        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
-          <Link to={`/author/${authorSlug(article.author)}`} className="flex items-center gap-3 text-sm text-muted-foreground group">
-            <div className="w-9 h-9 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-sm group-hover:bg-primary/30 transition-colors">
-              {article.author[0]}
+          {/* ---------- Article content ---------- */}
+          <article className="container max-w-3xl py-6">
+            {/* Metadata */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <Link
+                to={`/topic/${article.categoryKey}`}
+                className="bg-dz-green text-accent-foreground px-3 py-1 rounded-sm text-xs font-bold hover:opacity-90"
+              >
+                {article.category}
+              </Link>
+              {article.isPremium && <PremiumBadge />}
+              <FactCheckBadge label={article.factCheck} />
+              {isVideo(article) && (
+                <span className="bg-blue-600 text-white px-2 py-0.5 rounded-sm text-xs font-bold flex items-center gap-1">
+                  <Play className="w-3 h-3 fill-current" />
+                  فيديو
+                </span>
+              )}
             </div>
-            <div>
-              <span className="font-medium text-foreground group-hover:text-primary transition-colors">{article.author}</span>
-              <div className="text-xs flex items-center gap-2">
-                <span>{article.date}</span>
-                <span>·</span>
-                <span>{article.readTime} {t("readDuration")}</span>
-                <span>·</span>
-                <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {article.viewCount}</span>
+
+            <h1 className="text-2xl md:text-4xl font-bold text-foreground mt-4 mb-4 leading-snug">
+              {article.title}
+            </h1>
+
+            {article.excerpt && (
+              <p className="text-base md:text-lg text-muted-foreground mb-4 leading-relaxed">
+                {article.excerpt}
+              </p>
+            )}
+
+            {/* Author & actions */}
+            <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+              <Link
+                to={`/author/${authorSlug(article.author)}`}
+                className="flex items-center gap-3 text-sm text-muted-foreground group"
+              >
+                <div className="w-9 h-9 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold text-sm group-hover:bg-primary/30 transition-colors">
+                  {article.author[0]}
+                </div>
+                <div>
+                  <span className="font-medium text-foreground group-hover:text-primary transition-colors">
+                    {article.author}
+                  </span>
+                  <div className="text-xs flex items-center gap-2">
+                    <span>{article.date}</span>
+                    <span>·</span>
+                    <span>
+                      {article.readTime} {t("readDuration")}
+                    </span>
+                    <span>·</span>
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" /> {article.viewCount}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+              <div className="flex items-center gap-2">
+                <FontSizeControl />
+                <AudioPlayer text={`${article.title}. ${article.body}`} />
+                <TranslateButton title={article.title} body={article.body} />
+                <ShareMenu title={article.title} />
+                <BookmarkButton articleId={article.id} />
               </div>
             </div>
-          </Link>
-          <div className="flex items-center gap-2">
-            <FontSizeControl />
-            <AudioPlayer text={`${article.title}. ${article.body}`} />
-            <TranslateButton title={article.title} body={article.body} />
-            <ShareMenu title={article.title} />
-            <BookmarkButton articleId={article.id} />
-          </div>
-        </div>
 
-        <div className="mb-8 pb-4 border-b border-border" />
+            <div className="mb-8 pb-4 border-b border-border" />
 
-        <TableOfContents body={article.body} />
+            <TableOfContents body={article.body} />
 
-        {article.isPremium && !isSubscribed ? (
-          <>
-            <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6 max-h-[420px] overflow-hidden relative">
-              {paragraphs.slice(0, 2).map(renderParagraph)}
+            {/* Paywall or full content */}
+            {article.isPremium && !isSubscribed ? (
+              <>
+                <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6 max-h-[420px] overflow-hidden relative">
+                  {paragraphs.slice(0, 2).map(renderParagraph)}
+                </div>
+                <Paywall />
+              </>
+            ) : (
+              <>
+                <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6">
+                  {paragraphs.flatMap((p, i) => {
+                    const node = renderParagraph(p, i);
+                    return i === 1
+                      ? [node, <AdBanner key={`ad-${i}`} variant="inline" />]
+                      : [node];
+                  })}
+                </div>
+                <SourceCitations sources={article.sources} />
+              </>
+            )}
+
+            {/* Tags */}
+            {article.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-8 pt-4 border-t border-border">
+                {article.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    to={`/search?tag=${encodeURIComponent(tag)}`}
+                    className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs hover:bg-primary/10 hover:text-primary transition-colors"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            <AuthorCard name={article.author} />
+
+            <div className="mt-8">
+              <Reactions articleId={article.id} />
             </div>
-            <Paywall />
-          </>
-        ) : (
-          <>
-            <div className="prose-article text-foreground text-lg leading-[1.8] space-y-6">
-              {paragraphs.flatMap((p, i) => {
-                const node = renderParagraph(p, i);
-                return i === 1
-                  ? [node, <AdBanner key={`ad-${i}`} variant="inline" />]
-                  : [node];
-              })}
-            </div>
 
-            <SourceCitations sources={article.sources} />
-          </>
-        )}
+            <AdBanner variant="leaderboard" />
 
-        {article.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-8 pt-4 border-t border-border">
-            {article.tags.map((tag) => (
-              <Link key={tag} to={`/search?tag=${encodeURIComponent(tag)}`} className="px-3 py-1 bg-muted text-muted-foreground rounded-full text-xs hover:bg-primary/10 hover:text-primary transition-colors">
-                #{tag}
-              </Link>
-            ))}
-          </div>
-        )}
+            {/* Related */}
+            {related.length > 0 && (
+              <div className="mt-10">
+                <h3 className="font-bold text-lg text-foreground mb-4">
+                  {t("relatedArticles")}
+                </h3>
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                  {related.map((r) => (
+                    <Link
+                      key={r.id}
+                      to={`/article/${r.id}`}
+                      className="flex-shrink-0 w-56 group"
+                    >
+                      <div className="rounded-lg overflow-hidden mb-2">
+                        <img
+                          src={r.image}
+                          alt={r.title}
+                          loading="lazy"
+                          className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                      <span className="text-[11px] font-bold text-dz-green">
+                        {r.category}
+                      </span>
+                      <h4 className="text-sm font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                        {r.title}
+                      </h4>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
-        <AuthorCard name={article.author} />
-
-        <div className="mt-8">
-          <Reactions articleId={article.id} />
-        </div>
-
-        <AdBanner variant="leaderboard" />
-
-        {related.length > 0 && (
-          <div className="mt-10">
-            <h3 className="font-bold text-lg text-foreground mb-4">{t("relatedArticles")}</h3>
-            <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-              {related.map((r) => (
-                <Link key={r.id} to={`/article/${r.id}`} className="flex-shrink-0 w-56 group">
-                  <div className="rounded-lg overflow-hidden mb-2">
-                    <img src={r.image} alt={r.title} loading="lazy" className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500" />
-                  </div>
-                  <span className="text-[11px] font-bold text-dz-green">{r.category}</span>
-                  <h4 className="text-sm font-bold text-foreground line-clamp-2 group-hover:text-primary transition-colors">{r.title}</h4>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <Comments articleId={article.id} />
-      </article>
-      </PageTransition>
+            <Comments articleId={article.id} />
+          </article>
+        </PageTransition>
       </main>
 
+      {/* Mobile floating bar */}
       <div className="md:hidden fixed bottom-14 right-0 left-0 bg-background/95 backdrop-blur-md border-t border-border flex items-center justify-around h-12 z-40">
         <ShareMenu title={article.title} />
         <BookmarkButton articleId={article.id} />
-        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="text-muted-foreground" aria-label="أعلى الصفحة">
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="text-muted-foreground"
+          aria-label="أعلى الصفحة"
+        >
           <ArrowUp className="w-5 h-5" />
         </button>
       </div>

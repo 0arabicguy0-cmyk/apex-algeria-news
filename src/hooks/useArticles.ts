@@ -22,6 +22,10 @@ export interface Article {
   tags: string[];
   viewCount: number;
   publishedAt: string | null;
+  // 🆕 New fields for video support
+  media_type?: "image" | "youtube" | "video";
+  video_url?: string | null;
+  video_thumbnail?: string | null;
 }
 
 const FALLBACK_IMG = "/placeholder.svg";
@@ -64,6 +68,10 @@ export function mapArticle(a: DbArticle): Article {
     tags: a.tags ?? [],
     viewCount: a.view_count ?? 0,
     publishedAt: a.published_at,
+    // 🆕 Map the new columns
+    media_type: (a.media_type as Article["media_type"]) || "image",
+    video_url: a.video_url ?? null,
+    video_thumbnail: a.video_thumbnail ?? null,
   };
 }
 
