@@ -38,6 +38,7 @@ import CommandPalette from "./components/CommandPalette";
 import BackToTop from "./components/BackToTop";
 import { useEffect } from "react";
 import { autoReregister } from "@/lib/fcm";
+import AdminSettings from "./pages/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => {
           <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="/advertise" element={<AdvertisePage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin" element={<AdminDashboard />}>
             <Route path="articles" element={<AdminArticles />} />
             <Route path="articles/:id" element={<AdminArticleEditor />} />

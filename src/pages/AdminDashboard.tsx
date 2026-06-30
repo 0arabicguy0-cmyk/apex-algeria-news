@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { feedbackApi, subscribe } from "@/lib/mockStore";
-import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign, PlusCircle, TrendingUp, Eye, Clock, ArrowUpRight } from "lucide-react";
+import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign, PlusCircle, TrendingUp, Eye, Clock, ArrowUpRight, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -65,6 +65,11 @@ export default function AdminDashboard() {
     { to: "/admin/push", icon: Bell, label: "الإشعارات الفورية" },
     { to: "/admin/corrections", icon: AlertCircle, label: "سجل التصحيحات" },
     { to: "/admin/ads", icon: BadgeDollarSign, label: "الإعلانات", badge: stats.pendingAds },
+    {
+      to: "/admin/settings",
+      icon: Settings,
+      label: "الإعدادات",
+    }
   ];
 
   const NavList = ({ onNavigate }: { onNavigate?: () => void }) => (
