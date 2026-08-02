@@ -75,9 +75,9 @@ export default function ArticlePage() {
   const getDisplayImage = (art: typeof article) => {
     if (!art) return "";
     if (isVideo(art)) {
-      return art.video_thumbnail || art.image_url || art.image || "";
+      return art.video_thumbnail || art.image || "";
     }
-    return art.image_url || art.image || "";
+    return art.image || "";
   };
 
   // ---- Render ----

@@ -69,9 +69,9 @@ export function mapArticle(a: DbArticle): Article {
     viewCount: a.view_count ?? 0,
     publishedAt: a.published_at,
     // 🆕 Map the new columns
-    media_type: (a.media_type as Article["media_type"]) || "image",
-    video_url: a.video_url ?? null,
-    video_thumbnail: a.video_thumbnail ?? null,
+    media_type: ((a as any).media_type as Article["media_type"]) || "image",
+    video_url: (a as any).video_url ?? null,
+    video_thumbnail: (a as any).video_thumbnail ?? null,
   };
 }
 
