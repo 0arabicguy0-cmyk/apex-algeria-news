@@ -16,10 +16,10 @@ export default function HeroSection({ featured, sidebar }: HeroSectionProps) {
 
     // If it's a video, use video_thumbnail if available, else fallback to image_url or image
     if (article.media_type === "youtube" || article.media_type === "video") {
-      imageUrl = article.video_thumbnail || article.image_url || article.image;
+      imageUrl = article.video_thumbnail || article.image;
     } else {
       // For images: prefer image_url, fallback to image
-      imageUrl = article.image_url || article.image;
+      imageUrl = article.image;
     }
 
     // If still empty, use a transparent placeholder to avoid broken images

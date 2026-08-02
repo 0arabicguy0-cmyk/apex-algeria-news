@@ -27,7 +27,7 @@ export function useVideosByIds(ids: string[]): Video[] {
     let cancelled = false;
 
     const fetchVideos = async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("videos")
         .select("*")
         .in("id", ids);
@@ -41,14 +41,14 @@ export function useVideosByIds(ids: string[]): Video[] {
       }
 
       // Map each video to include type: 'video'
-      const typedVideos = (data || []).map((video) => ({
+      const typedVideos = (data || []).map((video: any) => ({
         ...video,
         type: "video" as const,
         // ensure thumbnail field exists; fallback to a default if needed
         thumbnail: video.thumbnail || video.image || "",
       }));
 
-      setVideos(typedVideos);
+      setVideos(typedVideos as Video[]);
     };
 
     fetchVideos();

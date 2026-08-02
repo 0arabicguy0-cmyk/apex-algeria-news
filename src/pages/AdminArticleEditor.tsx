@@ -177,10 +177,6 @@ export default function AdminArticleEditor() {
       .upload(path, file, {
         cacheControl: "3600",
         upsert: false,
-        onProgress: (progress) => {
-          const percent = Math.round((progress.loaded / progress.total) * 100);
-          setThumbnailProgress(percent);
-        },
       });
 
     if (upErr) throw upErr;
@@ -221,10 +217,6 @@ export default function AdminArticleEditor() {
       .upload(path, file, {
         cacheControl: "3600",
         upsert: false,
-        onProgress: (progress) => {
-          const percent = Math.round((progress.loaded / progress.total) * 100);
-          setImageProgress(percent);
-        },
       });
 
     if (upErr) {
@@ -280,10 +272,6 @@ export default function AdminArticleEditor() {
       .upload(path, file, {
         cacheControl: "3600",
         upsert: false,
-        onProgress: (progress) => {
-          const percent = Math.round((progress.loaded / progress.total) * 100);
-          setThumbnailProgress(percent);
-        },
       });
 
     if (upErr) {
@@ -339,10 +327,6 @@ export default function AdminArticleEditor() {
       .upload(path, file, {
         cacheControl: "3600",
         upsert: false,
-        onProgress: (progress) => {
-          const percent = Math.round((progress.loaded / progress.total) * 100);
-          setVideoProgress(percent);
-        },
       });
 
     if (upErr) {
@@ -427,9 +411,9 @@ export default function AdminArticleEditor() {
         setAuthor(data.author ?? "");
         setCategoryKey(data.category_key);
         setImageUrl(data.image_url ?? "");
-        setMediaType(data.media_type ?? "image");
-        setVideoUrl(data.video_url ?? "");
-        setVideoThumbnail(data.video_thumbnail ?? "");
+        setMediaType(((data as any).media_type as any) ?? "image");
+        setVideoUrl((data as any).video_url ?? "");
+        setVideoThumbnail((data as any).video_thumbnail ?? "");
         setIsBreaking(data.is_breaking);
         setIsFeatured(data.is_featured);
         setTagsInput((data.tags ?? []).join(", "));
@@ -490,7 +474,7 @@ export default function AdminArticleEditor() {
       if (isNew) {
         const { data, error } = await supabase
           .from("articles")
-          .insert(payload)
+          .insert(payload as any)
           .select("id")
           .single();
         if (error) throw error;
@@ -498,7 +482,7 @@ export default function AdminArticleEditor() {
       } else if (id) {
         const { error } = await supabase
           .from("articles")
-          .update(payload)
+          .update(payload as any)
           .eq("id", id);
         if (error) throw error;
         articleId = id;

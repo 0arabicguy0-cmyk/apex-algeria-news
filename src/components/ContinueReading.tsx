@@ -7,7 +7,14 @@ import { useMemo } from "react";
 import { useVideosByIds } from "@/hooks/useVideos";
 
 export default function ContinueReading() {
-  const history = useReadingHistory(); // now returns [{ type: 'article'|'video', id: string }]
+  const rawHistory = useReadingHistory();
+  const history = useMemo(
+    () =>
+      rawHistory.map((h: any) =>
+        typeof h === "string" ? { type: "article" as const, id: h } : h
+      ),
+    [rawHistory]
+  );
   const { t } = useLanguage();
 
   // Separate IDs by type
@@ -28,8 +35,8 @@ export default function ContinueReading() {
   const items = useMemo(() => {
     const all = [...articles, ...videos];
     // Build a map for quick lookup
-    const map = {};
-    all.forEach((item) => {
+    const map: Record<string, any> = {};
+    all.forEach((item: any) => {
       // Each item must have a unique key: type+id
       const key = `${item.type}-${item.id}`;
       map[key] = item;
@@ -63,11 +70,11 @@ export default function ContinueReading() {
         </button>
       </div>
       <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
-        {items.map((item, i) => {
+        {items.map((item: any, i: number) => {
           const isVideo = item.type === "video";
           const linkTo = isVideo ? `/video/${item.id}` : `/article/${item.id}`;
           const thumbnail = item.thumbnail || item.image; // adjust field names as needed
-          const category = item.category || (isVideo ? t("video") : t("article"));
+          const category = item.category || (isVideo ? "فيديو" : "مقال");
 
           return (
             <Link
