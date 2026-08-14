@@ -10,6 +10,7 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   const checkAdminRole = async (userId: string) => {
@@ -23,6 +24,18 @@ export function useAuth() {
 
     return data?.role === "admin";
   };
+
+  const refreshAdminExists = async () => {
+    const { data, error } = await supabase.rpc("admin_exists");
+    if (error) return null;
+    setAdminExists(Boolean(data));
+    return Boolean(data);
+  };
+
+  useEffect(() => {
+    refreshAdminExists();
+  }, []);
+
 
   useEffect(() => {
     const initialize = async () => {
@@ -120,16 +133,47 @@ export function useAuth() {
     setIsAdmin(false);
   };
 
-  const signUp = async () => ({
-    error: {
-      message: "Registration is disabled.",
-    } satisfies AuthError,
-  });
+  const signUp = async (email: string, password: string) => {
+    // Only allowed while no admin account exists yet (first-time setup).
+    const exists = await refreshAdminExists();
+
+    if (exists !== false) {
+      return {
+        error: {
+          message: "Registration is disabled — an administrator already exists.",
+        } satisfies AuthError,
+        needsEmailConfirmation: false,
+      };
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { emailRedirectTo: `${window.location.origin}/admin/login` },
+    });
+
+    if (error) return { error, needsEmailConfirmation: false };
+
+    await refreshAdminExists();
+
+    if (!data.session) {
+      return { error: null, needsEmailConfirmation: true };
+    }
+
+    const admin = data.user ? await checkAdminRole(data.user.id) : false;
+    setUser(data.user ?? null);
+    setSession(data.session);
+    setIsAdmin(admin);
+
+    return { error: null, needsEmailConfirmation: false };
+  };
 
   return {
     user,
     session,
     isAdmin,
+    adminExists,
+    refreshAdminExists,
     isPublisher: isAdmin,
     isReviewer: isAdmin,
     isJournalist: isAdmin,
@@ -137,6 +181,7 @@ export function useAuth() {
     loading,
     signIn,
     signOut,
+
     signUp,
   };
 }
