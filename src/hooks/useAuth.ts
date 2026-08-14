@@ -26,11 +26,28 @@ export function useAuth() {
   };
 
   const refreshAdminExists = async () => {
+    // Preferred: security-definer RPC (works even when user_roles is locked down).
     const { data, error } = await supabase.rpc("admin_exists");
-    if (error) return null;
-    setAdminExists(Boolean(data));
-    return Boolean(data);
+
+    if (!error) {
+      const exists = Boolean(data);
+      setAdminExists(exists);
+      return exists;
+    }
+
+    // Fallback for projects where the RPC hasn't been created yet:
+    // try a direct read, and if that is blocked too assume no admin (setup mode).
+    const { data: rows, error: rowsError } = await supabase
+      .from("user_roles")
+      .select("id")
+      .eq("role", "admin")
+      .limit(1);
+
+    const exists = rowsError ? false : (rows?.length ?? 0) > 0;
+    setAdminExists(exists);
+    return exists;
   };
+
 
   useEffect(() => {
     refreshAdminExists();
