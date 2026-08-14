@@ -117,18 +117,26 @@ export default function AdminLogin() {
             <Input
               id="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete={isSetup ? "new-password" : "current-password"}
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={isSetup ? 8 : undefined}
               dir="ltr"
               className="mt-1"
             />
           </div>
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? t("signingIn") : t("signIn")}
+          <Button type="submit" className="w-full" disabled={submitting || adminExists === null}>
+            {submitting
+              ? isSetup
+                ? isRTL ? "جارٍ الإنشاء..." : "Creating..."
+                : t("signingIn")
+              : isSetup
+                ? isRTL ? "إنشاء الحساب" : "Create account"
+                : t("signIn")}
           </Button>
+
         </form>
         <div className="mt-6">
           <Button asChild variant="outline" className="w-full">
