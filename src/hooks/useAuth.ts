@@ -10,6 +10,7 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   const checkAdminRole = async (userId: string) => {
@@ -23,6 +24,18 @@ export function useAuth() {
 
     return data?.role === "admin";
   };
+
+  const refreshAdminExists = async () => {
+    const { data, error } = await supabase.rpc("admin_exists");
+    if (error) return null;
+    setAdminExists(Boolean(data));
+    return Boolean(data);
+  };
+
+  useEffect(() => {
+    refreshAdminExists();
+  }, []);
+
 
   useEffect(() => {
     const initialize = async () => {
