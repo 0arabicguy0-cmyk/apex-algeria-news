@@ -104,13 +104,22 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+const signIn = async (email: string, password: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email.trim(),
+    password,
+  });
 
-    if (error) return { error };
+  console.log("Supabase login:", {
+    data,
+    error,
+    message: error?.message,
+    status: error?.status,
+    code: error?.code,
+  });
+
+  if (error) return { error };
+
 
     const {
       data: { user },
