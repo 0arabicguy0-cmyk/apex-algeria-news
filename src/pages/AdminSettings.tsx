@@ -1,235 +1,194 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import {
-  UserCog,
-  Mail,
-  Lock,
-  Shield,
-  Loader2,
-} from "lucide-react";
+import { UserCog, User, Lock, Shield, Loader2 } from "lucide-react";
 
 export default function AdminSettings() {
   const { toast } = useToast();
+  const { username, updateUsername, updatePassword, loading } = useAuth();
 
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
-  }, []);
-
-  const [email, setEmail] = useState(user?.email || "");
+  const [newUsername, setNewUsername] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [loadingEmail, setLoadingEmail] = useState(false);
-  const [loadingPassword, setLoadingPassword] = useState(false);
+  const [savingUsername, setSavingUsername] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
 
-  const updateEmail = async () => {
-    setLoadingEmail(true);
+  useEffect(() => {
+    if (username) setNewUsername(username);
+  }, [username]);
 
-    const { error } = await supabase.auth.updateUser({
-      email,
-    });
-
-    setLoadingEmail(false);
+  const handleUsername = async () => {
+    setSavingUsername(true);
+    const { error } = await updateUsername(newUsername);
+    setSavingUsername(false);
 
     if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast({ title: "خطأ", description: error.message, variant: "destructive" });
       return;
     }
 
     toast({
-      title: "Email updated",
-      description:
-        "A confirmation email has been sent to your new address.",
+      title: "تم تحديث اسم المستخدم",
+      description: "استخدم الاسم الجديد في تسجيل الدخول القادم.",
     });
   };
 
-  const updatePassword = async () => {
-    if (newPassword.length < 8) {
+  const handlePassword = async () => {
+    if (newPassword.length < 6) {
       toast({
-        title: "Password too short",
-        description: "Minimum 8 characters.",
+        title: "كلمة المرور قصيرة",
+        description: "الحد الأدنى 6 أحرف.",
         variant: "destructive",
       });
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        variant: "destructive",
-      });
+      toast({ title: "كلمتا المرور غير متطابقتين", variant: "destructive" });
       return;
     }
 
-    setLoadingPassword(true);
-
-    const { error } = await supabase.auth.updateUser({
-      password: newPassword,
-    });
-
-    setLoadingPassword(false);
+    setSavingPassword(true);
+    const { error } = await updatePassword(currentPassword, newPassword);
+    setSavingPassword(false);
 
     if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast({ title: "خطأ", description: error.message, variant: "destructive" });
       return;
     }
 
+    setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
-
-    toast({
-      title: "Password updated successfully",
-    });
+    toast({ title: "تم تحديث كلمة المرور بنجاح" });
   };
 
   return (
     <div className="max-w-3xl space-y-6">
-
       <div>
         <h1 className="text-3xl font-bold flex items-center gap-2">
           <UserCog className="w-7 h-7" />
           إعدادات الحساب
         </h1>
-
         <p className="text-muted-foreground mt-1">
-          إدارة البريد الإلكتروني وكلمة المرور.
+          إدارة اسم المستخدم وكلمة المرور.
         </p>
       </div>
 
-      {/* Email */}
-
+      {/* Username */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Mail className="w-5 h-5" />
-            البريد الإلكتروني
+            <User className="w-5 h-5" />
+            اسم المستخدم
           </CardTitle>
         </CardHeader>
-
         <CardContent className="space-y-4">
-
           <div>
-            <Label>البريد الإلكتروني</Label>
-
-            <Input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <Label>اسم المستخدم الحالي</Label>
+            <Input value={username ?? ""} readOnly dir="ltr" className="mt-1 bg-muted" />
           </div>
-
+          <div>
+            <Label htmlFor="new-username">اسم المستخدم الجديد</Label>
+            <Input
+              id="new-username"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              dir="ltr"
+              className="mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              3–32 حرفًا، أحرف وأرقام و . _ - فقط
+            </p>
+          </div>
           <Button
-            onClick={updateEmail}
-            disabled={loadingEmail}
+            onClick={handleUsername}
+            disabled={savingUsername || loading || !newUsername.trim() || newUsername.trim() === username}
           >
-            {loadingEmail && (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            )}
-
-            تحديث البريد الإلكتروني
+            {savingUsername && <Loader2 className="w-4 h-4 me-2 animate-spin" />}
+            تحديث اسم المستخدم
           </Button>
-
         </CardContent>
       </Card>
 
       {/* Password */}
-
       <Card>
-
         <CardHeader>
-
           <CardTitle className="flex items-center gap-2">
-
             <Lock className="w-5 h-5" />
-
             تغيير كلمة المرور
-
           </CardTitle>
-
         </CardHeader>
-
         <CardContent className="space-y-4">
-
           <div>
-
-            <Label>كلمة المرور الجديدة</Label>
-
+            <Label htmlFor="current-password">كلمة المرور الحالية</Label>
             <Input
+              id="current-password"
               type="password"
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              dir="ltr"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="new-password">كلمة المرور الجديدة</Label>
+            <Input
+              id="new-password"
+              type="password"
+              autoComplete="new-password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              dir="ltr"
+              className="mt-1"
             />
-
           </div>
-
           <div>
-
-            <Label>تأكيد كلمة المرور</Label>
-
+            <Label htmlFor="confirm-password">تأكيد كلمة المرور</Label>
             <Input
+              id="confirm-password"
               type="password"
+              autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              dir="ltr"
+              className="mt-1"
             />
-
           </div>
-
           <Button
-            onClick={updatePassword}
-            disabled={loadingPassword}
+            onClick={handlePassword}
+            disabled={savingPassword || !currentPassword || !newPassword}
           >
-            {loadingPassword && (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            )}
-
+            {savingPassword && <Loader2 className="w-4 h-4 me-2 animate-spin" />}
             تحديث كلمة المرور
           </Button>
-
         </CardContent>
-
       </Card>
 
       {/* Account info */}
-
       <Card>
-
         <CardHeader>
-
           <CardTitle className="flex items-center gap-2">
-
             <Shield className="w-5 h-5" />
-
             معلومات الحساب
-
           </CardTitle>
-
         </CardHeader>
-
         <CardContent className="space-y-2 text-sm">
           <p>
-            <strong>البريد:</strong>{" "}
-            {user?.email}
+            <strong>اسم المستخدم:</strong> {username ?? "—"}
+          </p>
+          <p>
+            <strong>الصلاحية:</strong> مسؤول
           </p>
         </CardContent>
-
       </Card>
-
     </div>
   );
 }

@@ -83,6 +83,30 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_accounts: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
       article_comments: {
         Row: {
           article_id: string
@@ -439,6 +463,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      resolve_admin_login: { Args: { _username: string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
