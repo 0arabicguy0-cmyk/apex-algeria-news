@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -10,6 +10,7 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
   const [adminExists, setAdminExists] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,48 +19,38 @@ export function useAuth() {
       .from("user_roles")
       .select("role")
       .eq("user_id", userId)
-      .single();
+      .eq("role", "admin")
+      .maybeSingle();
 
     if (error) return false;
 
     return data?.role === "admin";
   };
 
-  const refreshAdminExists = async () => {
-    // Preferred: security-definer RPC (works even when user_roles is locked down).
-    const { data, error } = await supabase.rpc("admin_exists");
+  const loadUsername = async (userId: string) => {
+    const { data } = await supabase
+      .from("admin_accounts")
+      .select("username")
+      .eq("user_id", userId)
+      .maybeSingle();
 
-    if (!error) {
-      const exists = Boolean(data);
-      setAdminExists(exists);
-      return exists;
-    }
-
-    // Fallback for projects where the RPC hasn't been created yet:
-    // try a direct read, and if that is blocked too assume no admin (setup mode).
-    const { data: rows, error: rowsError } = await supabase
-      .from("user_roles")
-      .select("id")
-      .eq("role", "admin")
-      .limit(1);
-
-    const exists = rowsError ? false : (rows?.length ?? 0) > 0;
-    setAdminExists(exists);
-    return exists;
+    setUsername(data?.username ?? null);
+    return data?.username ?? null;
   };
 
+  const refreshAdminExists = useCallback(async () => {
+    const { data, error } = await supabase.rpc("admin_exists");
+    const exists = error ? false : Boolean(data);
+    setAdminExists(exists);
+    return exists;
+  }, []);
 
   useEffect(() => {
     refreshAdminExists();
-  }, []);
-
+  }, [refreshAdminExists]);
 
   useEffect(() => {
-    const initialize = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
+    const applySession = async (session: Session | null) => {
       setSession(session);
       setUser(session?.user ?? null);
 
@@ -67,59 +58,63 @@ export function useAuth() {
         const admin = await checkAdminRole(session.user.id);
         setIsAdmin(admin);
 
-        if (!admin) {
+        if (admin) {
+          await loadUsername(session.user.id);
+        } else {
           await supabase.auth.signOut();
           setSession(null);
           setUser(null);
+          setUsername(null);
         }
+      } else {
+        setIsAdmin(false);
+        setUsername(null);
       }
 
       setLoading(false);
     };
 
-    initialize();
+    supabase.auth.getSession().then(({ data }) => applySession(data.session));
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
-      setUser(session?.user ??null);
-
-      if (session?.user) {
-        const admin = await checkAdminRole(session.user.id);
-        setIsAdmin(admin);
-
-        if (!admin) {
-          await supabase.auth.signOut();
-          setSession(null);
-          setUser(null);
-        }
-      } else {
-        setIsAdmin(false);
-      }
-
-      setLoading(false);
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Defer Supabase calls out of the callback to avoid deadlocks.
+      setTimeout(() => applySession(session), 0);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-const signIn = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: email.trim(),
-    password,
-  });
+  /** Sign in with an application username (mapped to a Supabase Auth account). */
+  const signIn = async (usernameInput: string, password: string) => {
+    const cleaned = usernameInput.trim();
 
-  console.log("Supabase login:", {
-    data,
-    error,
-    message: error?.message,
-    status: error?.status,
-    code: error?.code,
-  });
+    if (!cleaned) {
+      return { error: { message: "Username is required." } satisfies AuthError };
+    }
 
-  if (error) return { error };
+    const { data: authEmail, error: resolveError } = await supabase.rpc(
+      "resolve_admin_login",
+      { _username: cleaned },
+    );
 
+    if (resolveError || !authEmail) {
+      return {
+        error: { message: "Invalid username or password." } satisfies AuthError,
+      };
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: authEmail,
+      password,
+    });
+
+    if (error) {
+      return {
+        error: { message: "Invalid username or password." } satisfies AuthError,
+      };
+    }
 
     const {
       data: { user },
@@ -147,6 +142,7 @@ const signIn = async (email: string, password: string) => {
 
     setUser(user);
     setIsAdmin(true);
+    await loadUsername(user.id);
 
     return { error: null };
   };
@@ -157,47 +153,81 @@ const signIn = async (email: string, password: string) => {
     setUser(null);
     setSession(null);
     setIsAdmin(false);
+    setUsername(null);
   };
 
-  const signUp = async (email: string, password: string) => {
-    // Only allowed while no admin account exists yet (first-time setup).
-    const exists = await refreshAdminExists();
+  /** Change the admin-facing username. Does not touch the Auth email or session. */
+  const updateUsername = async (newUsername: string) => {
+    const cleaned = newUsername.trim();
 
-    if (exists !== false) {
+    if (cleaned.length < 3 || cleaned.length > 32) {
       return {
         error: {
-          message: "Registration is disabled — an administrator already exists.",
+          message: "Username must be between 3 and 32 characters.",
         } satisfies AuthError,
-        needsEmailConfirmation: false,
       };
     }
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}/admin/login` },
-    });
-
-    if (error) return { error, needsEmailConfirmation: false };
-
-    await refreshAdminExists();
-
-    if (!data.session) {
-      return { error: null, needsEmailConfirmation: true };
+    if (!/^[A-Za-z0-9._-]+$/.test(cleaned)) {
+      return {
+        error: {
+          message:
+            "Username may only contain letters, numbers, dot, dash and underscore.",
+        } satisfies AuthError,
+      };
     }
 
-    const admin = data.user ? await checkAdminRole(data.user.id) : false;
-    setUser(data.user ?? null);
-    setSession(data.session);
-    setIsAdmin(admin);
+    if (!user) {
+      return { error: { message: "Not authenticated." } satisfies AuthError };
+    }
 
-    return { error: null, needsEmailConfirmation: false };
+    const { error } = await supabase
+      .from("admin_accounts")
+      .update({ username: cleaned })
+      .eq("user_id", user.id);
+
+    if (error) {
+      const taken = error.code === "23505";
+      return {
+        error: {
+          message: taken ? "This username is already taken." : error.message,
+        } satisfies AuthError,
+      };
+    }
+
+    setUsername(cleaned);
+    return { error: null };
+  };
+
+  /** Change the password through Supabase Auth after verifying the current one. */
+  const updatePassword = async (currentPassword: string, newPassword: string) => {
+    if (!user?.email) {
+      return { error: { message: "Not authenticated." } satisfies AuthError };
+    }
+
+    const { error: verifyError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    });
+
+    if (verifyError) {
+      return {
+        error: { message: "Current password is incorrect." } satisfies AuthError,
+      };
+    }
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+    if (error) return { error: { message: error.message } satisfies AuthError };
+
+    return { error: null };
   };
 
   return {
     user,
     session,
     isAdmin,
+    username,
     adminExists,
     refreshAdminExists,
     isPublisher: isAdmin,
@@ -207,7 +237,7 @@ const signIn = async (email: string, password: string) => {
     loading,
     signIn,
     signOut,
-
-    signUp,
+    updateUsername,
+    updatePassword,
   };
 }
