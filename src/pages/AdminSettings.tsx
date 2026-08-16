@@ -54,6 +54,17 @@ export default function AdminSettings() {
       return;
     }
 
+    if (newPassword === currentPassword) {
+      toast({
+        title: "كلمة المرور الجديدة مطابقة للحالية",
+        description: "اختر كلمة مرور مختلفة.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+
+
     setSavingPassword(true);
     const { error } = await updatePassword(currentPassword, newPassword);
     setSavingPassword(false);
