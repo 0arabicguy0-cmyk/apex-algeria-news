@@ -330,6 +330,60 @@ export type Database = {
           },
         ]
       }
+      dialogues: {
+        Row: {
+          body: string
+          created_at: string
+          excerpt: string
+          guest_name: string
+          guest_title: string
+          id: string
+          image_url: string | null
+          interviewer: string
+          is_featured: boolean
+          published_at: string | null
+          status: string
+          tags: string[]
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          excerpt?: string
+          guest_name?: string
+          guest_title?: string
+          id?: string
+          image_url?: string | null
+          interviewer?: string
+          is_featured?: boolean
+          published_at?: string | null
+          status?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          excerpt?: string
+          guest_name?: string
+          guest_title?: string
+          id?: string
+          image_url?: string | null
+          interviewer?: string
+          is_featured?: boolean
+          published_at?: string | null
+          status?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       fcm_tokens: {
         Row: {
           created_at: string
