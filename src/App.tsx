@@ -77,7 +77,6 @@ const App = () => {
           <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="/advertise" element={<AdvertisePage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/settings" element={<AdminSettings />} />
           <Route path="/admin" element={<AdminDashboard />}>
             <Route path="articles" element={<AdminArticles />} />
             <Route path="articles/:id" element={<AdminArticleEditor />} />
@@ -86,7 +85,8 @@ const App = () => {
             <Route path="comments" element={<AdminComments />} />
             <Route path="newsletter" element={<AdminNewsletter />} />
             <Route path="push" element={<AdminPushNotifications />} />
-            <Route path="corrections" element={<AdminCorrections />} />
+            <Route path="corrections" element={<AdminCorrections />} />         
+            <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="ads" element={<AdminAds />} />
           </Route>
           <Route path="*" element={<NotFound />} />

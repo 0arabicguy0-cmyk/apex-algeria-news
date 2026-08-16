@@ -151,7 +151,7 @@ export default function AdminDashboard() {
       </header>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-56 border-l border-border bg-card min-h-screen flex-col">
+      <aside className="hidden md:flex w-56 border-l border-border bg-card max-h-screen flex-col">
         <SidebarInner />
       </aside>
 
