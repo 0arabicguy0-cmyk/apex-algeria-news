@@ -200,26 +200,68 @@ export function useAuth() {
   };
 
   /** Change the password through Supabase Auth after verifying the current one. */
-  const updatePassword = async (currentPassword: string, newPassword: string) => {
-    if (!user?.email) {
-      return { error: { message: "Not authenticated." } satisfies AuthError };
-    }
-
-    const { error: verifyError } = await supabase.auth.signInWithPassword({
-      email: user.email,
-      password: currentPassword,
-    });
-
-    if (verifyError) {
+  const updatePassword = async (
+    currentPassword: string,
+    newPassword: string,
+  ) => {
+    if (!user) {
       return {
-        error: { message: "Current password is incorrect." } satisfies AuthError,
+        error: { message: "Not authenticated." } satisfies AuthError,
       };
     }
-
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-
-    if (error) return { error: { message: error.message } satisfies AuthError };
-
+  
+    if (!currentPassword || !newPassword) {
+      return {
+        error: {
+          message: "Current password and new password are required.",
+        } satisfies AuthError,
+      };
+    }
+  
+    if (newPassword.length < 6) {
+      return {
+        error: {
+          message: "Password must be at least 6 characters.",
+        } satisfies AuthError,
+      };
+    }
+  
+    if (currentPassword === newPassword) {
+      return {
+        error: {
+          message: "New password must be different from the current password.",
+        } satisfies AuthError,
+      };
+    }
+  
+    const { data, error } = await supabase.functions.invoke(
+      "update-admin-password",
+      {
+        body: {
+          currentPassword,
+          newPassword,
+        },
+      },
+    );
+  
+    if (error) {
+      console.error("Password update failed:", error);
+  
+      return {
+        error: {
+          message: error.message || "Unable to update password.",
+        } satisfies AuthError,
+      };
+    }
+  
+    if (!data?.success) {
+      return {
+        error: {
+          message: data?.message || "Unable to update password.",
+        } satisfies AuthError,
+      };
+    }
+  
     return { error: null };
   };
 
