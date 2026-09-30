@@ -28,18 +28,23 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [{ count: total }, { count: published }, { count: drafts }, viewsRes, adsRes, recentRes] = await Promise.all([
+      const [{ count: total }, { count: published }, { count: drafts }, viewsRes, adsRes, recentRes, dTotalRes, dPubRes] = await Promise.all([
         supabase.from("articles").select("*", { count: "exact", head: true }),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "draft"),
         supabase.from("articles").select("view_count"),
         supabase.from("ad_submissions").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("articles").select("id, title, status, created_at, view_count").order("created_at", { ascending: false }).limit(5),
+        supabase.from("dialogues").select("*", { count: "exact", head: true }),
+        supabase.from("dialogues").select("*", { count: "exact", head: true }).eq("status", "published"),
       ]);
       const totalViews = (viewsRes.data ?? []).reduce((sum, a: any) => sum + (a.view_count ?? 0), 0);
       setArticleStats({ total: total ?? 0, published: published ?? 0, drafts: drafts ?? 0, totalViews });
       setPendingAds(adsRes.count ?? 0);
       setRecentArticles(recentRes.data ?? []);
+      const dTotal = dTotalRes.count ?? 0;
+      const dPub = dPubRes.count ?? 0;
+      setDialogueStats({ total: dTotal, published: dPub, drafts: Math.max(dTotal - dPub, 0) });
     })();
   }, [isAdmin, location.pathname]);
 
