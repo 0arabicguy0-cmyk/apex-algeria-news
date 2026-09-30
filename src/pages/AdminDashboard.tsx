@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [articleStats, setArticleStats] = useState({ total: 0, published: 0, drafts: 0, totalViews: 0 });
   const [pendingAds, setPendingAds] = useState(0);
+  const [dialogueStats, setDialogueStats] = useState({ total: 0, published: 0, drafts: 0 });
   const [recentArticles, setRecentArticles] = useState<Array<{ id: string; title: string; status: string; created_at: string; view_count: number | null }>>([]);
 
   useEffect(() => subscribe(() => force((n) => n + 1)), []);
