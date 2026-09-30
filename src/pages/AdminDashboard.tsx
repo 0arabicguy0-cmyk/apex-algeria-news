@@ -241,7 +241,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Stat cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
               {[
                 { label: "إجمالي المقالات", value: stats.articles, icon: FileText, gradient: "from-blue-500/15 to-blue-500/5", color: "text-blue-600 dark:text-blue-400" },
                 { label: "منشورة", value: stats.published, icon: TrendingUp, gradient: "from-green-500/15 to-green-500/5", color: "text-green-600 dark:text-green-400" },
