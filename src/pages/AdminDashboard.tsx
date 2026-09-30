@@ -62,47 +62,93 @@ export default function AdminDashboard() {
   };
 
   const isExact = location.pathname === "/admin";
-  const navItems = [
-    { to: "/admin/articles", icon: FileText, label: "المقالات" },
-    { to: "/admin/breaking", icon: Megaphone, label: "الأخبار العاجلة" },
-    { to: "/admin/comments", icon: MessageCircle, label: "التعليقات" },
-    { to: "/admin/newsletter", icon: Mail, label: "النشرة" },
-    { to: "/admin/feedback", icon: MessageSquare, label: "الرسائل", badge: stats.unread },
-    { to: "/admin/push", icon: Bell, label: "الإشعارات الفورية" },
-    { to: "/admin/corrections", icon: AlertCircle, label: "سجل التصحيحات" },
-    { to: "/admin/ads", icon: BadgeDollarSign, label: "الإعلانات", badge: stats.pendingAds },
+  const navGroups: Array<{
+    title: string;
+    items: Array<{ to: string; icon: any; label: string; badge?: number; external?: boolean }>;
+  }> = [
     {
-      to: "/admin/settings",
-      icon: Settings,
-      label: "الإعدادات",
-    }
+      title: "إدارة المحتوى",
+      items: [
+        { to: "/admin/articles", icon: FileText, label: "المقالات" },
+        { to: "/admin/dialogues", icon: Mic, label: "الحوارات" },
+        { to: "/admin/breaking", icon: Megaphone, label: "الأخبار العاجلة" },
+        { to: "/admin/comments", icon: MessageCircle, label: "التعليقات" },
+      ],
+    },
+    {
+      title: "التواصل",
+      items: [
+        { to: "/admin/feedback", icon: MessageSquare, label: "الرسائل", badge: stats.unread },
+        { to: "/admin/newsletter", icon: Mail, label: "النشرة" },
+        { to: "/admin/push", icon: Bell, label: "الإشعارات الفورية" },
+      ],
+    },
+    {
+      title: "الإعلانات",
+      items: [{ to: "/admin/ads", icon: BadgeDollarSign, label: "الإعلانات", badge: stats.pendingAds }],
+    },
+    {
+      title: "الصفحات",
+      items: [{ to: "/about", icon: Info, label: "من نحن", external: true }],
+    },
+    {
+      title: "الصفحات القانونية",
+      items: [
+        { to: "/privacy", icon: Shield, label: "الخصوصية", external: true },
+        { to: "/cookies", icon: Cookie, label: "ملفات تعريف الارتباط", external: true },
+        { to: "/terms", icon: Scale, label: "الشروط والأحكام", external: true },
+        { to: "/copyright", icon: Copyright, label: "حقوق النشر", external: true },
+        { to: "/disclaimer", icon: FileWarning, label: "إخلاء المسؤولية", external: true },
+        { to: "/editorial-policy", icon: BookOpen, label: "سياسة التحرير", external: true },
+        { to: "/corrections", icon: Wrench, label: "التصحيحات", external: true },
+        { to: "/corrections-log", icon: History, label: "سجل التصحيحات", external: true },
+      ],
+    },
+    {
+      title: "النظام",
+      items: [{ to: "/admin/settings", icon: Settings, label: "الإعدادات" }],
+    },
   ];
 
   const NavList = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <nav className="space-y-1 flex-1">
-      {navItems.map((item) => {
-        const active = location.pathname.startsWith(item.to);
-        return (
-          <Link
-            key={item.to}
-            to={item.to}
-            onClick={onNavigate}
-            className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
-              active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            <span className="flex items-center gap-2">
-              <item.icon className="w-4 h-4" />
-              {item.label}
-            </span>
-            {item.badge ? (
-              <Badge variant={active ? "secondary" : "destructive"} className="h-5 min-w-5 px-1.5 text-[10px]">
-                {item.badge}
-              </Badge>
-            ) : null}
-          </Link>
-        );
-      })}
+    <nav className="space-y-4 flex-1 overflow-y-auto">
+      {navGroups.map((group) => (
+        <div key={group.title}>
+          <p className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+            {group.title}
+          </p>
+          <div className="space-y-1">
+            {group.items.map((item) => {
+              const active = !item.external && location.pathname.startsWith(item.to);
+              const className = `flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`;
+              const inner = (
+                <>
+                  <span className="flex items-center gap-2">
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </span>
+                  {item.badge ? (
+                    <Badge variant={active ? "secondary" : "destructive"} className="h-5 min-w-5 px-1.5 text-[10px]">
+                      {item.badge}
+                    </Badge>
+                  ) : null}
+                </>
+              );
+              return item.external ? (
+                <a key={item.to} href={item.to} target="_blank" rel="noreferrer" onClick={onNavigate} className={className}>
+                  {inner}
+                </a>
+              ) : (
+                <Link key={item.to} to={item.to} onClick={onNavigate} className={className}>
+                  {inner}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </nav>
   );
 
