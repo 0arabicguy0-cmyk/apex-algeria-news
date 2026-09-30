@@ -15,6 +15,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminArticles from "./pages/AdminArticles";
 import AdminArticleEditor from "./pages/AdminArticleEditor";
+import AdminDialogues from "./pages/AdminDialogues";
+import AdminDialogueEditor from "./pages/AdminDialogueEditor";
 import AdminFeedback from "./pages/AdminFeedback";
 import AdminBreakingNews from "./pages/AdminBreakingNews";
 import AdminComments from "./pages/AdminComments";
@@ -80,6 +82,9 @@ const App = () => {
           <Route path="/admin" element={<AdminDashboard />}>
             <Route path="articles" element={<AdminArticles />} />
             <Route path="articles/:id" element={<AdminArticleEditor />} />
+            <Route path="dialogues" element={<AdminDialogues />} />
+            <Route path="dialogues/new" element={<AdminDialogueEditor />} />
+            <Route path="dialogues/:id" element={<AdminDialogueEditor />} />
             <Route path="feedback" element={<AdminFeedback />} />
             <Route path="breaking" element={<AdminBreakingNews />} />
             <Route path="comments" element={<AdminComments />} />

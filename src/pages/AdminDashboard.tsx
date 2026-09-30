@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { feedbackApi, subscribe } from "@/lib/mockStore";
-import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign, PlusCircle, TrendingUp, Eye, Clock, ArrowUpRight, Settings } from "lucide-react";
+import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign, PlusCircle, TrendingUp, Eye, Clock, ArrowUpRight, Settings, Mic, Info, Shield, Cookie, Scale, Copyright, FileWarning, BookOpen, Wrench, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [articleStats, setArticleStats] = useState({ total: 0, published: 0, drafts: 0, totalViews: 0 });
   const [pendingAds, setPendingAds] = useState(0);
+  const [dialogueStats, setDialogueStats] = useState({ total: 0, published: 0, drafts: 0 });
   const [recentArticles, setRecentArticles] = useState<Array<{ id: string; title: string; status: string; created_at: string; view_count: number | null }>>([]);
 
   useEffect(() => subscribe(() => force((n) => n + 1)), []);
@@ -27,18 +28,23 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!isAdmin) return;
     (async () => {
-      const [{ count: total }, { count: published }, { count: drafts }, viewsRes, adsRes, recentRes] = await Promise.all([
+      const [{ count: total }, { count: published }, { count: drafts }, viewsRes, adsRes, recentRes, dTotalRes, dPubRes] = await Promise.all([
         supabase.from("articles").select("*", { count: "exact", head: true }),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "published"),
         supabase.from("articles").select("*", { count: "exact", head: true }).eq("status", "draft"),
         supabase.from("articles").select("view_count"),
         supabase.from("ad_submissions").select("*", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("articles").select("id, title, status, created_at, view_count").order("created_at", { ascending: false }).limit(5),
+        supabase.from("dialogues").select("*", { count: "exact", head: true }),
+        supabase.from("dialogues").select("*", { count: "exact", head: true }).eq("status", "published"),
       ]);
       const totalViews = (viewsRes.data ?? []).reduce((sum, a: any) => sum + (a.view_count ?? 0), 0);
       setArticleStats({ total: total ?? 0, published: published ?? 0, drafts: drafts ?? 0, totalViews });
       setPendingAds(adsRes.count ?? 0);
       setRecentArticles(recentRes.data ?? []);
+      const dTotal = dTotalRes.count ?? 0;
+      const dPub = dPubRes.count ?? 0;
+      setDialogueStats({ total: dTotal, published: dPub, drafts: Math.max(dTotal - dPub, 0) });
     })();
   }, [isAdmin, location.pathname]);
 
@@ -56,47 +62,93 @@ export default function AdminDashboard() {
   };
 
   const isExact = location.pathname === "/admin";
-  const navItems = [
-    { to: "/admin/articles", icon: FileText, label: "المقالات" },
-    { to: "/admin/breaking", icon: Megaphone, label: "الأخبار العاجلة" },
-    { to: "/admin/comments", icon: MessageCircle, label: "التعليقات" },
-    { to: "/admin/newsletter", icon: Mail, label: "النشرة" },
-    { to: "/admin/feedback", icon: MessageSquare, label: "الرسائل", badge: stats.unread },
-    { to: "/admin/push", icon: Bell, label: "الإشعارات الفورية" },
-    { to: "/admin/corrections", icon: AlertCircle, label: "سجل التصحيحات" },
-    { to: "/admin/ads", icon: BadgeDollarSign, label: "الإعلانات", badge: stats.pendingAds },
+  const navGroups: Array<{
+    title: string;
+    items: Array<{ to: string; icon: any; label: string; badge?: number; external?: boolean }>;
+  }> = [
     {
-      to: "/admin/settings",
-      icon: Settings,
-      label: "الإعدادات",
-    }
+      title: "إدارة المحتوى",
+      items: [
+        { to: "/admin/articles", icon: FileText, label: "المقالات" },
+        { to: "/admin/dialogues", icon: Mic, label: "الحوارات" },
+        { to: "/admin/breaking", icon: Megaphone, label: "الأخبار العاجلة" },
+        { to: "/admin/comments", icon: MessageCircle, label: "التعليقات" },
+      ],
+    },
+    {
+      title: "التواصل",
+      items: [
+        { to: "/admin/feedback", icon: MessageSquare, label: "الرسائل", badge: stats.unread },
+        { to: "/admin/newsletter", icon: Mail, label: "النشرة" },
+        { to: "/admin/push", icon: Bell, label: "الإشعارات الفورية" },
+      ],
+    },
+    {
+      title: "الإعلانات",
+      items: [{ to: "/admin/ads", icon: BadgeDollarSign, label: "الإعلانات", badge: stats.pendingAds }],
+    },
+    {
+      title: "الصفحات",
+      items: [{ to: "/about", icon: Info, label: "من نحن", external: true }],
+    },
+    {
+      title: "الصفحات القانونية",
+      items: [
+        { to: "/privacy", icon: Shield, label: "الخصوصية", external: true },
+        { to: "/cookies", icon: Cookie, label: "ملفات تعريف الارتباط", external: true },
+        { to: "/terms", icon: Scale, label: "الشروط والأحكام", external: true },
+        { to: "/copyright", icon: Copyright, label: "حقوق النشر", external: true },
+        { to: "/disclaimer", icon: FileWarning, label: "إخلاء المسؤولية", external: true },
+        { to: "/editorial-policy", icon: BookOpen, label: "سياسة التحرير", external: true },
+        { to: "/corrections", icon: Wrench, label: "التصحيحات", external: true },
+        { to: "/corrections-log", icon: History, label: "سجل التصحيحات", external: true },
+      ],
+    },
+    {
+      title: "النظام",
+      items: [{ to: "/admin/settings", icon: Settings, label: "الإعدادات" }],
+    },
   ];
 
   const NavList = ({ onNavigate }: { onNavigate?: () => void }) => (
-    <nav className="space-y-1 flex-1">
-      {navItems.map((item) => {
-        const active = location.pathname.startsWith(item.to);
-        return (
-          <Link
-            key={item.to}
-            to={item.to}
-            onClick={onNavigate}
-            className={`flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
-              active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-          >
-            <span className="flex items-center gap-2">
-              <item.icon className="w-4 h-4" />
-              {item.label}
-            </span>
-            {item.badge ? (
-              <Badge variant={active ? "secondary" : "destructive"} className="h-5 min-w-5 px-1.5 text-[10px]">
-                {item.badge}
-              </Badge>
-            ) : null}
-          </Link>
-        );
-      })}
+    <nav className="space-y-4 flex-1 overflow-y-auto">
+      {navGroups.map((group) => (
+        <div key={group.title}>
+          <p className="px-3 mb-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/70">
+            {group.title}
+          </p>
+          <div className="space-y-1">
+            {group.items.map((item) => {
+              const active = !item.external && location.pathname.startsWith(item.to);
+              const className = `flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
+                active ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`;
+              const inner = (
+                <>
+                  <span className="flex items-center gap-2">
+                    <item.icon className="w-4 h-4" />
+                    {item.label}
+                  </span>
+                  {item.badge ? (
+                    <Badge variant={active ? "secondary" : "destructive"} className="h-5 min-w-5 px-1.5 text-[10px]">
+                      {item.badge}
+                    </Badge>
+                  ) : null}
+                </>
+              );
+              return item.external ? (
+                <a key={item.to} href={item.to} target="_blank" rel="noreferrer" onClick={onNavigate} className={className}>
+                  {inner}
+                </a>
+              ) : (
+                <Link key={item.to} to={item.to} onClick={onNavigate} className={className}>
+                  {inner}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </nav>
   );
 
@@ -189,10 +241,11 @@ export default function AdminDashboard() {
             </div>
 
             {/* Stat cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 md:gap-4">
               {[
                 { label: "إجمالي المقالات", value: stats.articles, icon: FileText, gradient: "from-blue-500/15 to-blue-500/5", color: "text-blue-600 dark:text-blue-400" },
                 { label: "منشورة", value: stats.published, icon: TrendingUp, gradient: "from-green-500/15 to-green-500/5", color: "text-green-600 dark:text-green-400" },
+                { label: "إجمالي الحوارات", value: dialogueStats.total, icon: Mic, gradient: "from-purple-500/15 to-purple-500/5", color: "text-purple-600 dark:text-purple-400" },
                 { label: "إجمالي المشاهدات", value: stats.views.toLocaleString("ar"), icon: Eye, gradient: "from-amber-500/15 to-amber-500/5", color: "text-amber-600 dark:text-amber-400" },
                 { label: "إعلانات بانتظار الموافقة", value: stats.pendingAds, icon: BadgeDollarSign, gradient: "from-rose-500/15 to-rose-500/5", color: "text-rose-600 dark:text-rose-400" },
               ].map((s) => (
@@ -213,6 +266,7 @@ export default function AdminDashboard() {
                 <div className="space-y-2">
                   {[
                     { to: "/admin/articles/new", icon: PlusCircle, label: "نشر مقال" },
+                    { to: "/admin/dialogues/new", icon: Mic, label: "إضافة حوار" },
                     { to: "/admin/breaking", icon: Megaphone, label: "خبر عاجل" },
                     { to: "/admin/push", icon: Bell, label: "إرسال إشعار" },
                     { to: "/admin/ads", icon: BadgeDollarSign, label: "مراجعة الإعلانات", badge: stats.pendingAds },
@@ -268,7 +322,9 @@ export default function AdminDashboard() {
             {/* Secondary stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: "مسودات", value: stats.drafts },
+                { label: "مسودات المقالات", value: stats.drafts },
+                { label: "حوارات منشورة", value: dialogueStats.published },
+                { label: "مسودات الحوارات", value: dialogueStats.drafts },
                 { label: "إجمالي الرسائل", value: stats.feedback },
                 { label: "رسائل غير مقروءة", value: stats.unread },
                 { label: "إعلانات معلّقة", value: stats.pendingAds },
