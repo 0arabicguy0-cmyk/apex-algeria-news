@@ -15,6 +15,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminArticles from "./pages/AdminArticles";
 import AdminArticleEditor from "./pages/AdminArticleEditor";
+import AdminDialogues from "./pages/AdminDialogues";
+import AdminDialogueEditor from "./pages/AdminDialogueEditor";
 import AdminFeedback from "./pages/AdminFeedback";
 import AdminBreakingNews from "./pages/AdminBreakingNews";
 import AdminComments from "./pages/AdminComments";
