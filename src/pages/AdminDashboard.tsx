@@ -322,7 +322,9 @@ export default function AdminDashboard() {
             {/* Secondary stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: "مسودات", value: stats.drafts },
+                { label: "مسودات المقالات", value: stats.drafts },
+                { label: "حوارات منشورة", value: dialogueStats.published },
+                { label: "مسودات الحوارات", value: dialogueStats.drafts },
                 { label: "إجمالي الرسائل", value: stats.feedback },
                 { label: "رسائل غير مقروءة", value: stats.unread },
                 { label: "إعلانات معلّقة", value: stats.pendingAds },
