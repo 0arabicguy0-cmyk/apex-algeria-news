@@ -266,6 +266,7 @@ export default function AdminDashboard() {
                 <div className="space-y-2">
                   {[
                     { to: "/admin/articles/new", icon: PlusCircle, label: "نشر مقال" },
+                    { to: "/admin/dialogues/new", icon: Mic, label: "إضافة حوار" },
                     { to: "/admin/breaking", icon: Megaphone, label: "خبر عاجل" },
                     { to: "/admin/push", icon: Bell, label: "إرسال إشعار" },
                     { to: "/admin/ads", icon: BadgeDollarSign, label: "مراجعة الإعلانات", badge: stats.pendingAds },
