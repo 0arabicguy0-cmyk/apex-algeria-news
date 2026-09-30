@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { feedbackApi, subscribe } from "@/lib/mockStore";
-import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign, PlusCircle, TrendingUp, Eye, Clock, ArrowUpRight, Settings } from "lucide-react";
+import { FileText, MessageSquare, LogOut, Megaphone, MessageCircle, Mail, Menu, X, Bell, AlertCircle, Home, BadgeDollarSign, PlusCircle, TrendingUp, Eye, Clock, ArrowUpRight, Settings, Mic, Info, Shield, Cookie, Scale, Copyright, FileWarning, BookOpen, Wrench, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
