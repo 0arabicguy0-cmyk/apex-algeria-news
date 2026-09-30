@@ -245,6 +245,7 @@ export default function AdminDashboard() {
               {[
                 { label: "إجمالي المقالات", value: stats.articles, icon: FileText, gradient: "from-blue-500/15 to-blue-500/5", color: "text-blue-600 dark:text-blue-400" },
                 { label: "منشورة", value: stats.published, icon: TrendingUp, gradient: "from-green-500/15 to-green-500/5", color: "text-green-600 dark:text-green-400" },
+                { label: "إجمالي الحوارات", value: dialogueStats.total, icon: Mic, gradient: "from-purple-500/15 to-purple-500/5", color: "text-purple-600 dark:text-purple-400" },
                 { label: "إجمالي المشاهدات", value: stats.views.toLocaleString("ar"), icon: Eye, gradient: "from-amber-500/15 to-amber-500/5", color: "text-amber-600 dark:text-amber-400" },
                 { label: "إعلانات بانتظار الموافقة", value: stats.pendingAds, icon: BadgeDollarSign, gradient: "from-rose-500/15 to-rose-500/5", color: "text-rose-600 dark:text-rose-400" },
               ].map((s) => (
