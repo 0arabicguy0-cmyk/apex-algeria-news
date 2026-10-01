@@ -17,5 +17,6 @@ export default function BrandLogo({ className = "", imageClassName = "", priorit
         fetchPriority={priority ? "high" : "auto"}
       />
     </span>
+
   );
 }
