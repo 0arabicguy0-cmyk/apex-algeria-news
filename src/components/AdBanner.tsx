@@ -106,7 +106,7 @@ export default function AdBanner({ variant = "leaderboard", label, className }: 
             {isRTL ? "مساحتك الإعلانية هنا" : "Your ad could be here"}
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            {isRTL ? "اضغط للإعلان على Apex News" : "Click to advertise on Apex News"}
+            {isRTL ? "اضغط للإعلان على MAX NEWS" : "Click to advertise on MAX NEWS"}
           </div>
         </Link>
       </aside>

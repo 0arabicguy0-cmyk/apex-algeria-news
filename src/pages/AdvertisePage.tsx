@@ -141,7 +141,7 @@ export default function AdvertisePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col" dir="rtl">
-      <SEO title="أعلن معنا — Apex News DZ" description="أعلن عن منتجك أو خدمتك على Apex News DZ — ادفع عبر CCP وستظهر إعلاناتك بعد التحقق." />
+      <SEO title="أعلن معنا — MAX NEWS" description="أعلن عن منتجك أو خدمتك على MAX NEWS — ادفع عبر CCP وستظهر إعلاناتك بعد التحقق." />
       <Header isDark={isDark} onToggleTheme={toggle} />
       <main className="flex-1 container py-6 md:py-10 max-w-3xl">
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">أعلن معنا</h1>

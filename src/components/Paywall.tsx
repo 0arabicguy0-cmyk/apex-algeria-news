@@ -13,7 +13,7 @@ export default function Paywall() {
     subscribe();
     toast({
       title: isRTL ? "تم تفعيل اشتراكك" : "Subscription activated",
-      description: isRTL ? "استمتع بمحتوى Apex News بريميوم" : "Enjoy Apex News Premium content",
+      description: isRTL ? "استمتع بمحتوى MAX NEWS بريميوم" : "Enjoy MAX NEWS Premium content",
     });
   };
 
@@ -31,7 +31,7 @@ export default function Paywall() {
           <Crown className="w-7 h-7 text-amber-500" />
         </div>
         <h3 className="text-xl md:text-2xl font-bold text-foreground text-center">
-          {isRTL ? "تابع القراءة مع Apex News بريميوم" : "Continue reading with Apex News Premium"}
+          {isRTL ? "تابع القراءة مع MAX NEWS بريميوم" : "Continue reading with MAX NEWS Premium"}
         </h3>
         <p className="text-sm text-muted-foreground text-center mt-2 max-w-md mx-auto">
           {isRTL

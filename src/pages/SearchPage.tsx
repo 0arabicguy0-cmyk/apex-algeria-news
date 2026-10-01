@@ -41,8 +41,8 @@ export default function SearchPage() {
       <SEO
         title={lang === "en" ? "Search" : "بحث"}
         description={lang === "en"
-          ? "Search Apex News DZ for the latest Algerian, Arab and international news, by keyword, category or tag."
-          : "ابحث في أبكس نيوز الجزائر عن آخر الأخبار الجزائرية والعربية والدولية حسب الكلمة أو القسم أو الوسم."}
+          ? "Search MAX NEWS for the latest Algerian, Arab and international news, by keyword, category or tag."
+          : "ابحث في MAX NEWS عن آخر الأخبار الجزائرية والعربية والدولية حسب الكلمة أو القسم أو الوسم."}
       />
       <Header isDark={isDark} onToggleTheme={toggle} />
 

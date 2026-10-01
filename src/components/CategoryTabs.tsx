@@ -15,10 +15,10 @@ export default function CategoryTabs({ active, onChange }: CategoryTabsProps) {
           <button
             key={cat.key}
             onClick={() => onChange(cat.key)}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+            className={`whitespace-nowrap px-4 py-1.5 rounded-sm text-sm font-bold transition-all border-b-2 ${
               active === cat.key
-                ? "bg-primary text-primary-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-muted"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "text-muted-foreground border-transparent hover:text-primary"
             }`}
           >
             {lang === "en" ? cat.labelEn : cat.label}

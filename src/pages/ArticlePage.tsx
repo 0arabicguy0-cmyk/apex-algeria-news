@@ -153,7 +153,7 @@ export default function ArticlePage() {
             author: { "@type": "Person", name: article.author },
             publisher: {
               "@type": "NewsMediaOrganization",
-              name: "Apex News DZ",
+              name: "MAX NEWS",
               logo: {
                 "@type": "ImageObject",
                 url: "https://apex-algeria-news.lovable.app/icon-512.png",

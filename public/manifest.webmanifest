@@ -1,13 +1,13 @@
 {
-  "name": "Apex News DZ — أبكس نيوز الجزائر",
-  "short_name": "Apex News",
-  "description": "أبكس نيوز الجزائر — مصدرك الأول للأخبار الجزائرية والعربية والدولية.",
+  "name": "MAX NEWS — أخبار الجزائر والعالم",
+  "short_name": "MAX NEWS",
+  "description": "MAX NEWS — تغطية سريعة وموثوقة لأخبار الجزائر والعالم.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0D1B4B",
-  "theme_color": "#1A6BFF",
+  "background_color": "#171717",
+  "theme_color": "#D00035",
   "lang": "ar",
   "dir": "rtl",
   "icons": [

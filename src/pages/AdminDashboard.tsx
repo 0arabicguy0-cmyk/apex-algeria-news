@@ -156,7 +156,7 @@ export default function AdminDashboard() {
     <div className="flex flex-col h-full p-4">
       <div className="mb-6">
         <h2 className="font-bold text-lg text-foreground">لوحة التحكم</h2>
-        <p className="text-xs text-muted-foreground mt-0.5">Apex News DZ</p>
+        <p className="text-xs font-bold text-primary mt-0.5">MAX NEWS</p>
       </div>
       <NavList onNavigate={onNavigate} />
 
