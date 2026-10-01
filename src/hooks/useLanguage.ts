@@ -1,5 +1,37 @@
 import { useEffect, useState, useCallback } from "react";
 
+
+function getDynamicDateLine(language: string) {
+  const now = new Date();
+
+  if (language === "ar") {
+    const gregorian = new Intl.DateTimeFormat("ar-DZ", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(now);
+
+    const hijri = new Intl.DateTimeFormat(
+      "ar-DZ-u-ca-islamic",
+      {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      },
+    ).format(now);
+
+    return `${gregorian} — ${hijri}`;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(now);
+}
+
 export type Lang = "ar" | "en";
 const KEY = "apex-lang";
 
@@ -21,7 +53,7 @@ const dict = {
     twitter: "تويتر",
     youtube: "يوتيوب",
     instagram: "إنستغرام",
-    dateLine: "الثلاثاء ١٥ أبريل ٢٠٢٦ — ١٧ شوال ١٤٤٧",
+    dateline:'',
     nlBadge: "نشرة MAX NEWS اليومية",
     nlTitle: "أبرز ما يحدث في الجزائر والعالم — في صندوق بريدك كل صباح",
     nlSub: "انضم إلى آلاف القراء. اشتراك مجاني، إلغاء في أي وقت.",
@@ -133,7 +165,7 @@ const dict = {
     twitter: "Twitter",
     youtube: "YouTube",
     instagram: "Instagram",
-    dateLine: "Tuesday, April 15, 2026",
+    dateline:'',
     nlBadge: "MAX NEWS Daily Briefing",
     nlTitle: "Top stories from Algeria & the world — in your inbox every morning",
     nlSub: "Join thousands of readers. Free, unsubscribe anytime.",
@@ -258,7 +290,16 @@ export function useLanguage() {
 
   const toggle = useCallback(() => setLang(lang === "ar" ? "en" : "ar"), [lang, setLang]);
 
-  const t = useCallback((k: TKey): string => dict[lang][k] as string, [lang]);
+  const t = useCallback(
+    (k: TKey): string => {
+      if (k === "dateLine") {
+        return getDynamicDateLine(lang);
+      }
+  
+      return dict[lang][k] as string;
+    },
+    [lang],
+  );
   const tArr = useCallback((k: ArrayKeys): readonly string[] => dict[lang][k] as readonly string[], [lang]);
 
   return { lang, setLang, toggle, t, tArr, isRTL: lang === "ar" };
