@@ -111,8 +111,8 @@ export default function Index() {
       <main id="main-content" className="flex-1 pb-16 md:pb-0">
         <h1 className="sr-only">
           {lang === "en"
-            ? "Apex News DZ — Latest news from Algeria and the world"
-            : "أبكس نيوز الجزائر — آخر الأخبار من الجزائر والعالم"}
+            ? "MAX NEWS — Latest news from Algeria and the world"
+            : "MAX NEWS — آخر الأخبار من الجزائر والعالم"}
         </h1>
         <PageTransition>
           {/* Hero Section – show skeleton if loading or no articles */}

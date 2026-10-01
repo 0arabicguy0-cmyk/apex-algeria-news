@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/hooks/useLanguage";
 import { categories } from "@/lib/data";
+import BrandLogo from "@/components/BrandLogo";
 
 export default function Footer() {
   const { t, lang } = useLanguage();
@@ -21,15 +22,13 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="hidden md:block bg-navy text-navy-foreground mt-12">
+    <footer className="hidden md:block bg-navy text-navy-foreground mt-12 border-t-4 border-primary">
       <div className="container py-10">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg leading-none">A</span>
-              </div>
-              <span className="font-bold text-lg">Apex News DZ</span>
+              <BrandLogo className="h-12 w-12" />
+              <span className="font-heading font-extrabold text-xl">MAX NEWS</span>
             </div>
             <p className="text-sm opacity-70 leading-relaxed">{t("siteDescription")}</p>
           </div>
@@ -62,10 +61,10 @@ export default function Footer() {
           <div>
             <h4 className="font-bold mb-4">{t("followUs")}</h4>
             <div className="flex flex-wrap gap-4 text-sm opacity-70">
-              <a href="#" aria-label={`Apex News DZ on ${t("facebook")}`} className="hover:opacity-100 transition-opacity">{t("facebook")}</a>
-              <a href="#" aria-label={`Apex News DZ on ${t("twitter")}`} className="hover:opacity-100 transition-opacity">{t("twitter")}</a>
-              <a href="#" aria-label={`Apex News DZ on ${t("youtube")}`} className="hover:opacity-100 transition-opacity">{t("youtube")}</a>
-              <a href="#" aria-label={`Apex News DZ on ${t("instagram")}`} className="hover:opacity-100 transition-opacity">{t("instagram")}</a>
+              <a href="#" aria-label={`MAX NEWS on ${t("facebook")}`} className="hover:opacity-100 transition-opacity">{t("facebook")}</a>
+              <a href="#" aria-label={`MAX NEWS on ${t("twitter")}`} className="hover:opacity-100 transition-opacity">{t("twitter")}</a>
+              <a href="#" aria-label={`MAX NEWS on ${t("youtube")}`} className="hover:opacity-100 transition-opacity">{t("youtube")}</a>
+              <a href="#" aria-label={`MAX NEWS on ${t("instagram")}`} className="hover:opacity-100 transition-opacity">{t("instagram")}</a>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import { categories } from "@/lib/data";
 import LanguageToggle from "@/components/LanguageToggle";
 import NotificationsBell from "@/components/NotificationsBell";
 import { useLanguage } from "@/hooks/useLanguage";
+import BrandLogo from "@/components/BrandLogo";
 
 interface HeaderProps {
   isDark: boolean;
@@ -45,8 +46,8 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
 
   return (
     <>
-      {/* Top navy bar — desktop only */}
-      <div className="hidden md:block bg-navy text-navy-foreground">
+      {/* Top newsroom bar — desktop only */}
+      <div className="hidden md:block bg-navy text-navy-foreground border-b border-primary/50">
         <div className="container flex items-center justify-between py-1.5 text-sm opacity-80">
           <span>{t("dateLine")}</span>
           <div className="flex gap-4">
@@ -58,8 +59,8 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
       </div>
 
       {/* Main header */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
-        <div className="container flex items-center justify-between h-14 md:h-16">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b-2 border-primary shadow-sm">
+        <div className="container flex items-center justify-between h-16 md:h-20">
           {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(true)}
@@ -73,13 +74,13 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
           <button
             type="button"
             onClick={handleLogoTap}
-            aria-label="Apex News DZ — الصفحة الرئيسية"
+            aria-label="MAX NEWS — الصفحة الرئيسية"
             className="flex items-center gap-2 select-none bg-transparent border-0 p-0"
           >
-            <span className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center text-primary-foreground font-bold text-lg leading-none" aria-hidden="true">A</span>
+            <BrandLogo className="h-12 w-12 md:h-14 md:w-14" priority />
             <span className="flex flex-col leading-tight text-start">
-              <span className="font-bold text-lg text-foreground tracking-tight">Apex News</span>
-              <span className="text-[10px] text-muted-foreground -mt-1">الجزائر</span>
+              <span className="font-heading font-extrabold text-xl text-foreground">MAX NEWS</span>
+              <span className="text-[10px] font-semibold text-primary">الجزائر · الخبر بأقصى سرعة</span>
             </span>
           </button>
 
@@ -103,14 +104,14 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
             <LanguageToggle />
             <Link
               to="/search"
-              className="p-2 rounded-full hover:bg-muted transition-colors text-foreground"
+              className="p-2 rounded-sm hover:bg-muted transition-colors text-foreground"
               aria-label={t("search")}
             >
               <Search className="w-5 h-5" />
             </Link>
             <button
               onClick={onToggleTheme}
-              className="relative p-2 rounded-full hover:bg-muted transition-colors text-foreground overflow-hidden"
+              className="relative p-2 rounded-sm hover:bg-muted transition-colors text-foreground overflow-hidden"
               aria-label={t("toggleTheme")}
             >
               <Sun

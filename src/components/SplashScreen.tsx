@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
+import animatedLogoAsset from "@/assets/max-news-animated.mp4.asset.json";
 
 const LAST_SEEN_KEY = "apex-last-seen";
 const SESSION_KEY = "apex-splash-shown";
@@ -46,29 +47,20 @@ export default function SplashScreen() {
       aria-hidden={leaving}
     >
       <div className="flex flex-col items-center gap-5 animate-scale-in">
-        <div className="relative">
-          <div className="absolute inset-0 rounded-2xl bg-primary/30 blur-2xl animate-pulse" />
-          <div className="relative w-20 h-20 bg-primary rounded-2xl flex items-center justify-center shadow-2xl">
-            <span className="text-primary-foreground font-bold text-5xl leading-none">A</span>
-          </div>
+        <div className="relative h-52 w-52 overflow-hidden rounded-full border-4 border-primary-foreground shadow-2xl md:h-64 md:w-64">
+          <video
+            className="h-full w-full object-cover"
+            src={animatedLogoAsset.url}
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            aria-label="MAX NEWS"
+          />
         </div>
-
-        <div className="flex flex-col items-center gap-1">
-          <h1 className="font-bold text-2xl text-foreground tracking-tight">{t("siteName")}</h1>
-          <span className="text-xs text-muted-foreground">{t("siteSub")}</span>
-        </div>
-
-        <div
-          className="text-sm font-medium bg-clip-text text-transparent"
-          style={{
-            backgroundImage:
-              "linear-gradient(90deg, hsl(var(--muted-foreground) / 0.4) 0%, hsl(var(--foreground)) 50%, hsl(var(--muted-foreground) / 0.4) 100%)",
-            backgroundSize: "200% 100%",
-            animation: "shimmer 1.6s linear infinite",
-          }}
-        >
+        <p className="font-heading text-sm font-bold uppercase text-primary-foreground">
           {t("tagline")}
-        </div>
+        </p>
       </div>
     </div>
   );

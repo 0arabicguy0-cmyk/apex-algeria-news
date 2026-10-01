@@ -13,7 +13,7 @@ export default function BreakingTicker() {
   const duration = Math.max(20, items.length * 12);
 
   return (
-    <div className="bg-navy text-navy-foreground overflow-hidden sticky top-14 z-50">
+    <div className="bg-navy text-navy-foreground overflow-hidden sticky top-16 md:top-20 z-40 border-b border-primary">
       <style>{`
         @keyframes apex-ticker {
           0%   { transform: translateX(0); }
@@ -31,8 +31,8 @@ export default function BreakingTicker() {
            Arabic news channels render their breaking-news bar. */
       `}</style>
       <div className="container flex items-stretch h-9 gap-3">
-        <span className="flex-shrink-0 self-center bg-amber text-amber-foreground px-3 py-0.5 rounded-sm text-xs font-bold flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-destructive animate-pulse-dot" />
+        <span className="flex-shrink-0 self-center bg-primary text-primary-foreground px-3 py-1 rounded-sm text-xs font-extrabold flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-primary-foreground animate-pulse-dot" />
           عاجل
         </span>
         <div className="apex-ticker-wrapper flex-1 overflow-hidden relative">
@@ -44,7 +44,7 @@ export default function BreakingTicker() {
               const content = (
                 <span className="text-sm font-medium inline-flex items-center gap-3">
                   {item.text}
-                  <span className="text-amber/80 select-none" aria-hidden>
+                  <span className="text-primary select-none" aria-hidden>
                     ◆
                   </span>
                 </span>
