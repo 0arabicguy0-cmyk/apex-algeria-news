@@ -11,9 +11,9 @@ interface SEOProps {
   canonical?: string;
 }
 
-const SITE_NAME = "Apex News DZ";
-const DEFAULT_DESC_AR = "أبكس نيوز الجزائر — مصدرك الأول للأخبار الجزائرية والعربية والدولية.";
-const DEFAULT_DESC_EN = "Apex News DZ — your first source for Algerian, Arab and international news.";
+const SITE_NAME = "MAX NEWS";
+const DEFAULT_DESC_AR = "MAX NEWS — تغطية سريعة وموثوقة لأخبار الجزائر والعالم على مدار الساعة.";
+const DEFAULT_DESC_EN = "MAX NEWS — fast, reliable coverage of Algeria and the world around the clock.";
 
 export default function SEO({
   title,

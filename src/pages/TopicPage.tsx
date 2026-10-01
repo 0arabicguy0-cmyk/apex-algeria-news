@@ -28,12 +28,12 @@ export default function TopicPage() {
       <SEO
         title={catLabel ?? (lang === "en" ? "Section" : "قسم")}
         description={lang === "en"
-          ? `Latest ${catLabel ?? "news"} stories from Algeria and around the world on Apex News DZ.`
-          : `أحدث أخبار ${catLabel ?? ""} من الجزائر والعالم على أبكس نيوز الجزائر.`}
+          ? `Latest ${catLabel ?? "news"} stories from Algeria and around the world on MAX NEWS.`
+          : `أحدث أخبار ${catLabel ?? ""} من الجزائر والعالم على MAX NEWS.`}
       />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
-      <div className="bg-gradient-to-l from-navy via-navy/95 to-primary text-primary-foreground py-8 md:py-12">
+      <div className="bg-navy text-primary-foreground py-8 md:py-12 border-b-4 border-primary">
         <div className="container">
           <Link to="/" className="text-xs text-primary-foreground/70 hover:text-primary-foreground">{t("backHome")}</Link>
           <h1 className="text-3xl md:text-5xl font-bold mt-2">{catLabel ?? (lang === "en" ? "Section" : "قسم")}</h1>

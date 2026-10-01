@@ -21,8 +21,8 @@ export default function BookmarksPage() {
       <SEO
         title={lang === "en" ? "Bookmarks" : "المحفوظات"}
         description={lang === "en"
-          ? "Your saved articles on Apex News DZ — revisit your bookmarked Algerian, Arab and world news anytime."
-          : "مقالاتك المحفوظة على أبكس نيوز الجزائر — عُد إلى الأخبار التي حفظتها في أي وقت."}
+          ? "Your saved articles on MAX NEWS — revisit your bookmarked Algerian, Arab and world news anytime."
+          : "مقالاتك المحفوظة على MAX NEWS — عُد إلى الأخبار التي حفظتها في أي وقت."}
       />
       <Header isDark={isDark} onToggleTheme={toggle} />
 

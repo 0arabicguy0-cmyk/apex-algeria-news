@@ -51,9 +51,9 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
         <div className="container flex items-center justify-between py-1.5 text-sm opacity-80">
           <span>{t("dateLine")}</span>
           <div className="flex gap-4">
-            <a href="#" aria-label={`Apex News DZ on ${t("facebook")}`} className="hover:text-primary transition-colors">{t("facebook")}</a>
-            <a href="#" aria-label={`Apex News DZ on ${t("twitter")}`} className="hover:text-primary transition-colors">{t("twitter")}</a>
-            <a href="#" aria-label={`Apex News DZ on ${t("youtube")}`} className="hover:text-primary transition-colors">{t("youtube")}</a>
+            <a href="#" aria-label={`MAX NEWS on ${t("facebook")}`} className="hover:text-primary transition-colors">{t("facebook")}</a>
+            <a href="#" aria-label={`MAX NEWS on ${t("twitter")}`} className="hover:text-primary transition-colors">{t("twitter")}</a>
+            <a href="#" aria-label={`MAX NEWS on ${t("youtube")}`} className="hover:text-primary transition-colors">{t("youtube")}</a>
           </div>
         </div>
       </div>

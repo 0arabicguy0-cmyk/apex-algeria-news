@@ -43,8 +43,8 @@ export default function AuthorPage() {
         description={author.bio
           ? author.bio.slice(0, 155)
           : (lang === "en"
-            ? `Articles by ${author.name} on Apex News DZ — latest reporting and analysis.`
-            : `مقالات ${author.name} على أبكس نيوز الجزائر — أحدث التقارير والتحليلات.`)}
+            ? `Articles by ${author.name} on MAX NEWS — latest reporting and analysis.`
+            : `مقالات ${author.name} على MAX NEWS — أحدث التقارير والتحليلات.`)}
       />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
