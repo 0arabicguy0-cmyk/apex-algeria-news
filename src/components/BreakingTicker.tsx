@@ -64,7 +64,7 @@ export default function BreakingTicker() {
               <div
                 key={copy}
                 ref={copy === 0 ? groupRef : undefined}
-                dir="rtl"
+                dir="ltr"
                 aria-hidden={copy > 0 ? true : undefined}
                 className="flex shrink-0 items-center gap-12 pe-12"
               >
