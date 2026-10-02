@@ -14,7 +14,7 @@ interface Props {
 }
 
 const sizes: Record<Variant, string> = {
-  leaderboard: "h-24 md:h-28",
+  leaderboard: "h-40 md:h-48",
   inline: "h-32 md:h-40",
   square: "h-64",
   skyscraper: "h-[600px]",
@@ -167,26 +167,25 @@ export default function AdBanner({
 
   const ad = ads[index % ads.length];
   const inner = (
-    <
-    >
-      {/* Advertisement label */}
-      <span className="absolute top-1.5 start-2 z-30 text-[10px] uppercase tracking-wider text-white/90 bg-black/50 px-1.5 py-0.5 rounded">
-        {adLabel}
-      </span>
-  
+    <div className="relative w-full h-full">
       {/* Ad image */}
       <img
         src={ad.product_image_url}
         alt={ad.product_title}
         loading="eager"
-  className="absolute inset-0 z-[9999] w-full h-full object-contain bg-orange-500"
+        className="block w-full h-full object-cover"
       />
   
-      {/* Dark gradient for text readability */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+      {/* Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
   
-      {/* Advertisement content */}
-      <div className="absolute inset-x-0 bottom-0 z-20 p-3 text-white">
+      {/* Ad label */}
+      <span className="absolute top-1.5 start-2 z-10 text-[10px] uppercase tracking-wider text-white/90 bg-black/50 px-1.5 py-0.5 rounded">
+        {adLabel}
+      </span>
+  
+      {/* Text */}
+      <div className="absolute inset-x-0 bottom-0 z-10 p-3 text-white">
         <div className="text-sm md:text-base font-bold line-clamp-1">
           {ad.product_title}
         </div>
@@ -201,11 +200,11 @@ export default function AdBanner({
           {isRTL ? "بواسطة" : "by"} {ad.advertiser_name}
         </div>
       </div>
-    </>
+    </div>
   );
 
   const baseClass = cn(
-    "relative isolate w-full rounded-lg border border-border overflow-hidden my-4 group transition-transform hover:scale-[1.005]",
+    "relative w-full rounded-lg border border-border overflow-hidden my-4 group transition-transform hover:scale-[1.005]",
     sizes[variant],
     className,
   );
