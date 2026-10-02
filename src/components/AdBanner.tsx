@@ -37,26 +37,73 @@ let globalRotationIndex = 0;
 async function loadAds(): Promise<Ad[]> {
   if (cachedAds) return cachedAds;
   if (cachePromise) return cachePromise;
+
   cachePromise = (async () => {
     const { data, error } = await supabase
       .from("ad_submissions")
-      .select("id, product_title, product_description, product_image_url, product_url, advertiser_name")
+      .select(
+        "id, product_title, product_description, product_image_url, product_url, advertiser_name"
+      )
       .eq("status", "approved")
       .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
       .order("approved_at", { ascending: false })
       .limit(40);
+
     if (error) {
       console.warn("[AdBanner] failed to load ads", error);
       cachedAds = [];
       return [];
     }
-    cachedAds = (data ?? []) as Ad[];
+
+    const ads = (data ?? []) as Ad[];
+
+    const resolvedAds = await Promise.all(
+      ads.map(async (ad) => {
+        if (ad.product_image_url.startsWith("ad-uploads://")) {
+          const path = ad.product_image_url.replace("ad-uploads://", "");
+
+          const { data: signedData, error: signedError } =
+            await supabase.storage
+              .from("ad-uploads")
+              .createSignedUrl(path, 60 * 60);
+
+          console.log("[AdBanner] image path:", path);
+          console.log("[AdBanner] signed URL:", signedData?.signedUrl);
+          console.log("[AdBanner] signed error:", signedError);
+
+          if (signedError || !signedData?.signedUrl) {
+            console.warn(
+              "[AdBanner] failed to create signed URL:",
+              ad.id,
+              signedError
+            );
+
+            return null;
+          }
+
+          return {
+            ...ad,
+            product_image_url: signedData.signedUrl,
+          };
+        }
+
+        return ad;
+      })
+    );
+
+    cachedAds = resolvedAds.filter((ad): ad is Ad => ad !== null);
+
     return cachedAds;
   })();
+
   return cachePromise;
 }
 
-export default function AdBanner({ variant = "leaderboard", label, className }: Props) {
+export default function AdBanner({
+  variant = "leaderboard",
+  label,
+  className,
+}: Props) {
   const { isRTL } = useLanguage();
   const { active } = useSubscription();
   const [ads, setAds] = useState<Ad[]>([]);
@@ -95,18 +142,23 @@ export default function AdBanner({ variant = "leaderboard", label, className }: 
         className={cn(
           "relative w-full rounded-lg border border-dashed border-border bg-gradient-to-br from-muted/40 to-muted/10 flex items-center justify-center overflow-hidden my-4",
           sizes[variant],
-          className,
+          className
         )}
       >
         <span className="absolute top-1.5 start-2 text-[10px] uppercase tracking-wider text-muted-foreground/70 bg-background/60 px-1.5 py-0.5 rounded">
           {adLabel}
         </span>
-        <Link to="/advertise" className="text-center px-4 hover:opacity-90 transition-opacity">
+        <Link
+          to="/advertise"
+          className="text-center px-4 hover:opacity-90 transition-opacity"
+        >
           <div className="text-sm font-bold text-foreground/80">
             {isRTL ? "مساحتك الإعلانية هنا" : "Your ad could be here"}
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            {isRTL ? "اضغط للإعلان على MAX NEWS" : "Click to advertise on MAX NEWS"}
+            {isRTL
+              ? "اضغط للإعلان على MAX NEWS"
+              : "Click to advertise on MAX NEWS"}
           </div>
         </Link>
       </aside>
@@ -115,21 +167,36 @@ export default function AdBanner({ variant = "leaderboard", label, className }: 
 
   const ad = ads[index % ads.length];
   const inner = (
-    <>
-      <span className="absolute top-1.5 start-2 z-10 text-[10px] uppercase tracking-wider text-white/90 bg-black/50 px-1.5 py-0.5 rounded">
+    <
+    >
+      {/* Advertisement label */}
+      <span className="absolute top-1.5 start-2 z-30 text-[10px] uppercase tracking-wider text-white/90 bg-black/50 px-1.5 py-0.5 rounded">
         {adLabel}
       </span>
+  
+      {/* Ad image */}
       <img
         src={ad.product_image_url}
         alt={ad.product_title}
-        loading="lazy"
-        className="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+  className="absolute inset-0 z-[9999] w-full h-full object-contain bg-orange-500"
       />
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 text-white">
-        <div className="text-sm md:text-base font-bold line-clamp-1">{ad.product_title}</div>
+  
+      {/* Dark gradient for text readability */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+  
+      {/* Advertisement content */}
+      <div className="absolute inset-x-0 bottom-0 z-20 p-3 text-white">
+        <div className="text-sm md:text-base font-bold line-clamp-1">
+          {ad.product_title}
+        </div>
+  
         {ad.product_description && variant !== "leaderboard" && (
-          <div className="text-xs opacity-90 line-clamp-2 mt-0.5">{ad.product_description}</div>
+          <div className="text-xs opacity-90 line-clamp-2 mt-0.5">
+            {ad.product_description}
+          </div>
         )}
+  
         <div className="text-[10px] opacity-70 mt-1">
           {isRTL ? "بواسطة" : "by"} {ad.advertiser_name}
         </div>
@@ -138,7 +205,7 @@ export default function AdBanner({ variant = "leaderboard", label, className }: 
   );
 
   const baseClass = cn(
-    "relative w-full rounded-lg border border-border overflow-hidden my-4 group transition-transform hover:scale-[1.005]",
+    "relative isolate w-full rounded-lg border border-border overflow-hidden my-4 group transition-transform hover:scale-[1.005]",
     sizes[variant],
     className,
   );
@@ -159,7 +226,12 @@ export default function AdBanner({ variant = "leaderboard", label, className }: 
   }
 
   return (
-    <aside key={ad.id} role="complementary" aria-label={adLabel} className={baseClass}>
+    <aside
+      key={ad.id}
+      role="complementary"
+      aria-label={adLabel}
+      className={baseClass}
+    >
       {inner}
     </aside>
   );

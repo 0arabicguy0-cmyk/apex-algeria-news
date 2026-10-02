@@ -49,25 +49,28 @@ export default function AdvertisePage() {
     }
   };
 
-  async function uploadFile(bucket: string, file: File, prefix: string): Promise<string | null> {
+  async function uploadFile(
+    bucket: string,
+    file: File,
+    prefix: string
+  ): Promise<string | null> {
     const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
-    const path = `${prefix}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const path = `${prefix}/${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2, 8)}.${ext}`;
+  
     const { error } = await supabase.storage.from(bucket).upload(path, file, {
       contentType: file.type || undefined,
       upsert: false,
     });
+  
     if (error) {
-      console.error("upload error", error);
+      console.error(`Upload failed: ${bucket}/${path}`, error);
       return null;
     }
-    if (bucket === "ad-uploads") {
-      // Private bucket — store the storage path so admin can sign a URL
-      return `ad-uploads://${path}`;
-    }
-    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-    return data.publicUrl;
+  
+    return `${bucket}://${path}`;
   }
-
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
@@ -101,7 +104,7 @@ export default function AdvertisePage() {
     setSubmitting(true);
     try {
       const [productUrl, receiptRef] = await Promise.all([
-        uploadFile("article-images", productFile, "ads/products"),
+        uploadFile("ad-uploads", productFile, "products"),
         uploadFile("ad-uploads", receiptFile, "receipts"),
       ]);
       if (!productUrl || !receiptRef) {

@@ -135,7 +135,6 @@ export default function Index() {
               </div>
             </section>
           )}
-
           <div className="container">
             <AdBanner variant="leaderboard" />
           </div>

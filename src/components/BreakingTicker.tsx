@@ -1,103 +1,159 @@
-import { useEffect, useRef, useState } from "react";
-import { useBreakingNews } from "@/hooks/useBreakingNews";
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { Link } from "react-router-dom";
+import { useBreakingNews } from "@/hooks/useBreakingNews";
+
+/** Constant reading speed, independent of how many headlines exist. */
+const SPEED_PX_PER_SEC = 60;
+const MIN_DURATION_S = 12;
+
+const TICKER_CSS = `
+  @keyframes apex-ticker-rtl {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(var(--ticker-cycle), 0, 0); }
+  }
+
+  .apex-ticker-viewport {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
+  }
+
+  .apex-ticker-track {
+    animation: apex-ticker-rtl var(--ticker-duration) linear infinite;
+    will-change: transform;
+  }
+
+  .apex-ticker-viewport:hover .apex-ticker-track,
+  .apex-ticker-viewport:focus-within .apex-ticker-track {
+    animation-play-state: paused;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .apex-ticker-track { animation: none; }
+    .apex-ticker-viewport { overflow-x: auto; }
+  }
+`;
+
+type Layout = { copies: number; cycle: number };
 
 export default function BreakingTicker() {
   const items = useBreakingNews();
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const groupRef = useRef<HTMLDivElement>(null);
-  const [layout, setLayout] = useState({ copies: 2, cycle: 0 });
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const groupRef = useRef<HTMLUListElement>(null);
+  const [layout, setLayout] = useState<Layout>({ copies: 2, cycle: 0 });
 
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
     const group = groupRef.current;
-    if (!wrapper || !group) return;
+    if (!viewport || !group) return;
 
     const measure = () => {
-      const cycle = group.getBoundingClientRect().width;
+      const cycle = Math.round(group.getBoundingClientRect().width);
       if (cycle <= 0) return;
-      const copies = Math.max(2, Math.ceil(wrapper.clientWidth / cycle) + 2);
-      setLayout((prev) => prev.copies === copies && prev.cycle === cycle ? prev : { copies, cycle });
+
+      // The track is anchored to the right and shifts right by one cycle,
+      // so it must cover the viewport width + one extra cycle on the left.
+      const copies = Math.ceil(viewport.clientWidth / cycle) + 1;
+
+      setLayout((prev) =>
+        prev.copies === copies && prev.cycle === cycle
+          ? prev
+          : { copies, cycle }
+      );
     };
+
     const observer = new ResizeObserver(measure);
-    observer.observe(wrapper);
+    observer.observe(viewport);
     observer.observe(group);
     measure();
+
+    // Arabic web fonts change text width after load.
+    document.fonts?.ready.then(measure).catch(() => {});
+
     return () => observer.disconnect();
   }, [items]);
 
   if (items.length === 0) return null;
 
+  const duration = Math.max(MIN_DURATION_S, layout.cycle / SPEED_PX_PER_SEC);
+
+  const trackStyle = {
+    "--ticker-cycle": `${layout.cycle}px`,
+    "--ticker-duration": `${duration}s`,
+    animationPlayState: layout.cycle ? "running" : "paused",
+  } as CSSProperties;
+
   return (
-    <div className="bg-navy text-navy-foreground overflow-hidden sticky top-16 md:top-20 z-40 border-b border-primary">
-      <style>{`
-        @keyframes apex-ticker {
-          0%   { transform: translateX(var(--ticker-cycle)); }
-          100% { transform: translateX(0); }
-        }
-        .apex-ticker-track {
-          animation: apex-ticker var(--ticker-duration) linear infinite;
-          will-change: transform;
-        }
-        .apex-ticker-wrapper:hover .apex-ticker-track {
-          animation-play-state: paused;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .apex-ticker-track { animation: none; }
-        }
-      `}</style>
-      <div className="container flex items-stretch h-9 gap-3">
-        <span className="flex-shrink-0 self-center bg-primary text-primary-foreground px-3 py-1 rounded-sm text-xs font-extrabold flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full bg-primary-foreground animate-pulse-dot" />
+    <section
+      dir="rtl"
+      lang="ar"
+      aria-label="الأخبار العاجلة"
+      className="sticky top-16 md:top-20 z-40 overflow-hidden border-b border-primary bg-navy text-navy-foreground"
+    >
+      <style>{TICKER_CSS}</style>
+
+      <div className="container flex h-9 items-stretch gap-3">
+        {/* Badge: sits on the right (RTL start) where headlines exit */}
+        <span className="flex flex-shrink-0 items-center gap-1.5 self-center rounded-sm bg-primary px-3 py-1 text-xs font-extrabold text-primary-foreground">
+          <span
+            aria-hidden
+            className="h-2 w-2 animate-pulse-dot rounded-full bg-primary-foreground"
+          />
           عاجل
         </span>
-        <div ref={wrapperRef} dir="rtl" className="apex-ticker-wrapper flex-1 overflow-hidden relative">
+
+        <div
+          ref={viewportRef}
+          className="apex-ticker-viewport relative flex-1 overflow-hidden"
+        >
+          {/* Anchored to the right edge; extra copies extend to the left */}
           <div
-            className="apex-ticker-track flex items-center whitespace-nowrap h-full w-max"
-            style={{
-              "--ticker-cycle": `${layout.cycle}px`,
-              "--ticker-duration": `${Math.max(8, layout.cycle / 60)}s`,
-              animationPlayState: layout.cycle ? "running" : "paused",
-            } as React.CSSProperties}
+            className="apex-ticker-track absolute inset-y-0 right-0 flex w-max items-center whitespace-nowrap"
+            style={trackStyle}
           >
-            {Array.from({ length: layout.copies }, (_, copy) => (
-              <div
-                key={copy}
-                ref={copy === 0 ? groupRef : undefined}
-                dir="rtl"
-                aria-hidden={copy > 0 ? true : undefined}
-                className="flex shrink-0 items-center gap-12 pe-12"
-              >
-                {items.map((item) => {
-              const content = (
-                <span dir="rtl" className="text-sm font-medium inline-flex items-center gap-3">
-                  {item.text}
-                  <span className="text-primary select-none" aria-hidden>
-                    ◆
-                  </span>
-                </span>
-              );
+            {Array.from({ length: layout.copies }, (_, copy) => {
+              const isClone = copy > 0;
               return (
-                <div key={item.id} className="flex-shrink-0">
-                  {item.link_article_id ? (
-                    <Link
-                      to={`/article/${item.link_article_id}`}
-                      className="hover:underline"
-                      tabIndex={copy > 0 ? -1 : undefined}
+                <ul
+                  key={copy}
+                  ref={copy === 0 ? groupRef : undefined}
+                  aria-hidden={isClone || undefined}
+                  className="flex shrink-0 items-center"
+                >
+                  {items.map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex flex-shrink-0 items-center px-5"
                     >
-                      {content}
-                    </Link>
-                  ) : (
-                    content
-                  )}
-                </div>
+                      {item.link_article_id ? (
+                        <Link
+                          to={`/article/${item.link_article_id}`}
+                          tabIndex={isClone ? -1 : undefined}
+                          className="text-sm font-medium hover:underline focus-visible:underline"
+                        >
+                          {item.text}
+                        </Link>
+                      ) : (
+                        <span className="text-sm font-medium">{item.text}</span>
+                      )}
+                      <span
+                        aria-hidden
+                        className="select-none ps-10 text-primary"
+                      >
+                        ◆
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               );
-                })}
-              </div>
-            ))}
+            })}
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
