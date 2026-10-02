@@ -32,8 +32,8 @@ export default function BreakingTicker() {
     <div className="bg-navy text-navy-foreground overflow-hidden sticky top-16 md:top-20 z-40 border-b border-primary">
       <style>{`
         @keyframes apex-ticker {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(calc(-1 * var(--ticker-cycle))); }
+          0%   { transform: translateX(var(--ticker-cycle)); }
+          100% { transform: translateX(0); }
         }
         .apex-ticker-track {
           animation: apex-ticker var(--ticker-duration) linear infinite;
@@ -51,7 +51,7 @@ export default function BreakingTicker() {
           <span className="w-2 h-2 rounded-full bg-primary-foreground animate-pulse-dot" />
           عاجل
         </span>
-        <div ref={wrapperRef} dir="ltr" className="apex-ticker-wrapper flex-1 overflow-hidden relative">
+        <div ref={wrapperRef} dir="rtl" className="apex-ticker-wrapper flex-1 overflow-hidden relative">
           <div
             className="apex-ticker-track flex items-center whitespace-nowrap h-full w-max"
             style={{
@@ -64,7 +64,7 @@ export default function BreakingTicker() {
               <div
                 key={copy}
                 ref={copy === 0 ? groupRef : undefined}
-                dir="ltr"
+                dir="rtl"
                 aria-hidden={copy > 0 ? true : undefined}
                 className="flex shrink-0 items-center gap-12 pe-12"
               >
