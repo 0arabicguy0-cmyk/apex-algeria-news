@@ -94,6 +94,7 @@ const App = () => {
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="ads" element={<AdminAds />} />
           </Route>
+          <Route path="/:code" element={<ArticlePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

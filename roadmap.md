@@ -1,0 +1,2 @@
+- [x] Fix add dialogue (id=undefined)
+- [x] Article short_code URLs /{code} + redirect from /article/{uuid}

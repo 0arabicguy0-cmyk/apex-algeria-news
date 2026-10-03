@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useArticle, useRelated, trackView } from "@/hooks/useArticles";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -50,10 +50,19 @@ function getYoutubeEmbedUrl(url: string): string | null {
 }
 
 export default function ArticlePage() {
-  const { id } = useParams();
+  const { id: uuidParam, code } = useParams();
+  const id = uuidParam ?? code;
+  const navigate = useNavigate();
   const { isDark, toggle } = useTheme();
   const { t, isRTL } = useLanguage();
   const { article, loading } = useArticle(id);
+
+  // Redirect legacy /article/{uuid} URLs to the short /{short_code} URL
+  useEffect(() => {
+    if (uuidParam && article?.shortCode) {
+      navigate(`/${article.shortCode}`, { replace: true });
+    }
+  }, [uuidParam, article?.shortCode, navigate]);
   const related = useRelated(article);
   const { active: isSubscribed } = useSubscription();
 
