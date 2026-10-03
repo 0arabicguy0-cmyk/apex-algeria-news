@@ -101,12 +101,12 @@ const seed = (): State => ({
   subscribers: [],
   feedback: [],
   authors: [
-    { slug: "mohamed-benali", name: "محمد بن علي", bio: "صحفي متخصص في شؤون الطاقة والبيئة، يكتب لـ Apex News منذ ٢٠٢٠.", avatar_url: null, twitter: "@mbenali", email: "m.benali@apex.dz" },
-    { slug: "fatima-zahra", name: "فاطمة الزهراء", bio: "محررة الاقتصاد، خريجة مدرسة الصحافة بالجزائر، شغوفة بقصص التنمية.", avatar_url: null, twitter: "@fzahra", email: "f.zahra@apex.dz" },
-    { slug: "ahmed-karim", name: "أحمد كريم", bio: "كاتب تقني يغطي رقمنة الإدارة والشركات الناشئة في شمال إفريقيا.", avatar_url: null, twitter: "@akarim", email: "a.karim@apex.dz" },
-    { slug: "yassine-haddad", name: "ياسين حداد", bio: "مراسل رياضي يتابع المنتخب الوطني والدوريات الإفريقية.", avatar_url: null, twitter: "@yhaddad", email: "y.haddad@apex.dz" },
-    { slug: "sara-megrani", name: "سارة مقراني", bio: "محللة اقتصادية تركز على المالية العامة والبنوك.", avatar_url: null, twitter: "@smegrani", email: "s.megrani@apex.dz" },
-    { slug: "nadia-bouaziz", name: "نادية بوعزيز", bio: "ناقدة ثقافية، تغطي السينما والمهرجانات الفنية.", avatar_url: null, twitter: "@nbouaziz", email: "n.bouaziz@apex.dz" },
+    { slug: "mohamed-benali", name: "محمد بن علي", bio: "صحفي متخصص في شؤون الطاقة والبيئة، يكتب لـ Max News منذ ٢٠٢٠.", avatar_url: null, twitter: "@mbenali", email: "m.benali@max.dz" },
+    { slug: "fatima-zahra", name: "فاطمة الزهراء", bio: "محررة الاقتصاد، خريجة مدرسة الصحافة بالجزائر، شغوفة بقصص التنمية.", avatar_url: null, twitter: "@fzahra", email: "f.zahra@max.dz" },
+    { slug: "ahmed-karim", name: "أحمد كريم", bio: "كاتب تقني يغطي رقمنة الإدارة والشركات الناشئة في شمال إفريقيا.", avatar_url: null, twitter: "@akarim", email: "a.karim@max.dz" },
+    { slug: "yassine-haddad", name: "ياسين حداد", bio: "مراسل رياضي يتابع المنتخب الوطني والدوريات الإفريقية.", avatar_url: null, twitter: "@yhaddad", email: "y.haddad@max.dz" },
+    { slug: "sara-megrani", name: "سارة مقراني", bio: "محللة اقتصادية تركز على المالية العامة والبنوك.", avatar_url: null, twitter: "@smegrani", email: "s.megrani@max.dz" },
+    { slug: "nadia-bouaziz", name: "نادية بوعزيز", bio: "ناقدة ثقافية، تغطي السينما والمهرجانات الفنية.", avatar_url: null, twitter: "@nbouaziz", email: "n.bouaziz@max.dz" },
   ],
 });
 
@@ -297,18 +297,18 @@ export const authorsApi = {
 };
 
 // --- Premium subscription (mock) ---
-const SUB_KEY = "apex_subscription_v1";
+const SUB_KEY = "max_subscription_v1";
 export const subscriptionApi = {
   isActive(): boolean {
     try { return localStorage.getItem(SUB_KEY) === "active"; } catch { return false; }
   },
   subscribe() {
     try { localStorage.setItem(SUB_KEY, "active"); } catch {}
-    window.dispatchEvent(new Event("apex-subscription"));
+    window.dispatchEvent(new Event("max-subscription"));
   },
   cancel() {
     try { localStorage.removeItem(SUB_KEY); } catch {}
-    window.dispatchEvent(new Event("apex-subscription"));
+    window.dispatchEvent(new Event("max-subscription"));
   },
 };
 

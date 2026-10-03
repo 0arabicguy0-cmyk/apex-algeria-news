@@ -33,7 +33,7 @@ function getDynamicDateLine(language: string) {
 }
 
 export type Lang = "ar" | "en";
-const KEY = "apex-lang";
+const KEY = "max-lang";
 
 const dict = {
   ar: {

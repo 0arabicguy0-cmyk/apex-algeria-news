@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Minus, Plus, Type } from "lucide-react";
 
-const KEY = "apex-font-size";
+const KEY = "max-font-size";
 const SIZES = [16, 18, 20, 22] as const;
 
 export default function FontSizeControl({ targetSelector = ".prose-article" }: { targetSelector?: string }) {

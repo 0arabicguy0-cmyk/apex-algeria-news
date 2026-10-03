@@ -4,7 +4,7 @@ Updated: today
 # Project Memory
 
 ## Core
-Arabic RTL news site "Apex News DZ". Cairo font. Mobile-first.
+Arabic RTL news site "Max News DZ". Cairo font. Mobile-first.
 Primary #1A6BFF, Navy #0D1B4B, Accent green #00A550, Amber #E8A020.
 Dark mode with localStorage. dir="rtl" on html.
 Reader is guest-only — no signup. Bookmarks in localStorage. Comments are pre-moderated.

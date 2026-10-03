@@ -3,8 +3,8 @@ import type { LegalContent } from "@/pages/LegalPage";
 export const aboutContent: LegalContent = {
   title: { ar: "من نحن — هيئة التحرير", en: "About — Editorial Team" },
   intro: {
-    ar: "Apex News DZ هو موقع إخباري جزائري مستقل يقدم تغطية شاملة للأخبار المحلية والإقليمية والدولية. يضم فريقنا صحفيين مؤهلين حاصلين على شهادات معترف بها من جامعات جزائرية.",
-    en: "Apex News DZ is an independent Algerian news outlet providing comprehensive coverage of local, regional, and international news. Our team consists of qualified journalists holding recognized degrees from Algerian universities.",
+    ar: "Max News DZ هو موقع إخباري جزائري مستقل يقدم تغطية شاملة للأخبار المحلية والإقليمية والدولية. يضم فريقنا صحفيين مؤهلين حاصلين على شهادات معترف بها من جامعات جزائرية.",
+    en: "Max News DZ is an independent Algerian news outlet providing comprehensive coverage of local, regional, and international news. Our team consists of qualified journalists holding recognized degrees from Algerian universities.",
   },
   sections: [
     {
@@ -37,8 +37,8 @@ export const imprintContent: LegalContent = {
     {
       heading: { ar: "هوية الناشر", en: "Publisher Identity" },
       body: {
-        ar: "اسم الشركة: Apex News DZ SARL\nالشكل القانوني: شركة ذات مسؤولية محدودة (SARL)\nرأس المال الاجتماعي: 1.000.000 دج\nرقم السجل التجاري: 16/00-1234567 B 24\nرقم التعريف الجبائي (NIF): 002416123456789\nالعنوان: شارع ديدوش مراد، 16000 الجزائر العاصمة، الجزائر",
-        en: "Company name: Apex News DZ SARL\nLegal form: Limited Liability Company (SARL)\nShare capital: 1,000,000 DZD\nCommercial registry: 16/00-1234567 B 24\nTax ID (NIF): 002416123456789\nAddress: Didouche Mourad Street, 16000 Algiers, Algeria",
+        ar: "اسم الشركة: Max News DZ SARL\nالشكل القانوني: شركة ذات مسؤولية محدودة (SARL)\nرأس المال الاجتماعي: 1.000.000 دج\nرقم السجل التجاري: 16/00-1234567 B 24\nرقم التعريف الجبائي (NIF): 002416123456789\nالعنوان: شارع ديدوش مراد، 16000 الجزائر العاصمة، الجزائر",
+        en: "Company name: Max News DZ SARL\nLegal form: Limited Liability Company (SARL)\nShare capital: 1,000,000 DZD\nCommercial registry: 16/00-1234567 B 24\nTax ID (NIF): 002416123456789\nAddress: Didouche Mourad Street, 16000 Algiers, Algeria",
       },
     },
     {
@@ -51,8 +51,8 @@ export const imprintContent: LegalContent = {
     {
       heading: { ar: "الاتصال", en: "Contact" },
       body: {
-        ar: "البريد الإلكتروني: contact@apexnews.dz\nالهاتف: +213 (0) 21 00 00 00\nالاستفسارات التحريرية: redaction@apexnews.dz",
-        en: "Email: contact@apexnews.dz\nPhone: +213 (0) 21 00 00 00\nEditorial inquiries: redaction@apexnews.dz",
+        ar: "البريد الإلكتروني: contact@maxnews.dz\nالهاتف: +213 (0) 21 00 00 00\nالاستفسارات التحريرية: redaction@maxnews.dz",
+        en: "Email: contact@maxnews.dz\nPhone: +213 (0) 21 00 00 00\nEditorial inquiries: redaction@maxnews.dz",
       },
     },
     {
@@ -68,8 +68,8 @@ export const imprintContent: LegalContent = {
 export const editorialContent: LegalContent = {
   title: { ar: "الميثاق التحريري", en: "Editorial Charter" },
   intro: {
-    ar: "يلتزم Apex News DZ بمعايير مهنية عالية في ممارسة الصحافة، مع الاحترام التام للدستور الجزائري وقانون الإعلام والقيم الوطنية.",
-    en: "Apex News DZ commits to high professional standards in journalism, with full respect for the Algerian constitution, the Information Law, and national values.",
+    ar: "يلتزم Max News DZ بمعايير مهنية عالية في ممارسة الصحافة، مع الاحترام التام للدستور الجزائري وقانون الإعلام والقيم الوطنية.",
+    en: "Max News DZ commits to high professional standards in journalism, with full respect for the Algerian constitution, the Information Law, and national values.",
   },
   sections: [
     {
@@ -141,22 +141,22 @@ export const correctionsContent: LegalContent = {
     {
       heading: { ar: "كيفية تقديم تصحيح", en: "How to Submit a Correction" },
       body: {
-        ar: "أرسل بريداً إلكترونياً إلى corrections@apexnews.dz مع:\n• رابط المقال المعني\n• وصف الخطأ بدقة\n• المصدر أو الدليل الذي يثبت الصحيح\nسنرد خلال 72 ساعة كحد أقصى، وننشر التصحيح في حالة ثبوت الخطأ.",
-        en: "Email corrections@apexnews.dz with:\n• Link to the article concerned\n• Precise description of the error\n• Source or evidence supporting the correct version\nWe respond within a maximum of 72 hours, and publish the correction when the error is confirmed.",
+        ar: "أرسل بريداً إلكترونياً إلى corrections@maxnews.dz مع:\n• رابط المقال المعني\n• وصف الخطأ بدقة\n• المصدر أو الدليل الذي يثبت الصحيح\nسنرد خلال 72 ساعة كحد أقصى، وننشر التصحيح في حالة ثبوت الخطأ.",
+        en: "Email corrections@maxnews.dz with:\n• Link to the article concerned\n• Precise description of the error\n• Source or evidence supporting the correct version\nWe respond within a maximum of 72 hours, and publish the correction when the error is confirmed.",
       },
     },
     {
       heading: { ar: "حق الرد", en: "Right of Reply" },
       body: {
-        ar: "طبقاً للمواد 100 إلى 105 من القانون العضوي 12-05، لكل شخص طبيعي أو معنوي ذُكر في مقال الحق في الرد. أرسل طلبك المكتوب إلى droit-de-reponse@apexnews.dz خلال 30 يوماً من تاريخ النشر، وسننشر ردك ضمن نفس الشروط (الموقع والحجم) خلال 3 أيام.",
-        en: "Under Articles 100 to 105 of Organic Law 12-05, any natural or legal person named in an article has the right of reply. Send your written request to droit-de-reponse@apexnews.dz within 30 days of publication. We will publish your reply under the same conditions (location and size) within 3 days.",
+        ar: "طبقاً للمواد 100 إلى 105 من القانون العضوي 12-05، لكل شخص طبيعي أو معنوي ذُكر في مقال الحق في الرد. أرسل طلبك المكتوب إلى droit-de-reponse@maxnews.dz خلال 30 يوماً من تاريخ النشر، وسننشر ردك ضمن نفس الشروط (الموقع والحجم) خلال 3 أيام.",
+        en: "Under Articles 100 to 105 of Organic Law 12-05, any natural or legal person named in an article has the right of reply. Send your written request to droit-de-reponse@maxnews.dz within 30 days of publication. We will publish your reply under the same conditions (location and size) within 3 days.",
       },
     },
     {
       heading: { ar: "الشكاوى", en: "Complaints" },
       body: {
-        ar: "للشكاوى المتعلقة بالأخلاقيات المهنية، يمكن التواصل مع رئيس التحرير على redacteur-chef@apexnews.dz أو مع سلطة ضبط الصحافة المكتوبة.",
-        en: "For complaints related to professional ethics, contact the Editor-in-Chief at redacteur-chef@apexnews.dz or the Press Regulatory Authority.",
+        ar: "للشكاوى المتعلقة بالأخلاقيات المهنية، يمكن التواصل مع رئيس التحرير على redacteur-chef@maxnews.dz أو مع سلطة ضبط الصحافة المكتوبة.",
+        en: "For complaints related to professional ethics, contact the Editor-in-Chief at redacteur-chef@maxnews.dz or the Press Regulatory Authority.",
       },
     },
   ],
@@ -165,8 +165,8 @@ export const correctionsContent: LegalContent = {
 export const privacyContent: LegalContent = {
   title: { ar: "سياسة الخصوصية", en: "Privacy Policy" },
   intro: {
-    ar: "تحترم Apex News DZ خصوصية مستخدميها وتلتزم بأحكام القانون 18-07 المؤرخ في 10 جوان 2018 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي.",
-    en: "Apex News DZ respects user privacy and complies with Law 18-07 of June 10, 2018 on the protection of natural persons regarding personal data processing.",
+    ar: "تحترم Max News DZ خصوصية مستخدميها وتلتزم بأحكام القانون 18-07 المؤرخ في 10 جوان 2018 المتعلق بحماية الأشخاص الطبيعيين في مجال معالجة المعطيات ذات الطابع الشخصي.",
+    en: "Max News DZ respects user privacy and complies with Law 18-07 of June 10, 2018 on the protection of natural persons regarding personal data processing.",
   },
   sections: [
     {
@@ -186,8 +186,8 @@ export const privacyContent: LegalContent = {
     {
       heading: { ar: "حقوقك", en: "Your Rights" },
       body: {
-        ar: "طبقاً للقانون 18-07، لك الحق في: الوصول إلى بياناتك، تصحيحها، حذفها، الاعتراض على معالجتها، وإلغاء الاشتراك في النشرة في أي وقت. للممارسة، اتصل بـ: privacy@apexnews.dz",
-        en: "Under Law 18-07, you have the right to: access your data, correct it, delete it, object to its processing, and unsubscribe from the newsletter at any time. To exercise these rights, contact: privacy@apexnews.dz",
+        ar: "طبقاً للقانون 18-07، لك الحق في: الوصول إلى بياناتك، تصحيحها، حذفها، الاعتراض على معالجتها، وإلغاء الاشتراك في النشرة في أي وقت. للممارسة، اتصل بـ: privacy@maxnews.dz",
+        en: "Under Law 18-07, you have the right to: access your data, correct it, delete it, object to its processing, and unsubscribe from the newsletter at any time. To exercise these rights, contact: privacy@maxnews.dz",
       },
     },
     {
@@ -234,15 +234,15 @@ export const cookiesContent: LegalContent = {
 export const termsContent: LegalContent = {
   title: { ar: "شروط الاستخدام", en: "Terms of Use" },
   intro: {
-    ar: "يخضع استخدامك لموقع Apex News DZ للشروط التالية. باستخدام الموقع، فإنك تقبل هذه الشروط.",
-    en: "Your use of Apex News DZ is subject to the following terms. By using the site, you accept these terms.",
+    ar: "يخضع استخدامك لموقع Max News DZ للشروط التالية. باستخدام الموقع، فإنك تقبل هذه الشروط.",
+    en: "Your use of Max News DZ is subject to the following terms. By using the site, you accept these terms.",
   },
   sections: [
     {
       heading: { ar: "الملكية الفكرية", en: "Intellectual Property" },
       body: {
-        ar: "جميع المحتويات المنشورة (نصوص، صور، فيديو) محمية بحقوق المؤلف وهي ملك لـ Apex News DZ أو لأصحابها. يُمنع إعادة النشر دون إذن مكتوب مسبق.",
-        en: "All published content (text, images, video) is protected by copyright and belongs to Apex News DZ or its rightful owners. Reproduction is prohibited without prior written consent.",
+        ar: "جميع المحتويات المنشورة (نصوص، صور، فيديو) محمية بحقوق المؤلف وهي ملك لـ Max News DZ أو لأصحابها. يُمنع إعادة النشر دون إذن مكتوب مسبق.",
+        en: "All published content (text, images, video) is protected by copyright and belongs to Max News DZ or its rightful owners. Reproduction is prohibited without prior written consent.",
       },
     },
     {
@@ -272,22 +272,22 @@ export const termsContent: LegalContent = {
 export const copyrightContent: LegalContent = {
   title: { ar: "سياسة حقوق النشر", en: "Copyright Policy" },
   intro: {
-    ar: "جميع المحتويات المنشورة على Apex News DZ محمية بموجب قوانين حقوق المؤلف الجزائرية والدولية، لا سيما الأمر رقم 03-05 المتعلق بحقوق المؤلف والحقوق المجاورة.",
-    en: "All content published on Apex News DZ is protected under Algerian and international copyright laws, in particular Ordinance 03-05 on copyright and related rights.",
+    ar: "جميع المحتويات المنشورة على Max News DZ محمية بموجب قوانين حقوق المؤلف الجزائرية والدولية، لا سيما الأمر رقم 03-05 المتعلق بحقوق المؤلف والحقوق المجاورة.",
+    en: "All content published on Max News DZ is protected under Algerian and international copyright laws, in particular Ordinance 03-05 on copyright and related rights.",
   },
   sections: [
     {
       heading: { ar: "ملكية المحتوى", en: "Ownership of Content" },
       body: {
-        ar: "النصوص والصور ومقاطع الفيديو والرسوم التوضيحية والشعارات المنشورة على الموقع هي ملك حصري لـ Apex News DZ أو لأصحاب الحقوق الذين منحونا ترخيصاً للنشر. يُحظر إعادة الإنتاج أو النسخ أو التوزيع أو التعديل دون إذن خطي مسبق.",
-        en: "Texts, images, videos, illustrations and logos published on the site are the exclusive property of Apex News DZ or of rights holders who have granted us a publishing license. Reproduction, copying, distribution or modification without prior written authorization is prohibited.",
+        ar: "النصوص والصور ومقاطع الفيديو والرسوم التوضيحية والشعارات المنشورة على الموقع هي ملك حصري لـ Max News DZ أو لأصحاب الحقوق الذين منحونا ترخيصاً للنشر. يُحظر إعادة الإنتاج أو النسخ أو التوزيع أو التعديل دون إذن خطي مسبق.",
+        en: "Texts, images, videos, illustrations and logos published on the site are the exclusive property of Max News DZ or of rights holders who have granted us a publishing license. Reproduction, copying, distribution or modification without prior written authorization is prohibited.",
       },
     },
     {
       heading: { ar: "الاقتباس المسموح به", en: "Permitted Citation" },
       body: {
-        ar: "يُسمح بالاقتباس القصير لأغراض النقد أو المراجعة أو التعليم أو الصحافة، بشرط ذكر المصدر بوضوح (Apex News DZ) ووضع رابط مباشر للمقال الأصلي.",
-        en: "Short quotations are permitted for criticism, review, education or journalism, provided that the source (Apex News DZ) is clearly cited and a direct link to the original article is included.",
+        ar: "يُسمح بالاقتباس القصير لأغراض النقد أو المراجعة أو التعليم أو الصحافة، بشرط ذكر المصدر بوضوح (Max News DZ) ووضع رابط مباشر للمقال الأصلي.",
+        en: "Short quotations are permitted for criticism, review, education or journalism, provided that the source (Max News DZ) is clearly cited and a direct link to the original article is included.",
       },
     },
     {
@@ -317,8 +317,8 @@ export const copyrightContent: LegalContent = {
 export const disclaimerContent: LegalContent = {
   title: { ar: "إخلاء مسؤولية المحتوى", en: "Content Responsibility Disclaimer" },
   intro: {
-    ar: "يحرص فريق Apex News DZ على تقديم معلومات دقيقة ومحققة، لكن استخدام محتوى الموقع يخضع للشروط والتنبيهات التالية.",
-    en: "The Apex News DZ team strives to provide accurate and verified information, but use of the site's content is subject to the following terms and warnings.",
+    ar: "يحرص فريق Max News DZ على تقديم معلومات دقيقة ومحققة، لكن استخدام محتوى الموقع يخضع للشروط والتنبيهات التالية.",
+    en: "The Max News DZ team strives to provide accurate and verified information, but use of the site's content is subject to the following terms and warnings.",
   },
   sections: [
     {
@@ -338,8 +338,8 @@ export const disclaimerContent: LegalContent = {
     {
       heading: { ar: "آراء الكتّاب والمعلقين", en: "Opinions of Authors and Commenters" },
       body: {
-        ar: "آراء الكتّاب في أعمدة الرأي والتحليل تُعبّر عن أصحابها ولا تُلزم بالضرورة هيئة تحرير Apex News DZ. التعليقات المنشورة من القراء هي مسؤولية أصحابها وحدهم.",
-        en: "Opinions expressed by authors in opinion and analysis columns reflect their own views and do not necessarily commit the Apex News DZ editorial board. Comments posted by readers are the sole responsibility of their authors.",
+        ar: "آراء الكتّاب في أعمدة الرأي والتحليل تُعبّر عن أصحابها ولا تُلزم بالضرورة هيئة تحرير Max News DZ. التعليقات المنشورة من القراء هي مسؤولية أصحابها وحدهم.",
+        en: "Opinions expressed by authors in opinion and analysis columns reflect their own views and do not necessarily commit the Max News DZ editorial board. Comments posted by readers are the sole responsibility of their authors.",
       },
     },
     {
@@ -352,8 +352,8 @@ export const disclaimerContent: LegalContent = {
     {
       heading: { ar: "حدود المسؤولية", en: "Limitation of Liability" },
       body: {
-        ar: "لا يتحمل Apex News DZ أي مسؤولية عن الأضرار المباشرة أو غير المباشرة الناتجة عن استخدام الموقع أو عدم القدرة على الوصول إليه، أو عن أي قرار يتخذه القارئ بناءً على المحتوى المنشور.",
-        en: "Apex News DZ accepts no liability for direct or indirect damages arising from use of the site or inability to access it, or from any decision taken by the reader based on the published content.",
+        ar: "لا يتحمل Max News DZ أي مسؤولية عن الأضرار المباشرة أو غير المباشرة الناتجة عن استخدام الموقع أو عدم القدرة على الوصول إليه، أو عن أي قرار يتخذه القارئ بناءً على المحتوى المنشور.",
+        en: "Max News DZ accepts no liability for direct or indirect damages arising from use of the site or inability to access it, or from any decision taken by the reader based on the published content.",
       },
     },
     {

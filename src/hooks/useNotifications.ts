@@ -11,10 +11,10 @@ export interface AppNotification {
   read: boolean;
 }
 
-const PERM_KEY = "apex-notif-permission";
-const READ_IDS_KEY = "apex-notif-read-ids-v1";
-const LAST_READ_KEY = "apex-notif-last-read-v1";
-const CLEARED_AT_KEY = "apex-notif-cleared-at-v1";
+const PERM_KEY = "max-notif-permission";
+const READ_IDS_KEY = "max-notif-read-ids-v1";
+const LAST_READ_KEY = "max-notif-last-read-v1";
+const CLEARED_AT_KEY = "max-notif-cleared-at-v1";
 const MAX_ITEMS = 30;
 
 type ArticleRow = {

@@ -5,8 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 
 const SW_URL = "/firebase-messaging-sw.js";
-const TOKEN_KEY = "apex_fcm_token_v1";
-const OPTIN_KEY = "apex_fcm_optin_v1";
+const TOKEN_KEY = "max_fcm_token_v1";
+const OPTIN_KEY = "max_fcm_optin_v1";
 
 function isInIframe() {
   try { return window.self !== window.top; } catch { return true; }
@@ -96,7 +96,7 @@ export async function enableFcm(): Promise<EnableResult> {
     const d = payload.data || {};
     const isBreaking = d.is_breaking === "true";
     const prefix = isBreaking ? "🚨 عاجل" : "📰 خبر جديد";
-    const title = `${prefix} — ${d.title || "Apex News"}`;
+    const title = `${prefix} — ${d.title || "Max News"}`;
     const url = d.url || "/";
 
     const pageHidden = typeof document !== "undefined" && document.visibilityState !== "visible";
@@ -105,7 +105,7 @@ export async function enableFcm(): Promise<EnableResult> {
         body: d.body || "",
         icon: isBreaking ? "/icon-512.png" : "/icon-192.png",
         badge: "/icon-192.png",
-        tag: d.tag || (isBreaking ? "apex-breaking" : "apex-news"),
+        tag: d.tag || (isBreaking ? "max-breaking" : "max-news"),
         data: { url },
         dir: "rtl",
         lang: "ar",

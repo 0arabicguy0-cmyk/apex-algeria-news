@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 export function useTheme() {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("apex-theme") === "dark";
+      return localStorage.getItem("max-theme") === "dark";
     }
     return false;
   });
@@ -12,10 +12,10 @@ export function useTheme() {
     const root = document.documentElement;
     if (isDark) {
       root.classList.add("dark");
-      localStorage.setItem("apex-theme", "dark");
+      localStorage.setItem("max-theme", "dark");
     } else {
       root.classList.remove("dark");
-      localStorage.setItem("apex-theme", "light");
+      localStorage.setItem("max-theme", "light");
     }
   }, [isDark]);
 

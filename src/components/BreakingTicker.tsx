@@ -12,29 +12,29 @@ const SPEED_PX_PER_SEC = 60;
 const MIN_DURATION_S = 12;
 
 const TICKER_CSS = `
-  @keyframes apex-ticker-rtl {
+  @keyframes max-ticker-rtl {
     from { transform: translate3d(0, 0, 0); }
     to   { transform: translate3d(var(--ticker-cycle), 0, 0); }
   }
 
-  .apex-ticker-viewport {
+  .max-ticker-viewport {
     -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
             mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent);
   }
 
-  .apex-ticker-track {
-    animation: apex-ticker-rtl var(--ticker-duration) linear infinite;
+  .max-ticker-track {
+    animation: max-ticker-rtl var(--ticker-duration) linear infinite;
     will-change: transform;
   }
 
-  .apex-ticker-viewport:hover .apex-ticker-track,
-  .apex-ticker-viewport:focus-within .apex-ticker-track {
+  .max-ticker-viewport:hover .max-ticker-track,
+  .max-ticker-viewport:focus-within .max-ticker-track {
     animation-play-state: paused;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .apex-ticker-track { animation: none; }
-    .apex-ticker-viewport { overflow-x: auto; }
+    .max-ticker-track { animation: none; }
+    .max-ticker-viewport { overflow-x: auto; }
   }
 `;
 
@@ -108,11 +108,11 @@ export default function BreakingTicker() {
 
         <div
           ref={viewportRef}
-          className="apex-ticker-viewport relative flex-1 overflow-hidden"
+          className="max-ticker-viewport relative flex-1 overflow-hidden"
         >
           {/* Anchored to the right edge; extra copies extend to the left */}
           <div
-            className="apex-ticker-track absolute inset-y-0 right-0 flex w-max items-center whitespace-nowrap"
+            className="max-ticker-track absolute inset-y-0 right-0 flex w-max items-center whitespace-nowrap"
             style={trackStyle}
           >
             {Array.from({ length: layout.copies }, (_, copy) => {

@@ -6,10 +6,10 @@ export function useSubscription() {
 
   useEffect(() => {
     const sync = () => setActive(subscriptionApi.isActive());
-    window.addEventListener("apex-subscription", sync);
+    window.addEventListener("max-subscription", sync);
     window.addEventListener("storage", sync);
     return () => {
-      window.removeEventListener("apex-subscription", sync);
+      window.removeEventListener("max-subscription", sync);
       window.removeEventListener("storage", sync);
     };
   }, []);

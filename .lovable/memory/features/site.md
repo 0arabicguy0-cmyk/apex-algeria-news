@@ -3,7 +3,7 @@ name: Site features
 description: Full feature inventory — search, bookmarks, comments, reactions, newsletter, TOC, reading progress, audio (Web Speech API), AI translation (translate-article edge function), trending, topic pages, rotating breaking ticker, admin panels
 type: feature
 ---
-- Reader is guest-only (no signup). Bookmarks via localStorage `apex:bookmarks`.
+- Reader is guest-only (no signup). Bookmarks via localStorage `max:bookmarks`.
 - View tracking: `article_views` insert + trigger increments `articles.view_count`. De-duped per session via `sessionStorage`.
 - Reactions: 5 emojis (like/love/insightful/sad/angry), one per browser via localStorage `reaction:{id}`.
 - Comments: anonymous submit → `pending`, admin approves to `approved`.

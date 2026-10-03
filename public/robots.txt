@@ -15,4 +15,4 @@ Allow: /
 Disallow: /admin
 Disallow: /admin/
 
-Sitemap: https://apex-algeria-news.lovable.app/sitemap.xml
+Sitemap: https://max-news-dz.vercel.app/sitemap.xml

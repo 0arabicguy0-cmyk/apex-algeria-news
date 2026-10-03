@@ -4,7 +4,7 @@
 // code via importScripts. We register THIS file separately so push works alongside Workbox.
 
 self.addEventListener("push", (event) => {
-  let data = { title: "Apex News", body: "", url: "/", icon: "/icon-192.png", tag: "apex-news" };
+  let data = { title: "Max News", body: "", url: "/", icon: "/icon-192.png", tag: "max-news" };
   try {
     if (event.data) data = { ...data, ...event.data.json() };
   } catch {

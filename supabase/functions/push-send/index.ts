@@ -13,7 +13,7 @@ const corsHeaders = {
 
 const VAPID_PUBLIC = Deno.env.get("VAPID_PUBLIC_KEY")!;
 const VAPID_PRIVATE = Deno.env.get("VAPID_PRIVATE_KEY")!;
-const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") || "mailto:admin@apexnews.dz";
+const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") || "mailto:admin@maxnews.dz";
 
 if (!VAPID_PUBLIC || !VAPID_PRIVATE) {
   console.error("Missing VAPID keys");
@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
       body: body ?? "",
       url: url ?? "/",
       icon: icon ?? "/icon-192.png",
-      tag: tag ?? "apex-news",
+      tag: tag ?? "max-news",
     });
 
     let sent = 0;

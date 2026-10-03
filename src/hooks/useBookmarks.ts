@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const KEY = "apex:bookmarks";
+const KEY = "max:bookmarks";
 
 function read(): string[] {
   try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; }

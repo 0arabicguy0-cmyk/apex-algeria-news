@@ -7,9 +7,9 @@ importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-com
 
 firebase.initializeApp({
   apiKey: "AIzaSyAKX7VcsNdevIBMpv0baWHnH4r17l19bdM",
-  authDomain: "apex-c5262.firebaseapp.com",
-  projectId: "apex-c5262",
-  storageBucket: "apex-c5262.firebasestorage.app",
+  authDomain: "max-c5262.firebaseapp.com",
+  projectId: "max-c5262",
+  storageBucket: "max-c5262.firebasestorage.app",
   messagingSenderId: "609645507794",
   appId: "1:609645507794:web:28e89e924dd7445211e90b",
 });
@@ -24,13 +24,13 @@ messaging.onBackgroundMessage((payload) => {
   const isBreaking = d.is_breaking === "true";
 
   const prefix = isBreaking ? "🚨 BREAKING NEWS" : "📰 New Article";
-  const title = `${prefix} — ${d.title || "Apex News"}`;
+  const title = `${prefix} — ${d.title || "Max News"}`;
 
   const options = {
     body: d.body || "",
     icon: isBreaking ? "/icon-512.png" : "/icon-192.png",
     badge: "/icon-192.png",
-    tag: d.tag || (isBreaking ? "apex-breaking" : "apex-news"),
+    tag: d.tag || (isBreaking ? "max-breaking" : "max-news"),
     data: { url: d.url || "/", articleId: d.article_id || null },
     dir: "rtl",
     lang: "ar",

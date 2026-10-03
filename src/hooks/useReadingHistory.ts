@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const KEY = "apex-reading-history";
+const KEY = "max-reading-history";
 const MAX = 12;
 
 function read(): string[] {
@@ -15,7 +15,7 @@ function read(): string[] {
 function write(ids: string[]) {
   try {
     localStorage.setItem(KEY, JSON.stringify(ids));
-    window.dispatchEvent(new Event("apex-history"));
+    window.dispatchEvent(new Event("max-history"));
   } catch {}
 }
 
@@ -33,10 +33,10 @@ export function useReadingHistory(): string[] {
   const [ids, setIds] = useState<string[]>(() => read());
   useEffect(() => {
     const sync = () => setIds(read());
-    window.addEventListener("apex-history", sync);
+    window.addEventListener("max-history", sync);
     window.addEventListener("storage", sync);
     return () => {
-      window.removeEventListener("apex-history", sync);
+      window.removeEventListener("max-history", sync);
       window.removeEventListener("storage", sync);
     };
   }, []);

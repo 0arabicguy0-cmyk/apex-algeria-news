@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const SW_URL = "/push-sw.js";
 const SW_SCOPE = "/push/";
-const STORAGE_KEY = "apex_push_endpoint_v1";
+const STORAGE_KEY = "max_push_endpoint_v1";
 
 const isPreviewHost =
   typeof window !== "undefined" &&

@@ -165,13 +165,13 @@ export default function ArticlePage() {
               name: "MAX NEWS",
               logo: {
                 "@type": "ImageObject",
-                url: "https://apex-algeria-news.lovable.app/icon-512.png",
+                url: "https://max-news-dz.vercel.app/icon-512.png",
               },
             },
             mainEntityOfPage:
               typeof window !== "undefined"
                 ? window.location.href
-                : `https://apex-algeria-news.lovable.app/article/${article.id}`,
+                : `https://max-news-dz.vercel.app/${article.shortCode}`,
             articleSection: article.category,
             keywords: article.tags.join(", "),
           })}
@@ -369,7 +369,7 @@ export default function ArticlePage() {
                   {related.map((r) => (
                     <Link
                       key={r.id}
-                      to={`/article/${r.id}`}
+                      to={r.shortCode ? `/${r.shortCode}` : `/article/${r.id}`}
                       className="flex-shrink-0 w-56 group"
                     >
                       <div className="rounded-lg overflow-hidden mb-2">

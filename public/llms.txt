@@ -1,6 +1,6 @@
-# Apex News DZ
+# Max News DZ
 
-> Apex News DZ (أبكس نيوز الجزائر) — a bilingual Arabic/English news site covering Algeria, the Arab world, and international affairs across politics, sports, economy, culture, and technology.
+> Max News DZ (ماكس نيوز الجزائر) — a bilingual Arabic/English news site covering Algeria, the Arab world, and international affairs across politics, sports, economy, culture, and technology.
 
 ## Pages
 

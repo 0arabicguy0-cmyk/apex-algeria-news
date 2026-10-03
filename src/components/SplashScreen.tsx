@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/hooks/useLanguage";
 import animatedLogo from "@/assets/max-news-animated.mp4";
 
-const LAST_SEEN_KEY = "apex-last-seen";
-const SESSION_KEY = "apex-splash-shown";
+const LAST_SEEN_KEY = "max-last-seen";
+const SESSION_KEY = "max-splash-shown";
 const INACTIVITY_MS = 30 * 60 * 1000; // 30 minutes
 
 export default function SplashScreen() {

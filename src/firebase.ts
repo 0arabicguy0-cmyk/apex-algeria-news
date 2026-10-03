@@ -3,9 +3,9 @@ import { getMessaging, isSupported, type Messaging } from "firebase/messaging";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyAKX7VcsNdevIBMpv0baWHnH4r17l19bdM",
-  authDomain: "apex-c5262.firebaseapp.com",
-  projectId: "apex-c5262",
-  storageBucket: "apex-c5262.firebasestorage.app",
+  authDomain: "max-c5262.firebaseapp.com",
+  projectId: "max-c5262",
+  storageBucket: "max-c5262.firebasestorage.app",
   messagingSenderId: "609645507794",
   appId: "1:609645507794:web:28e89e924dd7445211e90b",
 };
