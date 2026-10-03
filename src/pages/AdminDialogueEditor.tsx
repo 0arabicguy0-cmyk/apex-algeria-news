@@ -15,7 +15,7 @@ type Status = "draft" | "published";
 
 export default function AdminDialogueEditor() {
   const { id } = useParams();
-  const isNew = id === "new";
+  const isNew = !id || id === "new";
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isPublisher } = useAuth();

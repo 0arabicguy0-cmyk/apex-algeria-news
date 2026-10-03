@@ -26,6 +26,7 @@ export interface Article {
   media_type?: "image" | "youtube" | "video";
   video_url?: string | null;
   video_thumbnail?: string | null;
+  shortCode?: string | null;
 }
 
 const FALLBACK_IMG = "/placeholder.svg";
@@ -72,6 +73,7 @@ export function mapArticle(a: DbArticle): Article {
     media_type: ((a as any).media_type as Article["media_type"]) || "image",
     video_url: (a as any).video_url ?? null,
     video_thumbnail: (a as any).video_thumbnail ?? null,
+    shortCode: (a as any).short_code ?? null,
   };
 }
 
@@ -98,15 +100,23 @@ export function useArticles(opts?: { categoryKey?: string; limit?: number }) {
   return { articles: data ?? [], loading: isLoading };
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Public URL for an article: short /{code} when available, else legacy /article/{uuid}. */
+export function articleUrl(a: { id: string; shortCode?: string | null }) {
+  return a.shortCode ? `/${a.shortCode}` : `/article/${a.id}`;
+}
+
+/** Accepts either a UUID or a short_code. */
 export function useArticle(id: string | undefined) {
   const { data, isLoading } = useQuery({
     queryKey: ["articles", "one", id],
     queryFn: async () => {
       if (!id) return null;
-      const { data, error } = await supabase
-        .from("articles")
-        .select("*")
-        .eq("id", id)
+      const isUuid = UUID_RE.test(id);
+      if (!isUuid && !/^[A-Za-z0-9]{5,7}$/.test(id)) return null;
+      const { data, error } = await (supabase.from("articles").select("*") as any)
+        .eq(isUuid ? "id" : "short_code", id)
         .maybeSingle();
       if (error) throw error;
       return data ? mapArticle(data) : null;
