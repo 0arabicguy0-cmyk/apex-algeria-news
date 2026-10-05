@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, MemoryRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -44,6 +44,13 @@ import AdminSettings from "./pages/AdminSettings";
 
 const queryClient = new QueryClient();
 
+const LegacyRouter = ({ children }: { children: React.ReactNode }) => {
+  if (typeof window === "undefined") {
+    return <MemoryRouter initialEntries={["/"]}>{children}</MemoryRouter>;
+  }
+  return <BrowserRouter>{children}</BrowserRouter>;
+};
+
 const App = () => {
   useEffect(() => {
     autoReregister();
@@ -55,7 +62,7 @@ const App = () => {
       <SplashScreen />
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <LegacyRouter>
         <a href="#main-content" className="skip-link">Skip to content / تخطّى إلى المحتوى</a>
         <CommandPalette />
         <BackToTop />
@@ -97,7 +104,7 @@ const App = () => {
           <Route path="/:code" element={<ArticlePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </BrowserRouter>
+      </LegacyRouter>
     </TooltipProvider>
   </QueryClientProvider>
 )};
