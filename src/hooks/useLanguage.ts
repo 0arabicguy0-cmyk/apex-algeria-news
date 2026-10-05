@@ -264,7 +264,10 @@ type ArrayKeys = { [K in keyof Dict]: Dict[K] extends readonly string[] ? K : ne
 export type TKey = StringKeys;
 
 let listeners: Array<(l: Lang) => void> = [];
-const getInitial = (): Lang => (localStorage.getItem(KEY) as Lang) || "ar";
+const getInitial = (): Lang => {
+  if (typeof window === "undefined") return "ar";
+  return (localStorage.getItem(KEY) as Lang) || "ar";
+};
 
 const apply = (l: Lang) => {
   document.documentElement.lang = l;
