@@ -20,7 +20,7 @@ type ArticlePreview = {
 };
 
 const getArticlePreview = createServerFn({ method: "GET" })
-  .inputValidator((path: string) => path)
+  .validator((path: string) => path)
   .handler(async ({ data: path }) => {
     const segments = path.split("/").filter(Boolean);
     const legacy = segments.length === 2 && segments[0] === "article" && UUID_RE.test(segments[1]);
@@ -39,9 +39,12 @@ const getArticlePreview = createServerFn({ method: "GET" })
       status: "eq.published",
       limit: "1",
     });
-    const response = await fetch(`${baseUrl}/rest/v1/articles?${query}`, {
+    let response = await fetch(`${baseUrl}/rest/v1/articles?${query}`, {
       headers: { apikey: anonKey },
     });
+    if (!response.ok && short) {
+      return null;
+    }
     if (!response.ok) return null;
     const rows = (await response.json()) as ArticlePreview[];
     return rows[0] ?? null;
