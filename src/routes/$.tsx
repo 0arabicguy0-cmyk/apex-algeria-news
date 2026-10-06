@@ -33,21 +33,36 @@ const getArticlePreview = createServerFn({ method: "GET" })
     const anonKey = process.env['SUPABASE_PUBLISHABLE_KEY'] || process.env['VITE_SUPABASE_PUBLISHABLE_KEY'];
     if (!baseUrl || !anonKey) return null;
 
-    const query = new URLSearchParams({
-      select: "title,excerpt,body,image_url,video_thumbnail,short_code,author,published_at,category",
-      [field]: `eq.${value}`,
-      status: "eq.published",
-      limit: "1",
-    });
-    let response = await fetch(`${baseUrl}/rest/v1/articles?${query}`, {
-      headers: { apikey: anonKey },
-    });
-    if (!response.ok && short) {
-      return null;
+    const requestArticle = (select: string) => {
+      const query = new URLSearchParams({
+        select,
+        [field]: `eq.${value}`,
+        status: "eq.published",
+        limit: "1",
+      });
+      return fetch(`${baseUrl}/rest/v1/articles?${query}`, { headers: { apikey: anonKey } });
+    };
+    let response = await requestArticle(
+      "title,excerpt,body,image_url,video_thumbnail,short_code,author,published_at,category",
+    );
+    if (!response.ok && legacy) {
+      response = await requestArticle("title,excerpt,body,image_url,author,published_at,category");
     }
     if (!response.ok) return null;
-    const rows = (await response.json()) as ArticlePreview[];
-    return rows[0] ?? null;
+    const rows = (await response.json()) as Array<Partial<ArticlePreview> & Pick<ArticlePreview, "title" | "category">>;
+    const article = rows[0];
+    if (!article) return null;
+    return {
+      title: article.title,
+      excerpt: article.excerpt ?? null,
+      body: article.body ?? null,
+      image_url: article.image_url ?? null,
+      video_thumbnail: article.video_thumbnail ?? null,
+      short_code: article.short_code ?? null,
+      author: article.author ?? null,
+      published_at: article.published_at ?? null,
+      category: article.category,
+    } satisfies ArticlePreview;
   });
 
 export const Route = createFileRoute("/$")({
