@@ -198,7 +198,7 @@ export default function ArticlePage() {
               <div className="w-full h-full bg-black">
                 {showYoutubeEmbed ? (
                   <iframe
-                    src={getYoutubeEmbedUrl(article.video_url) + "?autoplay=1"}
+                    src={getYoutubeEmbedUrl(article.video_url || "") + "?autoplay=1"}
                     title="YouTube video"
                     className="w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -226,7 +226,7 @@ export default function ArticlePage() {
               // ---- Uploaded video ----
               <div className="w-full h-full bg-black">
                 <video
-                  src={article.video_url}
+                  src={article.video_url || undefined}
                   poster={article.video_thumbnail || article.image}
                   controls
                   className="w-full h-full object-cover"

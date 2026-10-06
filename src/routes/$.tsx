@@ -20,7 +20,7 @@ type ArticlePreview = {
 };
 
 const getArticlePreview = createServerFn({ method: "GET" })
-  .validator((path: string) => path)
+  .inputValidator((path: string) => path)
   .handler(async ({ data: path }) => {
     const segments = path.split("/").filter(Boolean);
     const legacy = segments.length === 2 && segments[0] === "article" && UUID_RE.test(segments[1]);
@@ -29,8 +29,8 @@ const getArticlePreview = createServerFn({ method: "GET" })
 
     const field = legacy ? "id" : "short_code";
     const value = legacy ? segments[1] : segments[0];
-    const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    const baseUrl = process.env['SUPABASE_URL'] || process.env['VITE_SUPABASE_URL'];
+    const anonKey = process.env['SUPABASE_PUBLISHABLE_KEY'] || process.env['VITE_SUPABASE_PUBLISHABLE_KEY'];
     if (!baseUrl || !anonKey) return null;
 
     const query = new URLSearchParams({
@@ -40,7 +40,7 @@ const getArticlePreview = createServerFn({ method: "GET" })
       limit: "1",
     });
     const response = await fetch(`${baseUrl}/rest/v1/articles?${query}`, {
-      headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
+      headers: { apikey: anonKey },
     });
     if (!response.ok) return null;
     const rows = (await response.json()) as ArticlePreview[];
@@ -88,7 +88,24 @@ export const Route = createFileRoute("/$")({
       ...(article.published_at ? [{ property: "article:published_time", content: article.published_at }] : []),
       { property: "article:section", content: article.category },
     ];
-    return { meta, links: [{ rel: "canonical", href: canonical }] };
+    return {
+      meta,
+      links: [{ rel: "canonical", href: canonical }],
+      scripts: [{
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: article.title,
+          description,
+          image: image ? [image] : undefined,
+          datePublished: article.published_at,
+          author: { "@type": "Organization", name: article.author || "MAX NEWS" },
+          publisher: { "@type": "NewsMediaOrganization", name: "MAX NEWS" },
+          mainEntityOfPage: canonical,
+        }),
+      }],
+    };
   },
   component: App,
 });
