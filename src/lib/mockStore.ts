@@ -112,6 +112,7 @@ const seed = (): State => ({
 
 let state: State = (() => {
   try {
+    if (typeof window === "undefined") return seed();
     const raw = localStorage.getItem(KEY);
     if (raw) return JSON.parse(raw);
   } catch {}

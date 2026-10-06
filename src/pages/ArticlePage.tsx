@@ -21,7 +21,6 @@ import AuthorCard from "@/components/AuthorCard";
 import AdBanner from "@/components/AdBanner";
 import Paywall from "@/components/Paywall";
 import SEO from "@/components/SEO";
-import { Helmet } from "react-helmet-async";
 import { ArticleSkeleton } from "@/components/Skeletons";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -138,46 +137,8 @@ export default function ArticlePage() {
     );
   };
 
-  const seoImage = isVideo(article) ? article.video_thumbnail || article.image : article.image;
-
   return (
     <div className="min-h-screen pb-20 md:pb-0 transition-colors duration-300">
-      <SEO
-        title={article.title}
-        description={article.excerpt}
-        keywords={article.tags.join(", ")}
-        author={article.author}
-        image={seoImage}
-        type="article"
-      />
-      <Helmet>
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "NewsArticle",
-            headline: article.title,
-            description: article.excerpt,
-            image: [seoImage],
-            datePublished: article.date,
-            author: { "@type": "Person", name: article.author },
-            publisher: {
-              "@type": "NewsMediaOrganization",
-              name: "MAX NEWS",
-              logo: {
-                "@type": "ImageObject",
-                url: "https://max-news-dz.vercel.app/icon-512.png",
-              },
-            },
-            mainEntityOfPage:
-              typeof window !== "undefined"
-                ? window.location.href
-                : `https://max-news-dz.vercel.app/${article.shortCode}`,
-            articleSection: article.category,
-            keywords: article.tags.join(", "),
-          })}
-        </script>
-      </Helmet>
-
       <ReadingProgress />
       <Header isDark={isDark} onToggleTheme={toggle} />
 
@@ -198,7 +159,7 @@ export default function ArticlePage() {
               <div className="w-full h-full bg-black">
                 {showYoutubeEmbed ? (
                   <iframe
-                    src={getYoutubeEmbedUrl(article.video_url) + "?autoplay=1"}
+                    src={getYoutubeEmbedUrl(article.video_url || "") + "?autoplay=1"}
                     title="YouTube video"
                     className="w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -226,7 +187,7 @@ export default function ArticlePage() {
               // ---- Uploaded video ----
               <div className="w-full h-full bg-black">
                 <video
-                  src={article.video_url}
+                  src={article.video_url || undefined}
                   poster={article.video_thumbnail || article.image}
                   controls
                   className="w-full h-full object-cover"

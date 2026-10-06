@@ -29,22 +29,40 @@ const getArticlePreview = createServerFn({ method: "GET" })
 
     const field = legacy ? "id" : "short_code";
     const value = legacy ? segments[1] : segments[0];
-    const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    const baseUrl = process.env['SUPABASE_URL'] || process.env['VITE_SUPABASE_URL'];
+    const anonKey = process.env['SUPABASE_PUBLISHABLE_KEY'] || process.env['VITE_SUPABASE_PUBLISHABLE_KEY'];
     if (!baseUrl || !anonKey) return null;
 
-    const query = new URLSearchParams({
-      select: "title,excerpt,body,image_url,video_thumbnail,short_code,author,published_at,category",
-      [field]: `eq.${value}`,
-      status: "eq.published",
-      limit: "1",
-    });
-    const response = await fetch(`${baseUrl}/rest/v1/articles?${query}`, {
-      headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` },
-    });
+    const requestArticle = (select: string) => {
+      const query = new URLSearchParams({
+        select,
+        [field]: `eq.${value}`,
+        status: "eq.published",
+        limit: "1",
+      });
+      return fetch(`${baseUrl}/rest/v1/articles?${query}`, { headers: { apikey: anonKey } });
+    };
+    let response = await requestArticle(
+      "title,excerpt,body,image_url,video_thumbnail,short_code,author,published_at,category",
+    );
+    if (!response.ok && legacy) {
+      response = await requestArticle("title,excerpt,body,image_url,author,published_at,category");
+    }
     if (!response.ok) return null;
-    const rows = (await response.json()) as ArticlePreview[];
-    return rows[0] ?? null;
+    const rows = (await response.json()) as Array<Partial<ArticlePreview> & Pick<ArticlePreview, "title" | "category">>;
+    const article = rows[0];
+    if (!article) return null;
+    return {
+      title: article.title,
+      excerpt: article.excerpt ?? null,
+      body: article.body ?? null,
+      image_url: article.image_url ?? null,
+      video_thumbnail: article.video_thumbnail ?? null,
+      short_code: article.short_code ?? null,
+      author: article.author ?? null,
+      published_at: article.published_at ?? null,
+      category: article.category,
+    } satisfies ArticlePreview;
   });
 
 export const Route = createFileRoute("/$")({
@@ -88,7 +106,29 @@ export const Route = createFileRoute("/$")({
       ...(article.published_at ? [{ property: "article:published_time", content: article.published_at }] : []),
       { property: "article:section", content: article.category },
     ];
-    return { meta, links: [{ rel: "canonical", href: canonical }] };
+    return {
+      meta,
+      links: [{ rel: "canonical", href: canonical }],
+      scripts: [{
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: article.title,
+          description,
+          image: image ? [image] : undefined,
+          datePublished: article.published_at,
+          author: { "@type": "Organization", name: article.author || "MAX NEWS" },
+          publisher: { "@type": "NewsMediaOrganization", name: "MAX NEWS" },
+          mainEntityOfPage: canonical,
+        }),
+      }],
+    };
   },
-  component: App,
+  component: LegacyPage,
 });
+
+function LegacyPage() {
+  const { _splat } = Route.useParams();
+  return <App initialPath={`/${_splat ?? ""}`} />;
+}

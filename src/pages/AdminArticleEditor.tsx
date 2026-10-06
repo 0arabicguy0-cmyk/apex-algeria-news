@@ -128,6 +128,10 @@ export default function AdminArticleEditor() {
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
           const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("Canvas is not available"));
+            return;
+          }
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           canvas.toBlob((blob) => {
             if (blob) {

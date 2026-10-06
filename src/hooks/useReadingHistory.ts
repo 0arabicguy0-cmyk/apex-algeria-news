@@ -5,6 +5,7 @@ const MAX = 12;
 
 function read(): string[] {
   try {
+    if (typeof window === "undefined") return [];
     const raw = localStorage.getItem(KEY);
     return raw ? (JSON.parse(raw) as string[]) : [];
   } catch {
