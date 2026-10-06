@@ -29,6 +29,7 @@ type ArticleRow = {
 
 function readSet(key: string): Set<string> {
   try {
+    if (typeof window === "undefined") return new Set();
     const raw = localStorage.getItem(key);
     if (!raw) return new Set();
     return new Set(JSON.parse(raw) as string[]);
@@ -69,8 +70,12 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
 export function useNotifications() {
   const [rows, setRows] = useState<ArticleRow[]>([]);
   const [readIds, setReadIds] = useState<Set<string>>(() => readSet(READ_IDS_KEY));
-  const [lastReadAt, setLastReadAt] = useState<string | null>(() => localStorage.getItem(LAST_READ_KEY));
-  const [clearedAt, setClearedAt] = useState<string | null>(() => localStorage.getItem(CLEARED_AT_KEY));
+  const [lastReadAt, setLastReadAt] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : localStorage.getItem(LAST_READ_KEY),
+  );
+  const [clearedAt, setClearedAt] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : localStorage.getItem(CLEARED_AT_KEY),
+  );
 
   // Initial fetch
   useEffect(() => {
