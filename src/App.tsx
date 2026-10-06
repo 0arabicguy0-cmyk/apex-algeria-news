@@ -44,14 +44,14 @@ import AdminSettings from "./pages/AdminSettings";
 
 const queryClient = new QueryClient();
 
-const LegacyRouter = ({ children }: { children: React.ReactNode }) => {
+const LegacyRouter = ({ children, initialPath }: { children: React.ReactNode; initialPath: string }) => {
   if (typeof window === "undefined") {
-    return <MemoryRouter initialEntries={["/"]}>{children}</MemoryRouter>;
+    return <MemoryRouter initialEntries={[initialPath]}>{children}</MemoryRouter>;
   }
   return <BrowserRouter>{children}</BrowserRouter>;
 };
 
-const App = () => {
+const App = ({ initialPath = "/" }: { initialPath?: string }) => {
   useEffect(() => {
     autoReregister();
   }, []);
@@ -62,7 +62,7 @@ const App = () => {
       <SplashScreen />
       <Toaster />
       <Sonner />
-      <LegacyRouter>
+      <LegacyRouter initialPath={initialPath}>
         <a href="#main-content" className="skip-link">Skip to content / تخطّى إلى المحتوى</a>
         <CommandPalette />
         <BackToTop />

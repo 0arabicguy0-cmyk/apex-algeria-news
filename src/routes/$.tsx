@@ -125,5 +125,10 @@ export const Route = createFileRoute("/$")({
       }],
     };
   },
-  component: App,
+  component: LegacyPage,
 });
+
+function LegacyPage() {
+  const { _splat } = Route.useParams();
+  return <App initialPath={`/${_splat ?? ""}`} />;
+}
