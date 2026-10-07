@@ -128,7 +128,7 @@ export default function ArticlePage() {
         key={i}
         className={
           i === 0
-            ? "first-letter:text-4xl first-letter:font-bold first-letter:text-primary first-letter:float-right first-letter:ml-2 first-letter:mt-1"
+            ? "border-r-4 border-primary pr-4 font-medium"
             : ""
         }
       >
