@@ -51,9 +51,11 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
         <div className="container flex items-center justify-between py-1.5 text-sm opacity-80">
           <span>{t("dateLine")}</span>
           <div className="flex gap-4">
-            <a href="#" aria-label={`MAX NEWS on ${t("facebook")}`} className="hover:text-primary transition-colors">{t("facebook")}</a>
-            <a href="#" aria-label={`MAX NEWS on ${t("twitter")}`} className="hover:text-primary transition-colors">{t("twitter")}</a>
+          <a href="https://www.instagram.com/p/Derm2NPlfmH/?obrf=MTZ0Z2FhdGoyNnl3OA%3D%3D" aria-label={`MAX NEWS on ${t("instagram")}`} className="hover:text-primary transition-colors">{t("instagram")}</a>
+            <a href="https://www.facebook.com/share/1CaHPwejNt" aria-label={`MAX NEWS on ${t("facebook")}`} className="hover:text-primary transition-colors">{t("facebook")}</a>
+            <a href="https://vt.tiktok.com/ZSgkb5Tx5/" aria-label={`MAX NEWS on ${t("tiktok")}`} className="hover:text-primary transition-colors">{t("tiktok")}</a>
             <a href="#" aria-label={`MAX NEWS on ${t("youtube")}`} className="hover:text-primary transition-colors">{t("youtube")}</a>
+            <a href="#" aria-label={`MAX NEWS on ${t("whatsapp")}`} className="hover:text-primary transition-colors">{t("whatsapp")}</a>
           </div>
         </div>
       </div>
