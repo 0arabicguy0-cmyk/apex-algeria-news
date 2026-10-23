@@ -1,0 +1,1 @@
+import{r as e,t}from"./index-BvK7M-Oi.js";import{t as n}from"./App-BL-oxS3H.js";var r=e();function i(){let{_splat:e}=t.useParams();return(0,r.jsx)(n,{initialPath:`/${e??``}`})}export{i as component};
