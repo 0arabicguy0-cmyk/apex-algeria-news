@@ -1,31 +1,31 @@
 import type { LegalContent } from "@/pages/LegalPage";
 
 export const aboutContent: LegalContent = {
-  title: { ar: "من نحن — هيئة التحرير", en: "About — Editorial Team" },
+  title: { ar: "من نحن", en: "About Us" },
   intro: {
-    ar: "Max News DZ هو موقع إخباري جزائري مستقل يقدم تغطية شاملة للأخبار المحلية والإقليمية والدولية. يضم فريقنا صحفيين مؤهلين حاصلين على شهادات معترف بها من جامعات جزائرية.",
-    en: "Max News DZ is an independent Algerian news outlet providing comprehensive coverage of local, regional, and international news. Our team consists of qualified journalists holding recognized degrees from Algerian universities.",
+    ar: "MAX NEWS موقع إخباري جزائري مستقل يهتم بنقل الأخبار ومتابعة الأحداث بمختلف مجالاتها داخل الجزائر وخارجها.\n\nنقدم للقارئ الأخبار السياسية والاقتصادية والاجتماعية والرياضية والثقافية والتكنولوجية وغيرها من الملفات التي تشكل صلب المشهد الوطني والدولي.\n\nنعتمد في عملنا على التحقق من المعلومات والرجوع إلى المصادر الموثوقة وتقديم الخبر بوضوح ودقة وسرعة مع الحفاظ على المضمون الحقيقي للحدث.",
+    en: "MAX NEWS is an independent Algerian news outlet dedicated to reporting news and following events across a wide range of fields, both within Algeria and internationally.\n\nWe provide readers with political, economic, social, sports, cultural, and technology news, alongside other topics shaping the national and international landscape.\n\nOur work is based on verifying information, consulting reliable sources, and delivering news clearly, accurately, and promptly while preserving the true substance of each event.",
   },
   sections: [
     {
-      heading: { ar: "مدير النشر", en: "Director of Publication" },
+      heading: { ar: "مبادئ MAX NEWS", en: "MAX NEWS Principles" },
       body: {
-        ar: "السيد أحمد بن عمر — حاصل على شهادة الماجستير في علوم الإعلام والاتصال من جامعة الجزائر 3، خبرة 15 سنة في الصحافة المكتوبة والإلكترونية. مسؤول مدنياً وجزائياً عن المحتوى المنشور.",
-        en: "Mr. Ahmed Benamar — Master's degree in Information & Communication Sciences from University of Algiers 3, 15 years of experience in print and digital journalism. Civilly and criminally responsible for published content.",
+        ar: "الحقيقة:\nنضع صحة المعلومة في مقدمة أولويات العمل الصحفي.\n\nالتحقق:\nلا نعتمد أي معلومة قبل التأكد منها ومراجعة مصادرها.\n\nالدقة:\nنحرص على نقل التفاصيل كما وردت دون تحريف أو اجتزاء يغير معنى الخبر.\n\nالسرعة:\nنواكب الأحداث في وقتها مع الحفاظ على جودة المعلومة.\n\nالموضوعية:\nنفصل بين نقل الخبر والتعبير عن الرأي ونبتعد عن التهويل والإثارة غير المبررة.\n\nالمصادر الموثوقة:\nنعتمد على المصادر الرسمية والجهات المختصة والمصادر المهنية الموثوقة بحسب طبيعة كل موضوع.\n\nوضوح الخبر:\nنقدم المعلومة بلغة واضحة ومباشرة تجعل القارئ أمام صورة مفهومة عن الحدث.\n\nمواجهة التضليل:\nنتعامل بحذر مع الأخبار والمعلومات المتداولة عبر المنصات الرقمية ولا نعتمدها قبل التحقق منها.\n\nالملكية الفكرية:\nنحترم حقوق المؤلف والمحتوى الصحفي وننسب المواد إلى مصادرها.\n\nالالتزام المهني:\nنلتزم بالقواعد المهنية للعمل الصحفي وبالقوانين الجزائرية المنظمة للإعلام.",
+        en: "Truth:\nWe place the accuracy and truthfulness of information at the forefront of our journalistic priorities.\n\nVerification:\nWe do not rely on information before checking its accuracy and reviewing its sources.\n\nAccuracy:\nWe strive to report details faithfully, without distortion or omissions that could change the meaning of a story.\n\nTimeliness:\nWe follow events as they unfold while maintaining the quality and reliability of information.\n\nObjectivity:\nWe distinguish news reporting from opinion and avoid exaggeration and unjustified sensationalism.\n\nReliable Sources:\nWe rely on official sources, competent authorities, and trusted professional sources according to the nature of each subject.\n\nClarity:\nWe present information in clear, direct language that helps readers understand the events being reported.\n\nCombating Misinformation:\nWe approach news and information circulating on digital platforms with caution and do not rely on them before verification.\n\nIntellectual Property:\nWe respect copyright and journalistic content rights, and properly attribute material to its sources.\n\nProfessional Commitment:\nWe adhere to professional journalistic standards and Algerian laws governing the media.",
       },
     },
     {
-      heading: { ar: "رئيس التحرير", en: "Editor-in-Chief" },
+      heading: { ar: "رسالتنا", en: "Our Mission" },
       body: {
-        ar: "السيدة سلمى حداد — ليسانس في الصحافة من جامعة وهران، شهادة دراسات عليا في الصحافة الاستقصائية. تشرف على الخط التحريري اليومي.",
-        en: "Ms. Salma Haddad — Bachelor's in Journalism from University of Oran, postgraduate diploma in investigative journalism. Oversees daily editorial line.",
+        ar: "نسعى إلى مواكبة الأحداث الوطنية والدولية وتقديم أخبار موثوقة وواضحة للقارئ، بما يساعده على فهم المستجدات وتكوين صورة دقيقة عن مختلف القضايا.",
+        en: "Our mission is to follow national and international developments and provide readers with reliable, clear news that helps them understand current events and form an accurate picture of the issues that matter.",
       },
     },
     {
-      heading: { ar: "هيئة التحرير", en: "Editorial Staff" },
+      heading: { ar: "شعارنا", en: "Our Slogan" },
       body: {
-        ar: "• كريم بوزيان — محرر السياسة (ماجستير علوم سياسية، جامعة قسنطينة)\n• ليلى مرابط — محررة الاقتصاد (ليسانس اقتصاد، جامعة الجزائر)\n• يوسف عباسي — محرر الرياضة (ليسانس صحافة رياضية)\n• نادية شريف — محررة الثقافة (ماجستير أدب عربي)\n• مهدي زيتوني — محرر التكنولوجيا (مهندس إعلام آلي)",
-        en: "• Karim Bouzian — Politics editor (Master's Political Science, University of Constantine)\n• Leila Merabet — Economy editor (Bachelor's Economics, University of Algiers)\n• Youcef Abbasi — Sports editor (Bachelor's Sports Journalism)\n• Nadia Cherif — Culture editor (Master's Arabic Literature)\n• Mehdi Zitouni — Technology editor (Computer Engineer)",
+        ar: "MAX NEWS\nنبض الحدث",
+        en: "MAX NEWS\nThe Pulse of Events",
       },
     },
   ],
