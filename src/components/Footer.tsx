@@ -61,10 +61,9 @@ export default function Footer() {
           <div>
             <h4 className="font-bold mb-4">{t("followUs")}</h4>
             <div className="flex flex-wrap gap-4 text-sm opacity-70">
-              <a href="#" aria-label={`MAX NEWS on ${t("facebook")}`} className="hover:opacity-100 transition-opacity">{t("facebook")}</a>
-              <a href="#" aria-label={`MAX NEWS on ${t("twitter")}`} className="hover:opacity-100 transition-opacity">{t("twitter")}</a>
-              <a href="#" aria-label={`MAX NEWS on ${t("youtube")}`} className="hover:opacity-100 transition-opacity">{t("youtube")}</a>
-              <a href="#" aria-label={`MAX NEWS on ${t("instagram")}`} className="hover:opacity-100 transition-opacity">{t("instagram")}</a>
+            <a href="https://www.instagram.com/p/Derm2NPlfmH/?obrf=MTZ0Z2FhdGoyNnl3OA%3D%3D" aria-label={`MAX NEWS on ${t("instagram")}`} className="hover:opacity-100 transition-opacity">{t("instagram")}</a>
+            <a href="https://www.facebook.com/share/1CaHPwejNt" aria-label={`MAX NEWS on ${t("facebook")}`} className="hover:opacity-100 transition-opacity">{t("facebook")}</a>
+            <a href="https://vt.tiktok.com/ZSgkb5Tx5/" aria-label={`MAX NEWS on ${t("tiktok")}`} className="hover:opacity-100 transition-opacity">{t("tiktok")}</a>
             </div>
           </div>
         </div>
