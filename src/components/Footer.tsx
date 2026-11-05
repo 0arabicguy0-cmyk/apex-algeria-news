@@ -22,10 +22,10 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="hidden md:block bg-navy text-navy-foreground mt-12 border-t-4 border-primary">
-      <div className="container py-10">
-        <div className="grid md:grid-cols-4 gap-8">
-          <div>
+    <footer className="block bg-navy text-navy-foreground mt-12 border-t-4 border-primary">
+      <div className="container py-8 md:py-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <BrandLogo className="h-12 w-12" />
               <span className="font-heading font-extrabold text-xl">MAX NEWS</span>
