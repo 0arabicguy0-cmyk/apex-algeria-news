@@ -143,6 +143,26 @@ export function useTrending(limit = 5) {
   return data ?? [];
 }
 
+/** Most-viewed articles published within the last 5 days, across all categories. */
+export function useTrendingWeek(limit = 10) {
+  const { data } = useQuery({
+    queryKey: ["articles", "trending-week", limit],
+    queryFn: async () => {
+      const since = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
+      const { data, error } = await supabase
+        .from("articles")
+        .select("*")
+        .eq("status", PUBLISHED)
+        .gte("published_at", since)
+        .order("view_count", { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return (data ?? []).map(mapArticle);
+    },
+  });
+  return data ?? [];
+}
+
 export function useRelated(article: Article | null, limit = 4) {
   const { data } = useQuery({
     queryKey: ["articles", "related", article?.id, article?.categoryKey, article?.tags?.join(",")],

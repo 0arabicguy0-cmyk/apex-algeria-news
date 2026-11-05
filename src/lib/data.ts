@@ -22,11 +22,16 @@ export interface Article {
 export const categories = [
   { key: "all", label: "الرئيسية", labelEn: "Home" },
   { key: "algeria", label: "الجزائر", labelEn: "Algeria" },
-  { key: "world", label: "العالم", labelEn: "World" },
+  { key: "politics", label: "سياسة", labelEn: "Politics" },
   { key: "economy", label: "اقتصاد", labelEn: "Economy" },
+  { key: "society", label: "مجتمع", labelEn: "Society" },
+  { key: "regions", label: "جهات", labelEn: "Regions" },
+  { key: "world", label: "دولي", labelEn: "International" },
   { key: "sports", label: "رياضة", labelEn: "Sports" },
-  { key: "tech", label: "تكنولوجيا", labelEn: "Tech" },
-  { key: "culture", label: "ثقافة", labelEn: "Culture" },
+  { key: "culture", label: "ثقافة وفن", labelEn: "Culture & Arts" },
+  { key: "tech", label: "تكنولوجيا", labelEn: "Technology" },
+  { key: "dialogues", label: "حوارات", labelEn: "Interviews" },
+  { key: "misc", label: "منوعات", labelEn: "Misc" },
 ];
 
 export const articles: Article[] = [

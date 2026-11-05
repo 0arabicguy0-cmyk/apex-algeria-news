@@ -8,6 +8,7 @@ import HeroSection from "@/components/HeroSection";
 import StoryCard from "@/components/StoryCard";
 import AdBanner from "@/components/AdBanner";
 import MostRead from "@/components/MostRead";
+import TrendingCarousel from "@/components/TrendingCarousel";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
@@ -58,9 +59,9 @@ export default function Index() {
 
   const featured = filtered.find((a) => a.isFeatured) || filtered[0];
   const sidebar = filtered.filter((a) => a.id !== featured?.id).slice(0, 3);
-  const feedItems = filtered.filter(
-    (a) => a.id !== featured?.id && !sidebar.some((s) => s.id === a.id)
-  );
+  const feedItems = filtered
+    .filter((a) => a.id !== featured?.id && !sidebar.some((s) => s.id === a.id))
+    .slice(0, 5);
 
   const hasArticles = filtered.length > 0;
   const isLoading = loading;
@@ -216,6 +217,8 @@ export default function Index() {
                 </aside>
               )}
             </div>
+
+            <TrendingCarousel />
 
             <NewsletterSignup />
           </section>
