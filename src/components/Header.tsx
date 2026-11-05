@@ -82,7 +82,6 @@ export default function Header({ isDark, onToggleTheme }: HeaderProps) {
             <BrandLogo className="h-12 w-12 md:h-14 md:w-14" priority />
             <span className="flex flex-col leading-tight text-start">
               <span className="font-heading font-extrabold text-xl text-foreground">MAX NEWS</span>
-              <span className="text-[10px] font-semibold text-primary">الجزائر · الخبر بأقصى سرعة</span>
             </span>
           </button>
 
